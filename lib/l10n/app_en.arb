@@ -1,0 +1,1118 @@
+{
+  "@@locale": "en",
+  "appName": "RABAIS CI",
+  "@appName": {
+    "description": "Application name"
+  },
+  "welcome": "Welcome",
+  "@welcome": {
+    "description": "Welcome message"
+  },
+  "customer": "Customer",
+  "@customer": {
+    "description": "Customer label"
+  },
+  "role": "Role",
+  "@role": {
+    "description": "Role label"
+  },
+  "balance": "Balance",
+  "@balance": {
+    "description": "Balance label"
+  },
+  "merchantPartners": "Merchant Partners",
+  "@merchantPartners": {
+    "description": "Merchant partners page title"
+  },
+  "searchPartners": "Search partners",
+  "@searchPartners": {
+    "description": "Placeholder for partner search"
+  },
+  "noPartnersFound": "No partners found",
+  "@noPartnersFound": {
+    "description": "Message when no partners are found"
+  },
+  "close": "Close",
+  "@close": {
+    "description": "Close button"
+  },
+  "category": "Category",
+  "@category": {
+    "description": "Category label"
+  },
+  "phone": "Phone",
+  "@phone": {
+    "description": "Phone label"
+  },
+  "specialOffers": "Special Offers",
+  "@specialOffers": {
+    "description": "Special offers title"
+  },
+  "discoverExclusive": "Discover our exclusive offers",
+  "@discoverExclusive": {
+    "description": "Message to discover exclusive offers"
+  },
+  "purchases": "Purchases",
+  "@purchases": {
+    "description": "Purchases page title"
+  },
+  "noPurchasesFound": "No purchases found",
+  "@noPurchasesFound": {
+    "description": "Message when no purchases are found"
+  },
+  "purchaseDetails": "Purchase Details",
+  "@purchaseDetails": {
+    "description": "Purchase details title"
+  },
+  "qrCode": "QR Code",
+  "@qrCode": {
+    "description": "QR code label"
+  },
+  "showQrToMerchant": "Show this QR code to the merchant to use your voucher",
+  "@showQrToMerchant": {
+    "description": "Instruction to show QR code to merchant"
+  },
+  "purchasedOn": "Purchased on",
+  "@purchasedOn": {
+    "description": "Purchase date label"
+  },
+  "expiresOn": "Expires on",
+  "@expiresOn": {
+    "description": "Expiration date label"
+  },
+  "active": "Active",
+  "@active": {
+    "description": "Active status"
+  },
+  "used": "Used",
+  "@used": {
+    "description": "Used status"
+  },
+  "expired": "Expired",
+  "@expired": {
+    "description": "Expired status"
+  },
+  "description": "Description",
+  "@description": {
+    "description": "Description label"
+  },
+  "amount": "Amount",
+  "@amount": {
+    "description": "Amount label"
+  },
+  "voucher": "Voucher",
+  "@voucher": {
+    "description": "Voucher label"
+  },
+  "code": "Code",
+  "@code": {
+    "description": "Code label"
+  },
+  "availableFeatures": "Available Features",
+  "@availableFeatures": {
+    "description": "Available features title"
+  },
+  
+  "login": "Login",
+  "@login": {
+    "description": "Login button text"
+  },
+  "logout": "Logout",
+  "@logout": {
+    "description": "Logout button text"
+  },
+  "phoneNumber": "Phone Number",
+  "@phoneNumber": {
+    "description": "Phone number field label"
+  },
+  "enterPhoneNumber": "Enter your phone number",
+  "@enterPhoneNumber": {
+    "description": "Phone number input hint"
+  },
+  "weWillSendCode": "We will send you a verification code",
+  "@weWillSendCode": {
+    "description": "OTP request explanation"
+  },
+  "receiveOtpCode": "Receive OTP Code",
+  "@receiveOtpCode": {
+    "description": "OTP request button text"
+  },
+  
+  "otpVerification": "OTP Verification",
+  "@otpVerification": {
+    "description": "OTP verification page title"
+  },
+  "verifyYourNumber": "Verify your number",
+  "@verifyYourNumber": {
+    "description": "OTP verification page subtitle"
+  },
+  "weSentCodeTo": "We sent a verification code to",
+  "@weSentCodeTo": {
+    "description": "OTP sent confirmation"
+  },
+  "enterFourDigitCode": "Enter the 4-digit code",
+  "@enterFourDigitCode": {
+    "description": "OTP input instruction"
+  },
+  "verify": "Verify",
+  "@verify": {
+    "description": "Verify button text"
+  },
+  "resendCode": "Resend Code",
+  "@resendCode": {
+    "description": "Resend OTP button text"
+  },
+  
+  "profileCompletion": "Complete Profile",
+  "@profileCompletion": {
+    "description": "Profile completion page title"
+  },
+  "completeYourProfile": "Complete your profile to continue",
+  "@completeYourProfile": {
+    "description": "Profile completion instruction"
+  },
+  "firstName": "First Name",
+  "@firstName": {
+    "description": "First name field label"
+  },
+  "lastName": "Last Name",
+  "@lastName": {
+    "description": "Last name field label"
+  },
+  "email": "Email",
+  "@email": {
+    "description": "Email field label"
+  },
+  "emailOptional": "Email (optional)",
+  "@emailOptional": {
+    "description": "Email field label with optional indicator"
+  },
+  "dateOfBirth": "Date of Birth",
+  "@dateOfBirth": {
+    "description": "Date of birth field label"
+  },
+  "dateOfBirthOptional": "Date of birth (optional)",
+  "@dateOfBirthOptional": {
+    "description": "Date of birth field label with optional indicator"
+  },
+  "gender": "Gender",
+  "@gender": {
+    "description": "Gender field label"
+  },
+  "genderOptional": "Gender (optional)",
+  "@genderOptional": {
+    "description": "Gender field label with optional indicator"
+  },
+  "profileInformation": "Profile information",
+  "@profileInformation": {
+    "description": "Section title for profile information"
+  },
+  "male": "Male",
+  "@male": {
+    "description": "Male gender option"
+  },
+  "female": "Female",
+  "@female": {
+    "description": "Female gender option"
+  },
+  "nonBinary": "Non-binary",
+  "@nonBinary": {
+    "description": "Non-binary gender option"
+  },
+  "other": "Other",
+  "@other": {
+    "description": "Other gender option"
+  },
+  "unknown": "Prefer not to say",
+  "@unknown": {
+    "description": "Unknown gender option"
+  },
+  "completeProfile": "Complete Profile",
+  "@completeProfile": {
+    "description": "Complete profile button text"
+  },
+  "firstNameRequired": "First name is required",
+  "@firstNameRequired": {
+    "description": "First name validation message"
+  },
+  "lastNameRequired": "Last name is required",
+  "@lastNameRequired": {
+    "description": "Last name validation message"
+  },
+  "invalidEmailFormat": "Invalid email format",
+  "@invalidEmailFormat": {
+    "description": "Invalid email validation message"
+  },
+  "clearField": "Clear field",
+  "@clearField": {
+    "description": "Action to clear an input field"
+  },
+  "additionalInfoOptional": "Additional info (optional)",
+  "@additionalInfoOptional": {
+    "description": "Label for additional info section"
+  },
+  "additionalInfoHint": "Add any extra profile details as key/value pairs.",
+  "@additionalInfoHint": {
+    "description": "Helper text for additional info section"
+  },
+  "additionalInfoKeyLabel": "Field name",
+  "@additionalInfoKeyLabel": {
+    "description": "Label for additional info key field"
+  },
+  "additionalInfoValueLabel": "Field value",
+  "@additionalInfoValueLabel": {
+    "description": "Label for additional info value field"
+  },
+  "addAdditionalInfoField": "Add info field",
+  "@addAdditionalInfoField": {
+    "description": "Button label to add another additional info field"
+  },
+  "removeAdditionalInfoField": "Remove field",
+  "@removeAdditionalInfoField": {
+    "description": "Tooltip to remove an additional info field"
+  },
+  "saveChanges": "Save changes",
+  "@saveChanges": {
+    "description": "Button label to save profile changes"
+  },
+  "profileUpdated": "Profile updated successfully",
+  "@profileUpdated": {
+    "description": "Success message when the profile is updated"
+  },
+  "helpPersonalizeExperience": "This information will help us personalize your experience",
+  "@helpPersonalizeExperience": {
+    "description": "Help text for profile completion"
+  },
+  
+  "customerHome": "Customer Home",
+  "@customerHome": {
+    "description": "Customer home page title"
+  },
+  "merchantConsole": "Merchant Console",
+  "@merchantConsole": {
+    "description": "Merchant home page title"
+  },
+  "welcomeBack": "Welcome back!",
+  "@welcomeBack": {
+    "description": "Welcome message"
+  },
+  "wallet": "Wallet",
+  "@wallet": {
+    "description": "Wallet feature name"
+  },
+  "vouchers": "Vouchers",
+  "@vouchers": {
+    "description": "Vouchers feature name"
+  },
+  "purchases": "Purchases",
+  "@purchases": {
+    "description": "Purchases feature name"
+  },
+  "profile": "Profile",
+  "@profile": {
+    "description": "Profile feature name"
+  },
+  "qrScanner": "QR Scanner",
+  "@qrScanner": {
+    "description": "QR scanner feature name"
+  },
+  "manualEntry": "Manual Entry",
+  "@manualEntry": {
+    "description": "Manual entry feature name"
+  },
+  "history": "History",
+  "@history": {
+    "description": "History feature name"
+  },
+  
+  "walletPage": "Wallet",
+  "@walletPage": {
+    "description": "Wallet page title"
+  },
+  "currentBalance": "Current Balance",
+  "@currentBalance": {
+    "description": "Current balance label"
+  },
+  "coins": "Coins",
+  "@coins": {
+    "description": "Coins currency"
+  },
+  "quickActions": "Quick Actions",
+  "@quickActions": {
+    "description": "Quick actions section title"
+  },
+  "topUp": "Top Up",
+  "@topUp": {
+    "description": "Top up action"
+  },
+  "transactionHistory": "Transaction History",
+  "@transactionHistory": {
+    "description": "Transaction history action"
+  },
+  "recentTransactions": "Recent Transactions",
+  "@recentTransactions": {
+    "description": "Recent transactions section title"
+  },
+  "noRecentTransactions": "No recent transactions",
+  "@noRecentTransactions": {
+    "description": "Empty transactions message"
+  },
+  "credit": "Credit",
+  "@credit": {
+    "description": "Credit transaction type"
+  },
+  "debit": "Debit",
+  "@debit": {
+    "description": "Debit transaction type"
+  },
+  
+  "vouchersPage": "Discount Vouchers",
+  "@vouchersPage": {
+    "description": "Vouchers page title"
+  },
+  "searchVouchers": "Search vouchers...",
+  "@searchVouchers": {
+    "description": "Voucher search hint"
+  },
+  "all": "All",
+  "@all": {
+    "description": "All category filter"
+  },
+  "restaurants": "Restaurants",
+  "@restaurants": {
+    "description": "Restaurants category"
+  },
+  "shopping": "Shopping",
+  "@shopping": {
+    "description": "Shopping category"
+  },
+  "services": "Services",
+  "@services": {
+    "description": "Services category"
+  },
+  "businessFiltersTitle": "Business types",
+  "@businessFiltersTitle": {
+    "description": "Heading for business type filters"
+  },
+  "businessFiltersLoadError": "Unable to load filters",
+  "@businessFiltersLoadError": {
+    "description": "Error message when business filters fail to load"
+  },
+  "minPrice": "Min price (in cents)",
+  "@minPrice": {
+    "description": "Minimum price filter label"
+  },
+  "maxPrice": "Max price (in cents)",
+  "@maxPrice": {
+    "description": "Maximum price filter label"
+  },
+  "expiresBefore": "Expires before",
+  "@expiresBefore": {
+    "description": "Expires before filter label"
+  },
+  "selectDate": "Select date",
+  "@selectDate": {
+    "description": "Prompt to select a date"
+  },
+  "clearFilters": "Clear filters",
+  "@clearFilters": {
+    "description": "Button label to clear voucher filters"
+  },
+  "noVouchersFound": "No vouchers found",
+  "@noVouchersFound": {
+    "description": "Empty vouchers message"
+  },
+  "buy": "Buy",
+  "@buy": {
+    "description": "Buy voucher button"
+  },
+  "claim": "Claim",
+  "@claim": {
+    "description": "Claim free voucher button"
+  },
+  "confirmClaimFree": "Do you want to accept your free coupon?",
+  "@confirmClaimFree": {
+    "description": "Confirmation message for claiming a free coupon"
+  },
+  "validUntil": "Valid until",
+  "@validUntil": {
+    "description": "Voucher validity label"
+  },
+  "voucherDetails": "Voucher Details",
+  "@voucherDetails": {
+    "description": "Voucher details page title"
+  },
+  "validity": "Validity",
+  "@validity": {
+    "description": "Validity section title"
+  },
+  "from": "From",
+  "@from": {
+    "description": "From date label"
+  },
+  "to": "To",
+  "@to": {
+    "description": "To date label"
+  },
+  "availableQuantity": "Available quantity",
+  "@availableQuantity": {
+    "description": "Available quantity label"
+  },
+  "buyNow": "Buy Now",
+  "@buyNow": {
+    "description": "Buy now button"
+  },
+  "confirmPurchase": "Confirm Purchase",
+  "@confirmPurchase": {
+    "description": "Purchase confirmation dialog title"
+  },
+  "confirmPurchaseMessage": "Do you want to buy \"{voucherTitle}\" for {price} {currency}?",
+  "@confirmPurchaseMessage": {
+    "description": "Purchase confirmation message",
+    "placeholders": {
+      "voucherTitle": {
+        "type": "String"
+      },
+      "price": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button text"
+  },
+  "confirm": "Confirm",
+  "@confirm": {
+    "description": "Confirm button text"
+  },
+  
+  "redemption": "Redemption",
+  "@redemption": {
+    "description": "Redemption page title"
+  },
+  "scanQr": "Scan QR",
+  "@scanQr": {
+    "description": "Scan QR tab title"
+  },
+  "manualEntry": "Manual Entry",
+  "@manualEntry": {
+    "description": "Manual entry tab title"
+  },
+  "scanQrCode": "Scan QR Code",
+  "@scanQrCode": {
+    "description": "QR scanner instruction"
+  },
+  "placeQrInFrame": "Place the QR code in the frame to scan it",
+  "@placeQrInFrame": {
+    "description": "QR scanner instruction text"
+  },
+  "scan": "Scan",
+  "@scan": {
+    "description": "Scan button text"
+  },
+  "manualEntryTitle": "Manual Entry",
+  "@manualEntryTitle": {
+    "description": "Manual entry page title"
+  },
+  "enterRedemptionCode": "Enter the redemption code manually",
+  "@enterRedemptionCode": {
+    "description": "Manual entry instruction"
+  },
+  "redemptionCode": "Redemption Code",
+  "@redemptionCode": {
+    "description": "Redemption code field label"
+  },
+  "redemptionCodeHint": "Ex: ABCD1234",
+  "@redemptionCodeHint": {
+    "description": "Redemption code field hint"
+  },
+  "redeem": "Redeem",
+  "@redeem": {
+    "description": "Redeem button text"
+  },
+  "redemptionHistory": "Redemption History",
+  "@redemptionHistory": {
+    "description": "Redemption history page title"
+  },
+  "noRedemptionsFound": "No redemptions found",
+  "@noRedemptionsFound": {
+    "description": "Empty redemptions message"
+  },
+  "amount": "Amount",
+  "@amount": {
+    "description": "Amount label"
+  },
+  "customer": "Customer",
+  "@customer": {
+    "description": "Customer label"
+  },
+  "method": "Method",
+  "@method": {
+    "description": "Method label"
+  },
+  "status": "Status",
+  "@status": {
+    "description": "Status label"
+  },
+  "filters": "Filters",
+  "@filters": {
+    "description": "Filters section title"
+  },
+  "clearFilters": "Clear filters",
+  "@clearFilters": {
+    "description": "Button to clear all filters"
+  },
+  "dateRange": "Date range",
+  "@dateRange": {
+    "description": "Date range label"
+  },
+  "selectDateRange": "Select date range",
+  "@selectDateRange": {
+    "description": "Prompt to select a date range"
+  },
+  "noDateSelected": "No date selected",
+  "@noDateSelected": {
+    "description": "Displayed when no date range is selected"
+  },
+  "limit": "Items per page",
+  "@limit": {
+    "description": "Dropdown label for page size"
+  },
+  "business": "Business",
+  "@business": {
+    "description": "Business selection label"
+  },
+  "redemptionStatusCompleted": "Completed",
+  "@redemptionStatusCompleted": {
+    "description": "Completed redemption status label"
+  },
+  "redemptionStatusPending": "Pending",
+  "@redemptionStatusPending": {
+    "description": "Pending redemption status label"
+  },
+  "redemptionStatusFailed": "Failed",
+  "@redemptionStatusFailed": {
+    "description": "Failed redemption status label"
+  },
+  "redemptionMethodQrCode": "QR code",
+  "@redemptionMethodQrCode": {
+    "description": "QR code redemption method label"
+  },
+  "redemptionMethodManualCode": "Manual code",
+  "@redemptionMethodManualCode": {
+    "description": "Manual code redemption method label"
+  },
+  "date": "Date",
+  "@date": {
+    "description": "Date label"
+  },
+  "success": "Success",
+  "@success": {
+    "description": "Success status"
+  },
+  "pending": "Pending",
+  "@pending": {
+    "description": "Pending status"
+  },
+  "failed": "Failed",
+  "@failed": {
+    "description": "Failed status"
+  },
+  
+  "settings": "Settings",
+  "@settings": {
+    "description": "Settings page title"
+  },
+  "personalInfo": "Personal Information",
+  "@personalInfo": {
+    "description": "Personal info setting"
+  },
+  "modifyYourInfo": "Modify your information",
+  "@modifyYourInfo": {
+    "description": "Personal info description"
+  },
+  "security": "Security",
+  "@security": {
+    "description": "Security setting"
+  },
+  "passwordAndAuth": "Password and authentication",
+  "@passwordAndAuth": {
+    "description": "Security description"
+  },
+  "application": "Application",
+  "@application": {
+    "description": "Application settings section"
+  },
+  "language": "Language",
+  "@language": {
+    "description": "Language setting"
+  },
+  "french": "French",
+  "@french": {
+    "description": "French language option"
+  },
+  "english": "English",
+  "@english": {
+    "description": "English language option"
+  },
+  "notifications": "Notifications",
+  "@notifications": {
+    "description": "Notifications setting"
+  },
+  "manageNotifications": "Manage notifications",
+  "@manageNotifications": {
+    "description": "Notifications description"
+  },
+  "theme": "Theme",
+  "@theme": {
+    "description": "Theme setting"
+  },
+  "system": "System",
+  "@system": {
+    "description": "System theme option"
+  },
+  "support": "Support",
+  "@support": {
+    "description": "Support section"
+  },
+  "help": "Help",
+  "@help": {
+    "description": "Help setting"
+  },
+  "faqAndSupport": "FAQ and support",
+  "@faqAndSupport": {
+    "description": "Help description"
+  },
+  "contactUs": "Contact Us",
+  "@contactUs": {
+    "description": "Contact us setting"
+  },
+  "customerSupport": "Customer support",
+  "@customerSupport": {
+    "description": "Contact us description"
+  },
+  "about": "About",
+  "@about": {
+    "description": "About setting"
+  },
+  "version": "Version 1.0.0",
+  "@version": {
+    "description": "App version"
+  },
+  "account": "Account",
+  "@account": {
+    "description": "Account section"
+  },
+  "logoutConfirmation": "Logout",
+  "@logoutConfirmation": {
+    "description": "Logout dialog title"
+  },
+  "logoutConfirmationMessage": "Are you sure you want to logout?",
+  "@logoutConfirmationMessage": {
+    "description": "Logout confirmation message"
+  },
+  
+  "notificationsPage": "Notifications",
+  "@notificationsPage": {
+    "description": "Notifications page title"
+  },
+  "notificationTypes": "Notification Types",
+  "@notificationTypes": {
+    "description": "Notification types section"
+  },
+  "pushNotifications": "Push Notifications",
+  "@pushNotifications": {
+    "description": "Push notifications setting"
+  },
+  "receiveDeviceNotifications": "Receive notifications on your device",
+  "@receiveDeviceNotifications": {
+    "description": "Push notifications description"
+  },
+  "emailNotifications": "Email Notifications",
+  "@emailNotifications": {
+    "description": "Email notifications setting"
+  },
+  "receiveEmailNotifications": "Receive notifications by email",
+  "@receiveEmailNotifications": {
+    "description": "Email notifications description"
+  },
+  "smsNotifications": "SMS Notifications",
+  "@smsNotifications": {
+    "description": "SMS notifications setting"
+  },
+  "receiveSmsNotifications": "Receive notifications by SMS",
+  "@receiveSmsNotifications": {
+    "description": "SMS notifications description"
+  },
+  "categories": "Categories",
+  "@categories": {
+    "description": "Categories section"
+  },
+  "promotionalNotifications": "Promotional Notifications",
+  "@promotionalNotifications": {
+    "description": "Promotional notifications setting"
+  },
+  "newVouchersAndOffers": "New vouchers and special offers",
+  "@newVouchersAndOffers": {
+    "description": "Promotional notifications description"
+  },
+  "transactionNotifications": "Transaction Notifications",
+  "@transactionNotifications": {
+    "description": "Transaction notifications setting"
+  },
+  "purchaseAndRedemptionConfirmations": "Purchase and redemption confirmations",
+  "@purchaseAndRedemptionConfirmations": {
+    "description": "Transaction notifications description"
+  },
+  "securityNotifications": "Security Notifications",
+  "@securityNotifications": {
+    "description": "Security notifications setting"
+  },
+  "loginAndAccountChanges": "Logins and account changes",
+  "@loginAndAccountChanges": {
+    "description": "Security notifications description"
+  },
+  "frequency": "Frequency",
+  "@frequency": {
+    "description": "Frequency section"
+  },
+  "notificationFrequency": "Notification Frequency",
+  "@notificationFrequency": {
+    "description": "Notification frequency setting"
+  },
+  "immediately": "Immediately",
+  "@immediately": {
+    "description": "Immediate frequency option"
+  },
+  "daily": "Daily",
+  "@daily": {
+    "description": "Daily frequency option"
+  },
+  "weekly": "Weekly",
+  "@weekly": {
+    "description": "Weekly frequency option"
+  },
+  "test": "Test",
+  "@test": {
+    "description": "Test section"
+  },
+  "sendTestNotification": "Send Test Notification",
+  "@sendTestNotification": {
+    "description": "Test notification setting"
+  },
+  "testYourNotificationSettings": "Test your notification settings",
+  "@testYourNotificationSettings": {
+    "description": "Test notification description"
+  },
+  "testNotificationSent": "Test notification sent!",
+  "@testNotificationSent": {
+    "description": "Test notification success message"
+  },
+  
+  "error": "Error",
+  "@error": {
+    "description": "Error title"
+  },
+  "networkError": "Network Error",
+  "@networkError": {
+    "description": "Network error message"
+  },
+  "checkInternetConnection": "Check your internet connection",
+  "@checkInternetConnection": {
+    "description": "Network error instruction"
+  },
+  "accessDenied": "Access Denied",
+  "@accessDenied": {
+    "description": "Access denied message"
+  },
+  "pleaseReconnect": "Please reconnect",
+  "@pleaseReconnect": {
+    "description": "Access denied instruction"
+  },
+  "serviceNotFound": "Service not found",
+  "@serviceNotFound": {
+    "description": "Service not found message"
+  },
+  "invalidData": "Invalid data. Check your information",
+  "@invalidData": {
+    "description": "Invalid data message"
+  },
+  "unknownError": "An error occurred",
+  "@unknownError": {
+    "description": "Unknown error message"
+  },
+  "retry": "Retry",
+  "@retry": {
+    "description": "Retry button text"
+  },
+  "ok": "OK",
+  "@ok": {
+    "description": "OK button text"
+  },
+  
+  "loading": "Loading...",
+  "@loading": {
+    "description": "Loading message"
+  },
+  "refresh": "Refresh",
+  "@refresh": {
+    "description": "Refresh button text"
+  },
+  "comingSoon": "Coming Soon",
+  "@comingSoon": {
+    "description": "Coming soon message"
+  },
+  "featureWillBeAvailableSoon": "This feature will be available soon",
+  "@featureWillBeAvailableSoon": {
+    "description": "Coming soon description"
+  },
+  
+  "pleaseEnterPhoneNumber": "Please enter your phone number",
+  "@pleaseEnterPhoneNumber": {
+    "description": "Phone number validation message"
+  },
+  "enterCompleteCode": "Please enter the complete code",
+  "@enterCompleteCode": {
+    "description": "OTP validation message"
+  },
+  "free": "Free",
+  "@free": {
+    "description": "Free voucher type"
+  },
+  "paid": "Paid",
+  "@paid": {
+    "description": "Paid voucher type"
+  },
+  "inactive": "Inactive",
+  "@inactive": {
+    "description": "Inactive status"
+  },
+  "unavailable": "Unavailable",
+  "@unavailable": {
+    "description": "Unavailable status"
+  },
+  "quantity": "Quantity",
+  "@quantity": {
+    "description": "Quantity label"
+  },
+  "price": "Price",
+  "@price": {
+    "description": "Price label"
+  },
+  "coinPrice": "Coin Price",
+  "@coinPrice": {
+    "description": "Coin price label"
+  },
+  "coinUnitPrice": "Unit price",
+  "@coinUnitPrice": {
+    "description": "Label for price per coin"
+  },
+  "availableCoinPackages": "Available coin packages",
+  "@availableCoinPackages": {
+    "description": "Title for the coin packages list"
+  },
+  "noCoinPackagesAvailable": "No coin packages available right now.",
+  "@noCoinPackagesAvailable": {
+    "description": "Empty state message when no packages are returned"
+  },
+  "topUpSuccessful": "Your recharge request was sent successfully.",
+  "@topUpSuccessful": {
+    "description": "Success message after confirming a coin top-up"
+  },
+  "newBadge": "NEW",
+  "@newBadge": {
+    "description": "Badge shown on recently added packages"
+  },
+  "packageCurrentlyUnavailable": "This package is currently unavailable.",
+  "@packageCurrentlyUnavailable": {
+    "description": "Message shown when a package is inactive"
+  },
+  "paymentMethodCard": "Bank card",
+  "@paymentMethodCard": {
+    "description": "Label for card payment option"
+  },
+  "paymentMethodWave": "Wave",
+  "@paymentMethodWave": {
+    "description": "Label for Wave payment option"
+  },
+  "paymentMethodMobileMoney": "Mobile money",
+  "@paymentMethodMobileMoney": {
+    "description": "Label for generic mobile money option"
+  },
+  "paymentMethodPaiementPro": "PaiementPro",
+  "@paymentMethodPaiementPro": {
+    "description": "Label for PaiementPro payment option"
+  },
+  "redirectingPaiementPro": "Redirecting to PaiementPro…",
+  "@redirectingPaiementPro": {
+    "description": "Snackbar when opening PaiementPro flow"
+  },
+  "pleaseEnterCode": "Please enter a code",
+  "@pleaseEnterCode": {
+    "description": "Code validation message"
+  },
+  "purchaseSuccess": "Purchase successful!",
+  "@purchaseSuccess": {
+    "description": "Purchase success message"
+  },
+  "barcode": "Barcode",
+  "@barcode": {
+    "description": "Barcode label"
+  },
+  "scanBarcode": "Scan Barcode",
+  "@scanBarcode": {
+    "description": "Scan barcode button"
+  },
+  "searchVoucher": "Search voucher",
+  "@searchVoucher": {
+    "description": "Search voucher button"
+  },
+  "pleaseEnterBarcode": "Please enter a barcode",
+  "@pleaseEnterBarcode": {
+    "description": "Barcode validation message"
+  },
+  "previewVoucher": "Preview Voucher",
+  "@previewVoucher": {
+    "description": "Preview voucher button"
+  },
+  "purchaseVoucher": "Purchase Voucher",
+  "@purchaseVoucher": {
+    "description": "Purchase voucher button"
+  },
+  "sponsoredBanners": "Sponsored Banners",
+  "@sponsoredBanners": {
+    "description": "Sponsored banners title"
+  },
+  "qrScannerPlaceholder": "Camera scanner will be available soon",
+  "@qrScannerPlaceholder": {
+    "description": "QR scanner placeholder message"
+  },
+  "merchantConsoleTitle": "Merchant Console",
+  "@merchantConsoleTitle": {
+    "description": "Merchant console page title"
+  },
+  "pleaseEnterRedemptionCode": "Please enter a redemption code",
+  "@pleaseEnterRedemptionCode": {
+    "description": "Redemption code validation"
+  },
+  "qrScannerComingSoon": "QR Scanner will be available soon",
+  "@qrScannerComingSoon": {
+    "description": "QR scanner coming soon message"
+  },
+  "recentTransactions": "Recent Transactions",
+  "@recentTransactions": {
+    "description": "Recent transactions section title"
+  },
+  "noTransactionsFound": "No transactions found",
+  "@noTransactionsFound": {
+    "description": "Empty transactions message"
+  },
+  "discount": "Discount",
+  "@discount": {
+    "description": "Discount label"
+  },
+  "toolsForRedemption": "Redemption Tools",
+  "@toolsForRedemption": {
+    "description": "Redemption tools section title"
+  },
+  "redemptionTools": "Redemption Tools",
+  "@redemptionTools": {
+    "description": "Redemption tools title"
+  },
+  "businessInformation": "Business Information",
+  "@businessInformation": {
+    "description": "Business information section title"
+  },
+  "choosePaymentMethod": "Choose Payment Method",
+  "@choosePaymentMethod": {
+    "description": "Payment method selection dialog title"
+  },
+  "walletPayment": "Wallet",
+  "@walletPayment": {
+    "description": "Wallet payment method"
+  },
+  "coinsPayment": "Coins",
+  "@coinsPayment": {
+    "description": "Coins payment method"
+  },
+  "mixedPayment": "Mixed",
+  "@mixedPayment": {
+    "description": "Mixed payment method"
+  },
+  "walletAndCoins": "Wallet + Coins",
+  "@walletAndCoins": {
+    "description": "Wallet and coins combined payment"
+  },
+  "insufficientBalance": "Insufficient balance. Please top up your wallet.",
+  "@insufficientBalance": {
+    "description": "Insufficient balance warning message"
+  },
+  "wantToBuyVoucher": "Do you want to buy \"{voucherTitle}\"?",
+  "@wantToBuyVoucher": {
+    "description": "Purchase confirmation question",
+    "placeholders": {
+      "voucherTitle": {
+        "type": "String"
+      }
+    }
+  },
+  "paymentMethod": "Payment Method",
+  "@paymentMethod": {
+    "description": "Payment method label"
+  },
+  "or": "or",
+  "@or": {
+    "description": "Or connector word"
+  },
+  "activeVouchers": "Active Vouchers",
+  "@activeVouchers": {
+    "description": "Active vouchers count label"
+  },
+  "specialOffers": "Special Offers",
+  "@specialOffers": {
+    "description": "Special offers section title"
+  },
+  "discoverExclusive": "Discover Exclusive Offers",
+  "@discoverExclusive": {
+    "description": "Discover exclusive offers text"
+  },
+  "cameraPermissionRequired": "Camera permission is required to scan QR codes",
+  "@cameraPermissionRequired": {
+    "description": "Camera permission required message"
+  },
+  "cameraPermissionDenied": "Camera permission is permanently denied. Please enable it in settings.",
+  "@cameraPermissionDenied": {
+    "description": "Camera permission denied message"
+  },
+  "openSettings": "Open Settings",
+  "@openSettings": {
+    "description": "Open settings button text"
+  },
+  "otpSentTo": "OTP sent to {phone}",
+  "@otpSentTo": {
+    "description": "Message shown when the OTP is sent successfully",
+    "placeholders": {
+      "phone": {
+        "type": "String"
+      }
+    }
+  },
+  "processingScan": "Processing...",
+  "@processingScan": {
+    "description": "Overlay message displayed while the scanned code is being processed"
+  },
+  "scannedCodeMessage": "Scanned code: {code}",
+  "@scannedCodeMessage": {
+    "description": "Message shown after a QR code is detected",
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "merchant": "Merchant"
+}
