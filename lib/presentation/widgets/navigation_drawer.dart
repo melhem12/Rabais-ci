@@ -60,6 +60,7 @@ class AppNavigationDrawer extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.end,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Hero(
                           tag: 'profile_avatar',
@@ -75,7 +76,7 @@ class AppNavigationDrawer extends StatelessWidget {
                               ],
                             ),
                             child: CircleAvatar(
-                              radius: 35,
+                              radius: 32,
                               backgroundColor: AppTheme.white,
                               backgroundImage: _getProfileImageUrl(authState.user) != null
                                   ? NetworkImage(_getProfileImageUrl(authState.user)!)
@@ -86,7 +87,7 @@ class AppNavigationDrawer extends StatelessWidget {
                                       authState.user.lastName?.substring(0, 1).toUpperCase() ?? 
                                       'U',
                                       style: TextStyle(
-                                        fontSize: 28,
+                                        fontSize: 26,
                                         fontWeight: FontWeight.bold,
                                         color: AppTheme.primaryOrange,
                                       ),
@@ -95,25 +96,33 @@ class AppNavigationDrawer extends StatelessWidget {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 16),
-                        Text(
-                          '${authState.user.firstName ?? ''} ${authState.user.lastName ?? ''}'.trim(),
-                          style: const TextStyle(
-                            color: AppTheme.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 0.5,
+                        const SizedBox(height: 12),
+                        Flexible(
+                          child: Text(
+                            '${authState.user.firstName ?? ''} ${authState.user.lastName ?? ''}'.trim(),
+                            style: const TextStyle(
+                              color: AppTheme.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 0.5,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                         if (authState.user.email != null)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 4),
-                            child: Text(
-                              authState.user.email!,
-                              style: TextStyle(
-                                color: AppTheme.white.withOpacity(0.9),
-                                fontSize: 14,
-                                letterSpacing: 0.3,
+                          Flexible(
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 4),
+                              child: Text(
+                                authState.user.email!,
+                                style: TextStyle(
+                                  color: AppTheme.white.withOpacity(0.9),
+                                  fontSize: 13,
+                                  letterSpacing: 0.3,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           ),
@@ -371,12 +380,12 @@ class AppNavigationDrawer extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: AppTheme.primaryOrange.withOpacity(0.1),
+                    color: AppTheme.white.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
                     icon,
-                    color: AppTheme.primaryOrange,
+                    color: AppTheme.white,
                     size: 24,
                   ),
                 ),
@@ -388,12 +397,13 @@ class AppNavigationDrawer extends StatelessWidget {
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
                       letterSpacing: 0.3,
+                      color: AppTheme.white,
                     ),
                   ),
                 ),
                 Icon(
                   Icons.chevron_right,
-                  color: Colors.grey[400],
+                  color: AppTheme.white.withOpacity(0.7),
                   size: 20,
                 ),
               ],

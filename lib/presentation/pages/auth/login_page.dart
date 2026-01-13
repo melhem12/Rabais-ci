@@ -5,6 +5,7 @@ import '../../features/auth/bloc/auth_bloc.dart';
 import '../../features/auth/bloc/auth_event.dart';
 import '../../features/auth/bloc/auth_state.dart';
 import '../../../generated/l10n/app_localizations.dart';
+import '../../widgets/animations/custom_loader.dart';
 
 /// Login page for phone number entry
 class LoginPage extends StatefulWidget {
@@ -111,7 +112,7 @@ class _LoginPageState extends State<LoginPage> {
                       child: BlocBuilder<AuthBloc, AuthState>(
                         builder: (context, state) {
                           if (state is AuthLoading) {
-                            return const CircularProgressIndicator(color: Colors.white);
+                            return const AppLoader(size: 20, color: Colors.white);
                           }
                           return Text(l10n.receiveOtpCode);
                         },

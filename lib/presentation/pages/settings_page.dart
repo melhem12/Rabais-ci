@@ -7,7 +7,11 @@ import '../features/localization/bloc/localization_bloc.dart';
 import '../features/localization/bloc/localization_event.dart';
 import '../features/localization/bloc/localization_state.dart';
 import '../../generated/l10n/app_localizations.dart';
+import '../../core/theme/app_theme.dart';
 import '../widgets/localized_app.dart';
+import '../widgets/animations/fade_in_widget.dart';
+import '../widgets/animations/slide_in_widget.dart';
+import '../widgets/animations/scale_tap_widget.dart';
 import 'profile_page.dart';
 import 'support_page.dart';
 import 'purchases_page.dart';
@@ -29,51 +33,74 @@ class SettingsPage extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         children: [
           // Profile Section
-          _buildSectionHeader(context, l10n.profile),
-          _buildSettingsTile(
-            context,
-            icon: Icons.person,
-            title: l10n.personalInfo,
-            subtitle: l10n.modifyYourInfo,
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const ProfilePage(),
-                ),
-              );
-            },
+          FadeInWidget(
+            delay: 0.1,
+            child: SlideInWidget(
+              delay: 0.1,
+              begin: const Offset(-0.2, 0),
+              child: _buildSectionHeader(context, l10n.profile),
+            ),
           ),
-          _buildSettingsTile(
-            context,
-            icon: Icons.local_offer,
-            title: 'Mes Coupons', // Will be localized
-            subtitle: 'Voir tous vos coupons achetés',
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const PurchasesPage(),
-                ),
-              );
-            },
+          FadeInWidget(
+            delay: 0.15,
+            child: _buildSettingsTile(
+              context,
+              icon: Icons.person,
+              title: l10n.personalInfo,
+              subtitle: l10n.modifyYourInfo,
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const ProfilePage(),
+                  ),
+                );
+              },
+            ),
           ),
-          _buildSettingsTile(
-            context,
-            icon: Icons.security,
-            title: l10n.security,
-            subtitle: l10n.passwordAndAuth,
-            onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(l10n.featureWillBeAvailableSoon),
-                ),
-              );
-            },
+          FadeInWidget(
+            delay: 0.2,
+            child: _buildSettingsTile(
+              context,
+              icon: Icons.local_offer,
+              title: 'Mes Coupons', // Will be localized
+              subtitle: 'Voir tous vos coupons achetés',
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const PurchasesPage(),
+                  ),
+                );
+              },
+            ),
+          ),
+          FadeInWidget(
+            delay: 0.25,
+            child: _buildSettingsTile(
+              context,
+              icon: Icons.security,
+              title: l10n.security,
+              subtitle: l10n.passwordAndAuth,
+              onTap: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(l10n.featureWillBeAvailableSoon),
+                  ),
+                );
+              },
+            ),
           ),
           
           const SizedBox(height: 24),
           
           // App Section
-          _buildSectionHeader(context, l10n.application),
+          FadeInWidget(
+            delay: 0.3,
+            child: SlideInWidget(
+              delay: 0.3,
+              begin: const Offset(-0.2, 0),
+              child: _buildSectionHeader(context, l10n.application),
+            ),
+          ),
           BlocBuilder<LocalizationBloc, LocalizationState>(
             builder: (context, state) {
               String currentLanguage = l10n.french;
@@ -121,7 +148,14 @@ class SettingsPage extends StatelessWidget {
           const SizedBox(height: 24),
           
           // Support Section
-          _buildSectionHeader(context, l10n.support),
+          FadeInWidget(
+            delay: 0.45,
+            child: SlideInWidget(
+              delay: 0.45,
+              begin: const Offset(-0.2, 0),
+              child: _buildSectionHeader(context, l10n.support),
+            ),
+          ),
           _buildSettingsTile(
             context,
             icon: Icons.help,
@@ -163,14 +197,24 @@ class SettingsPage extends StatelessWidget {
           const SizedBox(height: 24),
           
           // Account Section
-          _buildSectionHeader(context, l10n.account),
-          _buildSettingsTile(
-            context,
-            icon: Icons.logout,
-            title: l10n.logout,
-            subtitle: l10n.logoutConfirmationMessage,
-            onTap: () => _showLogoutDialog(context),
-            textColor: Colors.red,
+          FadeInWidget(
+            delay: 0.55,
+            child: SlideInWidget(
+              delay: 0.55,
+              begin: const Offset(-0.2, 0),
+              child: _buildSectionHeader(context, l10n.account),
+            ),
+          ),
+          FadeInWidget(
+            delay: 0.65,
+            child: _buildSettingsTile(
+              context,
+              icon: Icons.logout,
+              title: l10n.logout,
+              subtitle: l10n.logoutConfirmationMessage,
+              onTap: () => _showLogoutDialog(context),
+              textColor: Colors.red,
+            ),
           ),
         ],
       ),
@@ -179,13 +223,14 @@ class SettingsPage extends StatelessWidget {
 
   Widget _buildSectionHeader(BuildContext context, String title) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
+      padding: const EdgeInsets.only(bottom: 12.0, top: 8.0),
       child: Text(
         title,
         style: const TextStyle(
-          fontSize: 16,
+          fontSize: 20,
           fontWeight: FontWeight.bold,
-          color: Color(0xFF1976D2),
+          letterSpacing: 0.3,
+          color: AppTheme.primaryTurquoise,
         ),
       ),
     );
@@ -199,20 +244,65 @@ class SettingsPage extends StatelessWidget {
     required VoidCallback onTap,
     Color? textColor,
   }) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 8),
-      child: ListTile(
-        leading: Icon(icon, color: textColor),
-        title: Text(
-          title,
-          style: TextStyle(
-            fontWeight: FontWeight.w500,
-            color: textColor,
+    return ScaleTapWidget(
+      onTap: onTap,
+      child: Card(
+        elevation: 1,
+        margin: const EdgeInsets.only(bottom: 12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Colors.white,
+                AppTheme.primaryOrange.withOpacity(0.05),
+              ],
+            ),
+          ),
+          child: ListTile(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            leading: Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: (textColor ?? AppTheme.primaryOrange).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(
+                icon,
+                color: textColor ?? AppTheme.primaryOrange,
+                size: 24,
+              ),
+            ),
+            title: Text(
+              title,
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 16,
+                color: textColor,
+                letterSpacing: 0.2,
+              ),
+            ),
+            subtitle: Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Text(
+                subtitle,
+                style: TextStyle(
+                  fontSize: 13,
+                  color: Colors.grey[600],
+                ),
+              ),
+            ),
+            trailing: Icon(
+              Icons.chevron_right,
+              color: textColor ?? AppTheme.primaryOrange,
+            ),
           ),
         ),
-        subtitle: Text(subtitle),
-        trailing: const Icon(Icons.chevron_right),
-        onTap: onTap,
       ),
     );
   }

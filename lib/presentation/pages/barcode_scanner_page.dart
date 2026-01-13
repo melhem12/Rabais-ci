@@ -8,6 +8,7 @@ import '../features/voucher/bloc/voucher_state.dart';
 import '../features/wallet/bloc/wallet_bloc.dart';
 import '../features/wallet/bloc/wallet_state.dart';
 import '../widgets/payment_method_dialog.dart';
+import '../widgets/animations/custom_loader.dart';
 import '../../generated/l10n/app_localizations.dart';
 
 /// Barcode scanner page for purchasing vouchers by scanning barcode
@@ -34,7 +35,7 @@ class _BarcodeScannerPageState extends State<BarcodeScannerPage> {
     
     if (l10n == null) {
       return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
+        body: const Center(child: AppLoader()),
       );
     }
     
@@ -152,7 +153,7 @@ class _BarcodeScannerPageState extends State<BarcodeScannerPage> {
               
               if (_isProcessing) ...[
                 const SizedBox(height: 24),
-                const Center(child: CircularProgressIndicator()),
+                const Center(child: AppLoader()),
               ],
             ],
           ),

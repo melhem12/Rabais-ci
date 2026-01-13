@@ -6,6 +6,7 @@ import '../../features/auth/bloc/auth_event.dart';
 import '../../features/auth/bloc/auth_state.dart';
 import '../../../../generated/l10n/app_localizations.dart';
 import '../../widgets/additional_info_field_controller.dart';
+import '../../widgets/animations/custom_loader.dart';
 
 /// Profile completion page for first-time users
 class ProfileCompletionPage extends StatefulWidget {
@@ -314,7 +315,7 @@ class _ProfileCompletionPageState extends State<ProfileCompletionPage> {
                           child: BlocBuilder<AuthBloc, AuthState>(
                             builder: (context, state) {
                               if (state is AuthLoading) {
-                                return const CircularProgressIndicator(color: Colors.white);
+                                return const AppLoader(size: 20, color: Colors.white);
                               }
                               return Text(
                                 l10n.completeProfile,

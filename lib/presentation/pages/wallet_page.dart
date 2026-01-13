@@ -9,6 +9,9 @@ import '../../domain/entities/wallet.dart';
 import '../widgets/common/app_widgets.dart';
 import '../../generated/l10n/app_localizations.dart';
 import '../../core/theme/app_theme.dart';
+import '../widgets/animations/custom_loader.dart';
+import '../widgets/animations/fade_in_widget.dart';
+import '../widgets/animations/scale_tap_widget.dart';
 import 'wallet_recharge_page.dart';
 
 /// Wallet page
@@ -46,7 +49,7 @@ class _WalletPageState extends State<WalletPage> {
       body: BlocBuilder<WalletBloc, WalletState>(
         builder: (context, state) {
           if (state is WalletLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: AppLoader());
           } else if (state is WalletLoaded) {
             return _buildWalletContent(
               context,
@@ -113,16 +116,6 @@ class _WalletPageState extends State<WalletPage> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
-                  // Display balance in CFA only
-                  Text(
-                    '${(wallet.balanceMinor / 100).toStringAsFixed(0)} CFA',
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.green,
-                    ),
-                  ),
                 ],
               ),
             ),
@@ -179,23 +172,49 @@ class _WalletPageState extends State<WalletPage> {
     Color color,
     VoidCallback onTap,
   ) {
-    return Card(
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              Icon(icon, size: 32, color: color),
-              const SizedBox(height: 8),
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
+    return ScaleTapWidget(
+      onTap: onTap,
+      child: Card(
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Colors.white,
+                color.withOpacity(0.05),
+              ],
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(icon, size: 28, color: color),
                 ),
-              ),
-            ],
+                const SizedBox(height: 12),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0.2,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -305,7 +324,10 @@ class _TransactionsPageState extends State<TransactionsPage> {
               itemCount: state.transactions.length,
               itemBuilder: (context, index) {
                 final transaction = state.transactions[index];
-                return _buildTransactionTile(transaction, state.currency, l10n);
+                return FadeInWidget(
+                  delay: 0.05 * index,
+                  child: _buildTransactionTile(transaction, state.currency, l10n),
+                );
               },
             );
           } else if (state is WalletError) {
@@ -316,7 +338,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
               },
             );
           }
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: AppLoader());
         },
       ),
     );
@@ -360,16 +382,58 @@ Widget _buildTransactionTile(
   final title = _describeTransaction(transaction, l10n);
 
   return Card(
-    margin: const EdgeInsets.only(bottom: 8),
-    child: ListTile(
-      leading: Icon(icon, color: color),
-      title: Text(title),
-      subtitle: Text(subtitle),
-      trailing: Text(
-        trailing,
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          color: color,
+    elevation: 1,
+    margin: const EdgeInsets.only(bottom: 12),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(16),
+    ),
+    child: Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Colors.white,
+            color.withOpacity(0.05),
+          ],
+        ),
+      ),
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(icon, color: color, size: 24),
+        ),
+        title: Text(
+          title,
+          style: const TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 15,
+            letterSpacing: 0.2,
+          ),
+        ),
+        subtitle: Padding(
+          padding: const EdgeInsets.only(top: 4),
+          child: Text(
+            subtitle,
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey[600],
+            ),
+          ),
+        ),
+        trailing: Text(
+          trailing,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 15,
+            color: color,
+          ),
         ),
       ),
     ),

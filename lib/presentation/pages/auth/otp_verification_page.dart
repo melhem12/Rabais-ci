@@ -6,6 +6,7 @@ import '../../features/auth/bloc/auth_event.dart';
 import '../../features/auth/bloc/auth_state.dart';
 import '../../../../domain/entities/user.dart';
 import '../../../../generated/l10n/app_localizations.dart';
+import '../../widgets/animations/custom_loader.dart';
 
 /// OTP verification page
 class OtpVerificationPage extends StatefulWidget {
@@ -183,7 +184,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
                         child: BlocBuilder<AuthBloc, AuthState>(
                           builder: (context, state) {
                             if (state is AuthLoading) {
-                              return const CircularProgressIndicator(color: Colors.white);
+                              return const AppLoader(size: 20, color: Colors.white);
                             }
                             return Text(
                               l10n.verify,

@@ -9,6 +9,7 @@ import '../features/purchase/bloc/purchase_bloc.dart';
 import '../features/purchase/bloc/purchase_event.dart';
 import '../features/purchase/bloc/purchase_state.dart';
 import '../widgets/common/app_widgets.dart';
+import '../widgets/animations/custom_loader.dart';
 
 class PurchaseDetailPage extends StatefulWidget {
   final String purchaseId;
@@ -92,7 +93,7 @@ class _PurchaseDetailPageState extends State<PurchaseDetailPage> {
 
               // Show loading state if we're loading or if state is initial (waiting for data)
               if (state is PurchaseLoading || state is PurchaseInitial) {
-                return const Center(child: CircularProgressIndicator());
+                return const Center(child: AppLoader());
               } else if (state is PurchaseDetailLoaded) {
                 // Cache the purchase
                 _cachedPurchase = state.purchase;
@@ -108,7 +109,7 @@ class _PurchaseDetailPageState extends State<PurchaseDetailPage> {
                 );
               }
               // If state is not recognized, show loading (might be transitioning)
-              return const Center(child: CircularProgressIndicator());
+                return const Center(child: AppLoader());
             },
           ),
         ),
@@ -207,7 +208,7 @@ class _PurchaseDetailPageState extends State<PurchaseDetailPage> {
                               version: QrVersions.auto,
                               size: 200.0,
                             )
-                          : const CircularProgressIndicator(),
+                          : const AppLoader(),
                     ),
                   ),
                   const SizedBox(height: 16),

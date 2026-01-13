@@ -47,18 +47,15 @@ class _ScaleTapWidgetState extends State<ScaleTapWidget>
   }
 
   void _handleTapDown(TapDownDetails details) {
-    setState(() => _isPressed = true);
     _controller.forward();
   }
 
   void _handleTapUp(TapUpDetails details) {
-    setState(() => _isPressed = false);
     _controller.reverse();
     widget.onTap?.call();
   }
 
   void _handleTapCancel() {
-    setState(() => _isPressed = false);
     _controller.reverse();
   }
 

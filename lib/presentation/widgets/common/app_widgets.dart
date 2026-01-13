@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../animations/custom_loader.dart';
 
 /// Common app widgets used across the application
 class AppWidgets {
@@ -24,7 +25,7 @@ class AppWidgets {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const CircularProgressIndicator(),
+          const AppLoader(),
           if (message != null) ...[
             const SizedBox(height: 16),
             Text(
@@ -153,7 +154,7 @@ class LoadingOverlay extends StatelessWidget {
           Container(
             color: Colors.black.withOpacity(0.3),
             child: const Center(
-              child: CircularProgressIndicator(),
+              child: AppLoader(),
             ),
           ),
       ],
@@ -230,7 +231,7 @@ class AppButton extends StatelessWidget {
           ),
         ),
         child: isLoading
-            ? const CircularProgressIndicator(color: Colors.white)
+            ? const AppLoader(size: 20, color: Colors.white)
             : Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [

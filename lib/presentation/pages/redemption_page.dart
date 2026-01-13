@@ -13,6 +13,7 @@ import '../features/redemption/bloc/redemption_state.dart';
 import '../../domain/entities/redemption.dart';
 import '../../generated/l10n/app_localizations.dart';
 import '../widgets/common/app_widgets.dart';
+import '../widgets/animations/custom_loader.dart';
 
 /// Merchant redemption page
 class RedemptionPage extends StatefulWidget {
@@ -202,7 +203,7 @@ class _RedemptionPageState extends State<RedemptionPage> with TickerProviderStat
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const CircularProgressIndicator(color: Colors.white),
+                const AppLoader(size: 20, color: Colors.white),
                 const SizedBox(height: 16),
                 Text(
                   l10n.processingScan,
@@ -458,7 +459,7 @@ class _RedemptionPageState extends State<RedemptionPage> with TickerProviderStat
               child: BlocBuilder<RedemptionBloc, RedemptionState>(
                 builder: (context, state) {
                   if (state is RedemptionLoading) {
-                    return const CircularProgressIndicator(color: Colors.white);
+                    return const AppLoader(size: 20, color: Colors.white);
                   }
                   return Text(
                     l10n.redeem,
@@ -568,7 +569,7 @@ class _RedemptionHistoryPageState extends State<RedemptionHistoryPage> {
             child: BlocBuilder<RedemptionBloc, RedemptionState>(
               builder: (context, state) {
                 if (state is RedemptionLoading) {
-                  return const Center(child: CircularProgressIndicator());
+                  return const Center(child: AppLoader());
                 } else if (state is RedemptionsLoaded) {
                   if (state.redemptions.isEmpty) {
                     return RefreshIndicator(

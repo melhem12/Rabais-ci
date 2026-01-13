@@ -12,6 +12,11 @@ import '../widgets/additional_info_field_controller.dart';
 import '../../di/service_locator.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../../core/utils/image_url_helper.dart';
+import '../../core/theme/app_theme.dart';
+import '../widgets/animations/custom_loader.dart';
+import '../widgets/animations/fade_in_widget.dart';
+import '../widgets/animations/slide_in_widget.dart';
+import '../widgets/animations/scale_tap_widget.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -138,7 +143,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget _buildContent(AppLocalizations l10n) {
     if (!_initialized && !_isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(child: AppLoader());
     }
 
     return LayoutBuilder(
@@ -234,7 +239,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ),
                         child: _isLoading
-                            ? const CircularProgressIndicator(color: Colors.white)
+                            ? const AppLoader(size: 20, color: Colors.white)
                             : Text(
                                 l10n.saveChanges,
                                 style: TextStyle(
@@ -259,108 +264,148 @@ class _ProfilePageState extends State<ProfilePage> {
       return const SizedBox.shrink();
     }
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Stack(
-                  children: [
-                    CircleAvatar(
-                      radius: 40,
-                      backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-                      backgroundImage: _selectedProfileImage != null
-                          ? FileImage(_selectedProfileImage!)
-                          : (_getProfileImageUrl() != null
-                              ? NetworkImage(_getProfileImageUrl()!)
-                              : null) as ImageProvider?,
-                      child: _selectedProfileImage == null && _getProfileImageUrl() == null
-                          ? Text(
-                              (user.firstName ?? user.lastName ?? user.phone).substring(0, 1).toUpperCase(),
-                              style: TextStyle(
-                                fontSize: 28,
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                            )
-                          : null,
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: CircleAvatar(
-                        radius: 14,
-                        backgroundColor: Theme.of(context).colorScheme.primary,
-                        child: IconButton(
-                          padding: EdgeInsets.zero,
-                          icon: const Icon(Icons.camera_alt, size: 16, color: Colors.white),
-                          onPressed: _pickProfileImage,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+    return FadeInWidget(
+      delay: 0.1,
+      child: SlideInWidget(
+        delay: 0.1,
+        begin: const Offset(0, -0.2),
+        child: Card(
+          elevation: 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  AppTheme.primaryOrange.withOpacity(0.1),
+                  AppTheme.primaryTurquoise.withOpacity(0.1),
+                ],
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
                     children: [
-                      Text(
-                        user.firstName != null
-                            ? '${user.firstName ?? ''} ${user.lastName ?? ''}'.trim()
-                            : user.phone,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                        ),
+                      Stack(
+                        children: [
+                          CircleAvatar(
+                            radius: 40,
+                            backgroundColor: AppTheme.primaryOrange.withOpacity(0.1),
+                            backgroundImage: _selectedProfileImage != null
+                                ? FileImage(_selectedProfileImage!)
+                                : (_getProfileImageUrl() != null
+                                    ? NetworkImage(_getProfileImageUrl()!)
+                                    : null) as ImageProvider?,
+                            child: _selectedProfileImage == null && _getProfileImageUrl() == null
+                                ? Text(
+                                    (user.firstName ?? user.lastName ?? user.phone).substring(0, 1).toUpperCase(),
+                                    style: const TextStyle(
+                                      fontSize: 28,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppTheme.primaryOrange,
+                                    ),
+                                  )
+                                : null,
+                          ),
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: ScaleTapWidget(
+                              onTap: _pickProfileImage,
+                              child: CircleAvatar(
+                                radius: 14,
+                                backgroundColor: AppTheme.primaryOrange,
+                                child: const Icon(Icons.camera_alt, size: 16, color: Colors.white),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        user.phone,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey[600],
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              user.firstName != null
+                                  ? '${user.firstName ?? ''} ${user.lastName ?? ''}'.trim()
+                                  : user.phone,
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 0.3,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              user.phone,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey[600],
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Wrap(
-              spacing: 12,
-              runSpacing: 8,
-              children: [
-                _buildInfoChip(
-                  label: l10n.role,
-                  value: user.role,
-                ),
-                if (user.email != null && user.email!.isNotEmpty)
-                  _buildInfoChip(
-                    label: l10n.email,
-                    value: user.email!,
+                  const SizedBox(height: 16),
+                  Wrap(
+                    spacing: 12,
+                    runSpacing: 8,
+                    children: [
+                      _buildInfoChip(
+                        label: l10n.role,
+                        value: user.role,
+                      ),
+                      if (user.email != null && user.email!.isNotEmpty)
+                        _buildInfoChip(
+                          label: l10n.email,
+                          value: user.email!,
+                        ),
+                      if (user.gender != null && user.gender!.isNotEmpty)
+                        _buildInfoChip(
+                          label: l10n.gender,
+                          value: _genderLabel(l10n, user.gender!),
+                        ),
+                    ],
                   ),
-                if (user.gender != null && user.gender!.isNotEmpty)
-                  _buildInfoChip(
-                    label: l10n.gender,
-                    value: _genderLabel(l10n, user.gender!),
-                  ),
-              ],
+                ],
+              ),
             ),
-          ],
+          ),
         ),
       ),
     );
   }
 
   Widget _buildInfoChip({required String label, required String value}) {
-    return Chip(
-      label: Text('$label: $value'),
-      backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: AppTheme.primaryOrange.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: AppTheme.primaryOrange.withOpacity(0.2),
+          width: 1,
+        ),
+      ),
+      child: Text(
+        '$label: $value',
+        style: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          color: AppTheme.darkGray,
+        ),
+      ),
     );
   }
 
@@ -399,68 +444,104 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildEmailField(AppLocalizations l10n) {
-    return TextFormField(
-      controller: _emailController,
-      keyboardType: TextInputType.emailAddress,
-      decoration: InputDecoration(
-        labelText: l10n.emailOptional,
-        prefixIcon: const Icon(Icons.email_outlined),
+    return Card(
+      elevation: 1,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
       ),
-      validator: (value) {
-        if (value != null && value.isNotEmpty) {
-          if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-            return l10n.invalidEmailFormat;
+      child: TextFormField(
+        controller: _emailController,
+        keyboardType: TextInputType.emailAddress,
+        decoration: InputDecoration(
+          labelText: l10n.emailOptional,
+          prefixIcon: Icon(Icons.email_outlined, color: AppTheme.primaryOrange),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: BorderSide.none,
+          ),
+          filled: true,
+          fillColor: Colors.white,
+        ),
+        validator: (value) {
+          if (value != null && value.isNotEmpty) {
+            if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+              return l10n.invalidEmailFormat;
+            }
           }
-        }
-        return null;
-      },
+          return null;
+        },
+      ),
     );
   }
 
   Widget _buildDateOfBirthField(AppLocalizations l10n) {
-    return TextFormField(
-      controller: _dateOfBirthController,
-      readOnly: true,
-      decoration: InputDecoration(
-        labelText: l10n.dateOfBirthOptional,
-        prefixIcon: const Icon(Icons.cake_outlined),
-        suffixIcon: _selectedDateOfBirth != null
-            ? IconButton(
-                onPressed: () {
-                  setState(() {
-                    _selectedDateOfBirth = null;
-                    _dateOfBirthController.clear();
-                  });
-                },
-                tooltip: l10n.clearField,
-                icon: const Icon(Icons.clear),
-              )
-            : null,
+    return Card(
+      elevation: 1,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
       ),
-      onTap: _selectDateOfBirth,
+      child: TextFormField(
+        controller: _dateOfBirthController,
+        readOnly: true,
+        decoration: InputDecoration(
+          labelText: l10n.dateOfBirthOptional,
+          prefixIcon: Icon(Icons.cake_outlined, color: AppTheme.primaryOrange),
+          suffixIcon: _selectedDateOfBirth != null
+              ? IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _selectedDateOfBirth = null;
+                      _dateOfBirthController.clear();
+                    });
+                  },
+                  tooltip: l10n.clearField,
+                  icon: const Icon(Icons.clear),
+                )
+              : null,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: BorderSide.none,
+          ),
+          filled: true,
+          fillColor: Colors.white,
+        ),
+        onTap: _selectDateOfBirth,
+      ),
     );
   }
 
   Widget _buildGenderField(AppLocalizations l10n) {
-    return DropdownButtonFormField<String>(
-      value: _selectedGender != null && _genderOptions.contains(_selectedGender) ? _selectedGender : null,
-      decoration: InputDecoration(
-        labelText: l10n.genderOptional,
-        prefixIcon: const Icon(Icons.wc_outlined),
+    return Card(
+      elevation: 1,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
       ),
-      items: _genderOptions
-          .map(
-            (value) => DropdownMenuItem<String>(
-              value: value,
-              child: Text(_genderLabel(l10n, value)),
-            ),
-          )
-          .toList(),
-      onChanged: (value) {
-        setState(() {
-          _selectedGender = value;
-        });
-      },
+      child: DropdownButtonFormField<String>(
+        value: _selectedGender != null && _genderOptions.contains(_selectedGender) ? _selectedGender : null,
+        decoration: InputDecoration(
+          labelText: l10n.genderOptional,
+          prefixIcon: Icon(Icons.wc_outlined, color: AppTheme.primaryOrange),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: BorderSide.none,
+          ),
+          filled: true,
+          fillColor: Colors.white,
+        ),
+        items: _genderOptions
+            .map(
+              (value) => DropdownMenuItem<String>(
+                value: value,
+                child: Text(_genderLabel(l10n, value)),
+              ),
+            )
+            .toList(),
+        onChanged: (value) {
+          setState(() {
+            _selectedGender = value;
+          });
+        },
+      ),
     );
   }
 
@@ -895,7 +976,7 @@ class _PasswordChangeCardState extends State<_PasswordChangeCard> {
                     ? const SizedBox(
                         width: 16,
                         height: 16,
-                        child: CircularProgressIndicator(strokeWidth: 2),
+                        child: AppLoader(size: 16),
                       )
                     : const Icon(Icons.lock_reset),
                 label: Text(_isChangingPassword ? 'Changement...' : 'Changer le mot de passe'),

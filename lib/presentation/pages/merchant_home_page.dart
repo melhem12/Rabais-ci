@@ -7,6 +7,7 @@ import '../features/auth/bloc/auth_event.dart';
 import '../features/auth/bloc/auth_state.dart';
 import '../../generated/l10n/app_localizations.dart';
 import '../../core/theme/app_theme.dart';
+import '../widgets/animations/custom_loader.dart';
 import 'redemption_page.dart';
 import 'settings_page.dart';
 
@@ -161,7 +162,7 @@ class MerchantHomePage extends StatelessWidget {
               ),
             );
           }
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: AppLoader());
         },
       ),
     );

@@ -11,6 +11,7 @@ import '../features/wallet/bloc/wallet_bloc.dart';
 import '../features/wallet/bloc/wallet_event.dart';
 import '../features/wallet/bloc/wallet_state.dart';
 import '../../generated/l10n/app_localizations.dart';
+import '../widgets/animations/custom_loader.dart';
 
 class WalletRechargePage extends StatefulWidget {
   const WalletRechargePage({
@@ -75,11 +76,11 @@ class _WalletRechargePageState extends State<WalletRechargePage> {
         },
         builder: (context, state) {
           if (_isSubmitting) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: AppLoader());
           }
 
           if (state is WalletLoading && !_isSubmitting) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: AppLoader());
           }
 
           if (state is CoinPackagesLoaded) {
@@ -186,7 +187,11 @@ class _WalletSummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final formatter = NumberFormat.simpleCurrency(name: 'USD');
+    final coinPriceFormatter = NumberFormat.currency(
+      locale: 'fr-FR',
+      symbol: 'CFA',
+      decimalDigits: 0,
+    );
 
     return Container(
       decoration: BoxDecoration(
@@ -212,35 +217,43 @@ class _WalletSummary extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-                l10n.currentBalance,
+            l10n.currentBalance,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   color: Colors.white70,
                 ),
           ),
           const SizedBox(height: 8),
-          Text(
-            formatter.format(wallet.balanceMinor / 100),
-            style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-          ),
-          const SizedBox(height: 16),
           Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              _SummaryChip(
-                icon: Icons.monetization_on_outlined,
-                label: '${wallet.coins.toStringAsFixed(0)} ${l10n.coins}',
+              Text(
+                wallet.coins.toStringAsFixed(0),
+                style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
               ),
-              const SizedBox(width: 12),
-              if (wallet.coinPriceUsd != null)
-                _SummaryChip(
-                  icon: Icons.attach_money_rounded,
-                  label:
-                      '${l10n.coinPrice}: ${NumberFormat.simpleCurrency(name: 'USD').format(wallet.coinPriceUsd!)}',
+              const SizedBox(width: 8),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Text(
+                  l10n.coins,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        color: Colors.white70,
+                        fontWeight: FontWeight.w500,
+                      ),
                 ),
+              ),
             ],
           ),
+          if (wallet.coinPriceUsd != null) ...[
+            const SizedBox(height: 16),
+            _SummaryChip(
+              icon: Icons.attach_money_rounded,
+              label:
+                  '${l10n.coinPrice}: ${coinPriceFormatter.format(wallet.coinPriceUsd!)}',
+            ),
+          ],
         ],
       ),
     );
@@ -292,15 +305,23 @@ class _CoinPackageCard extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final priceMajor = package.priceMinor / 100;
-    final formatter = NumberFormat.simpleCurrency(name: 'USD');
+    final formatter = NumberFormat.currency(
+      locale: 'fr-FR',
+      symbol: 'CFA',
+      decimalDigits: 0,
+    );
     final priceText = formatter.format(priceMajor);
     final pricePerCoin = package.coinAmount > 0
         ? (package.priceMinor / package.coinAmount) / 100
         : null;
-    final usdEstimate = coinPriceUsd != null
+    final cfaEstimate = coinPriceUsd != null
         ? (package.coinAmount * coinPriceUsd!)
         : null;
-    final usdFormatter = NumberFormat.simpleCurrency(name: 'USD');
+    final cfaFormatter = NumberFormat.currency(
+      locale: 'fr-FR',
+      symbol: 'CFA',
+      decimalDigits: 0,
+    );
     final isNew = package.createdAt != null &&
         DateTime.now().difference(package.createdAt!).inDays <= 14;
 
@@ -385,9 +406,9 @@ class _CoinPackageCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 12),
-            if (usdEstimate != null) ...[
+            if (cfaEstimate != null) ...[
               Text(
-                '≈ ${usdFormatter.format(usdEstimate)}',
+                '≈ ${cfaFormatter.format(cfaEstimate)}',
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.primary.withOpacity(0.75),
                   fontWeight: FontWeight.w600,
@@ -405,7 +426,7 @@ class _CoinPackageCard extends StatelessWidget {
             if (pricePerCoin != null) ...[
               const SizedBox(height: 8),
               Text(
-                '${l10n.coinUnitPrice}: ${NumberFormat.simpleCurrency(name: 'USD').format(pricePerCoin)}',
+                '${l10n.coinUnitPrice}: ${NumberFormat.currency(locale: 'fr-FR', symbol: 'CFA', decimalDigits: 0).format(pricePerCoin)}',
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: Colors.grey[700],
                 ),

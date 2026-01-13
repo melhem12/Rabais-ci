@@ -25,6 +25,7 @@ import '../widgets/navigation_drawer.dart';
 import '../widgets/animations/fade_in_widget.dart';
 import '../widgets/animations/slide_in_widget.dart';
 import '../widgets/animations/scale_tap_widget.dart';
+import '../widgets/animations/custom_loader.dart';
 
 /// Customer home page
 class CustomerHomePage extends StatefulWidget {
@@ -211,7 +212,7 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                     child: const Center(
-                                      child: CircularProgressIndicator(),
+                                      child: AppLoader(),
                                     ),
                                   );
                                 }
@@ -225,8 +226,6 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
                     BlocBuilder<WalletBloc, WalletState>(
                       builder: (context, walletState) {
                         if (walletState is WalletLoaded) {
-                          // Format balance in CFA (XOF)
-                          final balanceInCfa = (walletState.wallet.balanceMinor / 100).toStringAsFixed(0);
                           return FadeInWidget(
                             delay: 0.2,
                             child: SlideInWidget(
@@ -354,15 +353,29 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
                                                 child: BlocBuilder<PurchaseBloc, PurchaseState>(
                                                   builder: (context, purchaseState) {
                                                     int couponsCount = 0;
+                                                    
                                                     if (purchaseState is PurchasesLoaded) {
-                                                      // Count active (non-redeemed, non-expired) purchases
-                                                      final now = DateTime.now();
-                                                      couponsCount = purchaseState.purchases.where((p) {
-                                                        if (p.isRedeemed) return false;
-                                                        if (p.validUntil != null && p.validUntil!.isBefore(now)) return false;
-                                                        return true;
-                                                      }).length;
+                                                      // Count all purchased coupons (bought vouchers)
+                                                      // Show total count of all purchases, regardless of redemption status
+                                                      couponsCount = purchaseState.purchases.length;
+                                                    } else if (purchaseState is PurchaseLoading) {
+                                                      // Show loading indicator while fetching
+                                                      return Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                                        children: [
+                                                          Text(
+                                                            'Coupons', // Will be localized
+                                                            style: TextStyle(
+                                                              fontSize: 12,
+                                                              color: Colors.grey[600],
+                                                            ),
+                                                          ),
+                                                          const SizedBox(height: 4),
+                                                          const AppLoader(size: 16),
+                                                        ],
+                                                      );
                                                     }
+                                                    
                                                     return Column(
                                                       crossAxisAlignment: CrossAxisAlignment.center,
                                                       children: [
@@ -385,30 +398,6 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
                                                       ],
                                                     );
                                                   },
-                                                ),
-                                              ),
-                                              // Balance in CFA
-                                              Expanded(
-                                                child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                                  children: [
-                                                    Text(
-                                                      l10n.balance,
-                                                      style: TextStyle(
-                                                        fontSize: 12,
-                                                        color: Colors.grey[600],
-                                                      ),
-                                                    ),
-                                                    const SizedBox(height: 4),
-                                                    Text(
-                                                      '$balanceInCfa CFA',
-                                                      style: const TextStyle(
-                                                        fontSize: 20,
-                                                        fontWeight: FontWeight.bold,
-                                                        color: Colors.green,
-                                                      ),
-                                                    ),
-                                                  ],
                                                 ),
                                               ),
                                             ],
@@ -440,7 +429,7 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
                                   const SizedBox(
                                     width: 20,
                                     height: 20,
-                                    child: CircularProgressIndicator(strokeWidth: 2),
+                                    child: const AppLoader(size: 20),
                                   ),
                                 ],
                               ),
@@ -648,7 +637,7 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
               ),
             );
           }
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: AppLoader());
         },
       ),
     );
