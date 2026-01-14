@@ -120,8 +120,8 @@ class _SupportPageState extends State<SupportPage> {
               child: _buildContactCard(
                 icon: Icons.chat,
                 title: 'WhatsApp',
-                subtitle: '+225 XX XX XX XX XX',
-                onTap: () => _launchWhatsApp('+225XXXXXXXXXX'),
+                subtitle: '+225 07 68 20 88 93',
+                onTap: () => _launchWhatsApp('+2250768208893'),
               ),
             ),
             const SizedBox(height: 12),

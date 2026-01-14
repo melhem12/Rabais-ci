@@ -165,7 +165,9 @@ class _PurchaseDetailPageState extends State<PurchaseDetailPage> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        '${purchase.amount.toInt()} ${purchase.currency}',
+                        purchase.coinAmount != null
+                            ? '${purchase.coinAmount!.toInt()} coins'
+                            : '${purchase.amount.toInt()} ${purchase.currency}',
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.grey[600],
@@ -350,7 +352,9 @@ class _PurchaseDetailPageState extends State<PurchaseDetailPage> {
                     ),
                   _buildDetailRow(
                     l10n.amount,
-                    '${purchase.amount.toInt()} ${purchase.currency}',
+                    purchase.coinAmount != null
+                        ? '${purchase.coinAmount!.toInt()} coins'
+                        : '${purchase.amount.toInt()} ${purchase.currency}',
                   ),
                     ],
                   ),
