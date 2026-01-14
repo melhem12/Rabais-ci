@@ -7,6 +7,9 @@ import '../../features/auth/bloc/auth_state.dart';
 import '../../../../domain/entities/user.dart';
 import '../../../../generated/l10n/app_localizations.dart';
 import '../../widgets/animations/custom_loader.dart';
+import '../../widgets/animations/fade_in_widget.dart';
+import '../../widgets/animations/slide_in_widget.dart';
+import '../../../core/theme/app_theme.dart';
 
 /// OTP verification page
 class OtpVerificationPage extends StatefulWidget {
@@ -98,38 +101,66 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
-                      Icons.sms,
-                      size: iconSize,
-                      color: const Color(0xFF1976D2),
+                    SlideInWidget(
+                      begin: const Offset(0, -0.3),
+                      child: Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              AppTheme.primaryOrange,
+                              AppTheme.primaryTurquoise,
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.sms,
+                          size: iconSize * 0.6,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
                     SizedBox(height: verticalSpacing),
-                    Text(
-                      l10n.otpVerification,
-                      style: TextStyle(
-                        fontSize: titleFontSize,
-                        fontWeight: FontWeight.bold,
+                    SlideInWidget(
+                      begin: const Offset(-0.3, 0),
+                      child: Text(
+                        l10n.otpVerification,
+                        style: TextStyle(
+                          fontSize: titleFontSize,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.primaryOrange,
+                          letterSpacing: 1.2,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
                     ),
                     SizedBox(height: isSmallScreen ? 4.0 : 8.0),
-                    Text(
-                      l10n.weSentCodeTo,
-                      style: TextStyle(
-                        fontSize: subtitleFontSize,
-                        color: Colors.grey[600],
+                    FadeInWidget(
+                      delay: 0.1,
+                      child: Text(
+                        l10n.weSentCodeTo,
+                        style: TextStyle(
+                          fontSize: subtitleFontSize,
+                          color: Colors.grey[600],
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
                     ),
                     SizedBox(height: isSmallScreen ? 2.0 : 4.0),
-                    Text(
-                      _phone.isNotEmpty ? _phone : 'votre.numero@exemple.com',
-                      style: TextStyle(
-                        fontSize: phoneFontSize,
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFF1976D2),
+                    FadeInWidget(
+                      delay: 0.2,
+                      child: Text(
+                        _phone.isNotEmpty ? _phone : 'votre.numero@exemple.com',
+                        style: TextStyle(
+                          fontSize: phoneFontSize,
+                          fontWeight: FontWeight.w600,
+                          color: AppTheme.primaryOrange,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
                     ),
                     SizedBox(height: largeSpacing),
                     Text(
@@ -172,27 +203,55 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
                       }),
                     ),
                     SizedBox(height: largeSpacing),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: _handleVerify,
-                        style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(
-                            vertical: isSmallScreen ? 12.0 : 16.0,
+                    FadeInWidget(
+                      delay: 0.5,
+                      child: Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              AppTheme.primaryOrange,
+                              AppTheme.primaryTurquoise,
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
                           ),
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppTheme.primaryOrange.withValues(alpha: 0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
                         ),
-                        child: BlocBuilder<AuthBloc, AuthState>(
-                          builder: (context, state) {
-                            if (state is AuthLoading) {
-                              return const AppLoader(size: 20, color: Colors.white);
-                            }
-                            return Text(
-                              l10n.verify,
-                              style: TextStyle(
-                                fontSize: isSmallScreen ? 14.0 : 16.0,
-                              ),
-                            );
-                          },
+                        child: ElevatedButton(
+                          onPressed: _handleVerify,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                            padding: EdgeInsets.symmetric(
+                              vertical: isSmallScreen ? 12.0 : 16.0,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                          ),
+                          child: BlocBuilder<AuthBloc, AuthState>(
+                            builder: (context, state) {
+                              if (state is AuthLoading) {
+                                return const AppLoader(size: 20, color: Colors.white);
+                              }
+                              return Text(
+                                l10n.verify,
+                                style: TextStyle(
+                                  fontSize: isSmallScreen ? 14.0 : 16.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              );
+                            },
+                          ),
                         ),
                       ),
                     ),

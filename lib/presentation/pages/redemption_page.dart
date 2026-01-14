@@ -14,6 +14,9 @@ import '../../domain/entities/redemption.dart';
 import '../../generated/l10n/app_localizations.dart';
 import '../widgets/common/app_widgets.dart';
 import '../widgets/animations/custom_loader.dart';
+import '../widgets/animations/fade_in_widget.dart';
+import '../widgets/animations/slide_in_widget.dart';
+import '../../core/theme/app_theme.dart';
 
 /// Merchant redemption page
 class RedemptionPage extends StatefulWidget {
@@ -135,35 +138,94 @@ class _RedemptionPageState extends State<RedemptionPage> with TickerProviderStat
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
-              Icons.qr_code_scanner,
-              size: 120,
-              color: Color(0xFF1976D2),
+            SlideInWidget(
+              begin: const Offset(0, -0.3),
+              child: Container(
+                padding: const EdgeInsets.all(30),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      AppTheme.primaryOrange,
+                      AppTheme.primaryTurquoise,
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.qr_code_scanner,
+                  size: 80,
+                  color: Colors.white,
+                ),
+              ),
             ),
             const SizedBox(height: 24),
-            Text(
-              l10n.scanQrCode,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
+            SlideInWidget(
+              begin: const Offset(-0.3, 0),
+              child: Text(
+                l10n.scanQrCode,
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: AppTheme.primaryOrange,
+                  letterSpacing: 1.2,
+                ),
               ),
             ),
             const SizedBox(height: 16),
-            Text(
-              l10n.placeQrInFrame,
-              style: const TextStyle(
-                fontSize: 16,
-                color: Colors.grey,
+            FadeInWidget(
+              delay: 0.1,
+              child: Text(
+                l10n.placeQrInFrame,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey[600],
+                ),
+                textAlign: TextAlign.center,
               ),
-              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 32),
-            ElevatedButton.icon(
-              onPressed: () => _startScanning(),
-              icon: const Icon(Icons.qr_code_scanner),
-              label: Text(l10n.scan),
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+            FadeInWidget(
+              delay: 0.2,
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      AppTheme.primaryOrange,
+                      AppTheme.primaryTurquoise,
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppTheme.primaryOrange.withValues(alpha: 0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: ElevatedButton.icon(
+                  onPressed: () => _startScanning(),
+                  icon: const Icon(Icons.qr_code_scanner, color: Colors.white),
+                  label: Text(
+                    l10n.scan,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                ),
               ),
             ),
             if (_lastScannedCode != null) ...[
@@ -415,57 +477,122 @@ class _RedemptionPageState extends State<RedemptionPage> with TickerProviderStat
       padding: const EdgeInsets.all(24.0),
       child: Column(
         children: [
-          const Icon(
-            Icons.keyboard,
-            size: 80,
-            color: Color(0xFF1976D2),
+          SlideInWidget(
+            begin: const Offset(0, -0.3),
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    AppTheme.primaryOrange,
+                    AppTheme.primaryTurquoise,
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.keyboard,
+                size: 60,
+                color: Colors.white,
+              ),
+            ),
           ),
           const SizedBox(height: 24),
-          Text(
-            l10n.manualEntryTitle,
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
+          SlideInWidget(
+            begin: const Offset(-0.3, 0),
+            child: Text(
+              l10n.manualEntryTitle,
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: AppTheme.primaryOrange,
+                letterSpacing: 1.2,
+              ),
             ),
           ),
           const SizedBox(height: 16),
-          Text(
-            l10n.enterRedemptionCode,
-            style: const TextStyle(
-              fontSize: 16,
-              color: Colors.grey,
+          FadeInWidget(
+            delay: 0.1,
+            child: Text(
+              l10n.enterRedemptionCode,
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey[600],
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
           ),
           const SizedBox(height: 32),
-          TextField(
-            controller: _codeController,
-            decoration: InputDecoration(
-              labelText: l10n.redemptionCode,
-              hintText: l10n.redemptionCodeHint,
-              border: const OutlineInputBorder(),
-              prefixIcon: const Icon(Icons.confirmation_number),
+          FadeInWidget(
+            delay: 0.2,
+            child: Card(
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: TextField(
+                controller: _codeController,
+                decoration: InputDecoration(
+                  labelText: l10n.redemptionCode,
+                  hintText: l10n.redemptionCodeHint,
+                  border: InputBorder.none,
+                  prefixIcon: const Icon(Icons.confirmation_number),
+                  contentPadding: const EdgeInsets.all(16),
+                ),
+                textCapitalization: TextCapitalization.characters,
+              ),
             ),
-            textCapitalization: TextCapitalization.characters,
           ),
           const SizedBox(height: 24),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: _handleRedeem,
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
+          FadeInWidget(
+            delay: 0.3,
+            child: Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    AppTheme.primaryOrange,
+                    AppTheme.primaryTurquoise,
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppTheme.primaryOrange.withValues(alpha: 0.3),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
-              child: BlocBuilder<RedemptionBloc, RedemptionState>(
-                builder: (context, state) {
-                  if (state is RedemptionLoading) {
-                    return const AppLoader(size: 20, color: Colors.white);
-                  }
-                  return Text(
-                    l10n.redeem,
-                    style: const TextStyle(fontSize: 18),
-                  );
-                },
+              child: ElevatedButton(
+                onPressed: _handleRedeem,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                  shadowColor: Colors.transparent,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
+                child: BlocBuilder<RedemptionBloc, RedemptionState>(
+                  builder: (context, state) {
+                    if (state is RedemptionLoading) {
+                      return const AppLoader(size: 20, color: Colors.white);
+                    }
+                    return Text(
+                      l10n.redeem,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
           ),

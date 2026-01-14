@@ -7,6 +7,9 @@ import '../../features/auth/bloc/auth_state.dart';
 import '../../../../generated/l10n/app_localizations.dart';
 import '../../widgets/additional_info_field_controller.dart';
 import '../../widgets/animations/custom_loader.dart';
+import '../../widgets/animations/fade_in_widget.dart';
+import '../../widgets/animations/slide_in_widget.dart';
+import '../../../core/theme/app_theme.dart';
 
 /// Profile completion page for first-time users
 class ProfileCompletionPage extends StatefulWidget {
@@ -161,116 +164,196 @@ class _ProfileCompletionPageState extends State<ProfileCompletionPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
-                        Icons.person_add,
-                        size: iconSize,
-                        color: const Color(0xFF1976D2),
+                      SlideInWidget(
+                        begin: const Offset(0, -0.3),
+                        child: Container(
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                AppTheme.primaryOrange,
+                                AppTheme.primaryTurquoise,
+                              ],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.person_add,
+                            size: iconSize * 0.6,
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
                       SizedBox(height: topSpacing),
-                      Text(
-                        l10n.completeYourProfile,
-                        style: TextStyle(
-                          fontSize: titleFontSize,
-                          fontWeight: FontWeight.bold,
+                      SlideInWidget(
+                        begin: const Offset(-0.3, 0),
+                        child: Text(
+                          l10n.completeYourProfile,
+                          style: TextStyle(
+                            fontSize: titleFontSize,
+                            fontWeight: FontWeight.bold,
+                            color: AppTheme.primaryOrange,
+                            letterSpacing: 1.2,
+                          ),
                         ),
                       ),
                       SizedBox(height: isSmallScreen ? 4.0 : 8.0),
-                      Text(
-                        l10n.helpPersonalizeExperience,
-                        style: TextStyle(
-                          fontSize: subtitleFontSize,
-                          color: Colors.grey[600],
+                      FadeInWidget(
+                        delay: 0.1,
+                        child: Text(
+                          l10n.helpPersonalizeExperience,
+                          style: TextStyle(
+                            fontSize: subtitleFontSize,
+                            color: Colors.grey[600],
+                          ),
                         ),
                       ),
                       SizedBox(height: sectionSpacing),
-                      TextFormField(
-                        controller: _firstNameController,
-                        decoration: InputDecoration(
-                          labelText: '${l10n.firstName} *',
-                          prefixIcon: const Icon(Icons.person),
+                      FadeInWidget(
+                        delay: 0.2,
+                        child: Card(
+                          elevation: 2,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: TextFormField(
+                            controller: _firstNameController,
+                            decoration: InputDecoration(
+                              labelText: '${l10n.firstName} *',
+                              prefixIcon: const Icon(Icons.person),
+                              border: InputBorder.none,
+                              contentPadding: const EdgeInsets.all(16),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return l10n.firstNameRequired;
+                              }
+                              return null;
+                            },
+                          ),
                         ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return l10n.firstNameRequired;
-                          }
-                          return null;
-                        },
                       ),
                       SizedBox(height: fieldSpacing),
-                      TextFormField(
-                        controller: _lastNameController,
-                        decoration: InputDecoration(
-                          labelText: '${l10n.lastName} *',
-                          prefixIcon: const Icon(Icons.person_outline),
+                      FadeInWidget(
+                        delay: 0.3,
+                        child: Card(
+                          elevation: 2,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: TextFormField(
+                            controller: _lastNameController,
+                            decoration: InputDecoration(
+                              labelText: '${l10n.lastName} *',
+                              prefixIcon: const Icon(Icons.person_outline),
+                              border: InputBorder.none,
+                              contentPadding: const EdgeInsets.all(16),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return l10n.lastNameRequired;
+                              }
+                              return null;
+                            },
+                          ),
                         ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return l10n.lastNameRequired;
-                          }
-                          return null;
-                        },
                       ),
                       SizedBox(height: fieldSpacing),
-                      TextFormField(
-                        controller: _emailController,
-                        keyboardType: TextInputType.emailAddress,
-                        decoration: InputDecoration(
-                          labelText: l10n.emailOptional,
-                          prefixIcon: const Icon(Icons.email),
+                      FadeInWidget(
+                        delay: 0.4,
+                        child: Card(
+                          elevation: 2,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: TextFormField(
+                            controller: _emailController,
+                            keyboardType: TextInputType.emailAddress,
+                            decoration: InputDecoration(
+                              labelText: l10n.emailOptional,
+                              prefixIcon: const Icon(Icons.email),
+                              border: InputBorder.none,
+                              contentPadding: const EdgeInsets.all(16),
+                            ),
+                            validator: (value) {
+                              if (value != null && value.isNotEmpty) {
+                                if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                                  return l10n.invalidEmailFormat;
+                                }
+                              }
+                              return null;
+                            },
+                          ),
                         ),
-                        validator: (value) {
-                          if (value != null && value.isNotEmpty) {
-                            if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-                              return l10n.invalidEmailFormat;
-                            }
-                          }
-                          return null;
-                        },
                       ),
                       SizedBox(height: fieldSpacing),
-                      TextFormField(
-                        controller: _dateOfBirthController,
-                        readOnly: true,
-                        decoration: InputDecoration(
-                          labelText: l10n.dateOfBirthOptional,
-                          prefixIcon: const Icon(Icons.cake_outlined),
-                          suffixIcon: _selectedDateOfBirth != null
-                              ? IconButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      _selectedDateOfBirth = null;
-                                      _dateOfBirthController.clear();
-                                    });
-                                  },
-                                  tooltip: l10n.clearField,
-                                  icon: const Icon(Icons.clear),
+                      FadeInWidget(
+                        delay: 0.5,
+                        child: Card(
+                          elevation: 2,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: TextFormField(
+                            controller: _dateOfBirthController,
+                            readOnly: true,
+                            decoration: InputDecoration(
+                              labelText: l10n.dateOfBirthOptional,
+                              prefixIcon: const Icon(Icons.cake_outlined),
+                              suffixIcon: _selectedDateOfBirth != null
+                                  ? IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          _selectedDateOfBirth = null;
+                                          _dateOfBirthController.clear();
+                                        });
+                                      },
+                                      tooltip: l10n.clearField,
+                                      icon: const Icon(Icons.clear),
+                                    )
+                                  : null,
+                              border: InputBorder.none,
+                              contentPadding: const EdgeInsets.all(16),
+                            ),
+                            onTap: _selectDateOfBirth,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: fieldSpacing),
+                      FadeInWidget(
+                        delay: 0.6,
+                        child: Card(
+                          elevation: 2,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: DropdownButtonFormField<String>(
+                            value: _selectedGender != null && _genderOptions.contains(_selectedGender)
+                                ? _selectedGender
+                                : null,
+                            decoration: InputDecoration(
+                              labelText: l10n.genderOptional,
+                              prefixIcon: const Icon(Icons.wc_outlined),
+                              border: InputBorder.none,
+                              contentPadding: const EdgeInsets.all(16),
+                            ),
+                            items: _genderOptions
+                                .map(
+                                  (value) => DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(_genderLabel(l10n, value)),
+                                  ),
                                 )
-                              : null,
+                                .toList(),
+                            onChanged: (value) {
+                              setState(() {
+                                _selectedGender = value;
+                              });
+                            },
+                          ),
                         ),
-                        onTap: _selectDateOfBirth,
-                      ),
-                      SizedBox(height: fieldSpacing),
-                      DropdownButtonFormField<String>(
-                        value: _selectedGender != null && _genderOptions.contains(_selectedGender)
-                            ? _selectedGender
-                            : null,
-                        decoration: InputDecoration(
-                          labelText: l10n.genderOptional,
-                          prefixIcon: const Icon(Icons.wc_outlined),
-                        ),
-                        items: _genderOptions
-                            .map(
-                              (value) => DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(_genderLabel(l10n, value)),
-                              ),
-                            )
-                            .toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            _selectedGender = value;
-                          });
-                        },
                       ),
                       SizedBox(height: sectionSpacing),
                       Text(
@@ -303,27 +386,55 @@ class _ProfileCompletionPageState extends State<ProfileCompletionPage> {
                         ),
                       ),
                       SizedBox(height: sectionSpacing),
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: _handleCompleteProfile,
-                          style: ElevatedButton.styleFrom(
-                            padding: EdgeInsets.symmetric(
-                              vertical: isSmallScreen ? 12.0 : 16.0,
+                      FadeInWidget(
+                        delay: 0.7,
+                        child: Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                AppTheme.primaryOrange,
+                                AppTheme.primaryTurquoise,
+                              ],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
                             ),
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppTheme.primaryOrange.withValues(alpha: 0.3),
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
                           ),
-                          child: BlocBuilder<AuthBloc, AuthState>(
-                            builder: (context, state) {
-                              if (state is AuthLoading) {
-                                return const AppLoader(size: 20, color: Colors.white);
-                              }
-                              return Text(
-                                l10n.completeProfile,
-                                style: TextStyle(
-                                  fontSize: isSmallScreen ? 14.0 : 16.0,
-                                ),
-                              );
-                            },
+                          child: ElevatedButton(
+                            onPressed: _handleCompleteProfile,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.transparent,
+                              shadowColor: Colors.transparent,
+                              padding: EdgeInsets.symmetric(
+                                vertical: isSmallScreen ? 12.0 : 16.0,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                            ),
+                            child: BlocBuilder<AuthBloc, AuthState>(
+                              builder: (context, state) {
+                                if (state is AuthLoading) {
+                                  return const AppLoader(size: 20, color: Colors.white);
+                                }
+                                return Text(
+                                  l10n.completeProfile,
+                                  style: TextStyle(
+                                    fontSize: isSmallScreen ? 14.0 : 16.0,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                );
+                              },
+                            ),
                           ),
                         ),
                       ),

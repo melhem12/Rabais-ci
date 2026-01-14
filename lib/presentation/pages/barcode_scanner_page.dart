@@ -6,9 +6,14 @@ import '../features/voucher/bloc/voucher_bloc.dart';
 import '../features/voucher/bloc/voucher_event.dart';
 import '../features/voucher/bloc/voucher_state.dart';
 import '../features/wallet/bloc/wallet_bloc.dart';
+import '../features/wallet/bloc/wallet_event.dart';
 import '../features/wallet/bloc/wallet_state.dart';
 import '../widgets/payment_method_dialog.dart';
 import '../widgets/animations/custom_loader.dart';
+import '../widgets/animations/fade_in_widget.dart';
+import '../widgets/animations/slide_in_widget.dart';
+import '../widgets/animations/scale_tap_widget.dart';
+import '../../core/theme/app_theme.dart';
 import '../../generated/l10n/app_localizations.dart';
 
 /// Barcode scanner page for purchasing vouchers by scanning barcode
@@ -72,82 +77,186 @@ class _BarcodeScannerPageState extends State<BarcodeScannerPage> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               // Instructions
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    children: [
-                      Icon(
-                        Icons.qr_code_scanner,
-                        size: 64,
-                        color: Theme.of(context).primaryColor,
+              SlideInWidget(
+                begin: const Offset(0, -0.3),
+                child: Card(
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.white,
+                          AppTheme.primaryOrange.withValues(alpha: 0.05),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
-                      const SizedBox(height: 16),
-                      Text(
-                        l10n?.scanBarcode ?? 'Scan or enter a barcode',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        textAlign: TextAlign.center,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  AppTheme.primaryOrange,
+                                  AppTheme.primaryTurquoise,
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Icon(
+                              Icons.qr_code_scanner,
+                              size: 48,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            l10n?.scanBarcode ?? 'Scan or enter a barcode',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: AppTheme.navyBlue,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Scannez le code-barres d\'un bon ou entrez-le manuellement pour l\'acheter.',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey[600],
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Scannez le code-barres d\'un bon ou entrez-le manuellement pour l\'acheter.',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey[600],
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ),
               const SizedBox(height: 24),
               
               // Barcode Input
-              TextField(
-                controller: _barcodeController,
-                decoration: InputDecoration(
-                  labelText: l10n.barcode ?? 'Barcode',
-                  hintText: l10n.scanBarcode ?? 'Enter or scan barcode',
-                  prefixIcon: const Icon(Icons.qr_code),
-                  suffixIcon: IconButton(
-                    icon: const Icon(Icons.clear),
-                    onPressed: () => _barcodeController.clear(),
+              FadeInWidget(
+                delay: 0.1,
+                child: Card(
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  border: const OutlineInputBorder(),
+                  child: TextField(
+                    controller: _barcodeController,
+                    decoration: InputDecoration(
+                      labelText: l10n.barcode ?? 'Barcode',
+                      hintText: l10n.scanBarcode ?? 'Enter or scan barcode',
+                      prefixIcon: const Icon(Icons.qr_code),
+                      suffixIcon: IconButton(
+                        icon: const Icon(Icons.clear),
+                        onPressed: () => _barcodeController.clear(),
+                      ),
+                      border: InputBorder.none,
+                      contentPadding: const EdgeInsets.all(16),
+                    ),
+                    keyboardType: TextInputType.number,
+                    enabled: !_isProcessing,
+                  ),
                 ),
-                keyboardType: TextInputType.number,
-                enabled: !_isProcessing,
               ),
               const SizedBox(height: 16),
               
               // Manual Entry Button
-              ElevatedButton.icon(
-                onPressed: _isProcessing ? null : () => _handleBarcodeLookup(_barcodeController.text),
-                icon: const Icon(Icons.search),
-                label: Text(l10n.searchVoucher ?? 'Search Voucher'),
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+              FadeInWidget(
+                delay: 0.2,
+                child: ScaleTapWidget(
+                  onTap: _isProcessing ? null : () => _handleBarcodeLookup(_barcodeController.text),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          AppTheme.primaryOrange,
+                          AppTheme.primaryTurquoise,
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppTheme.primaryOrange.withValues(alpha: 0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: ElevatedButton.icon(
+                      onPressed: _isProcessing ? null : () => _handleBarcodeLookup(_barcodeController.text),
+                      icon: const Icon(Icons.search, color: Colors.white),
+                      label: Text(
+                        l10n.searchVoucher ?? 'Search Voucher',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        shadowColor: Colors.transparent,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(height: 16),
               
               // Scan Button (Note: For full implementation, integrate a barcode scanner package)
-              OutlinedButton.icon(
-                onPressed: _isProcessing
-                    ? null
-                    : () {
-                        // TODO: Integrate barcode scanner package (e.g., mobile_scanner)
-                        // For now, show manual entry dialog
-                        _showManualEntryDialog();
-                      },
-                icon: const Icon(Icons.qr_code_scanner),
-                label: Text(l10n.scanBarcode ?? 'Scan Barcode'),
-                style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+              FadeInWidget(
+                delay: 0.3,
+                child: ScaleTapWidget(
+                  onTap: _isProcessing
+                      ? null
+                      : () {
+                          // TODO: Integrate barcode scanner package (e.g., mobile_scanner)
+                          // For now, show manual entry dialog
+                          _showManualEntryDialog();
+                        },
+                  child: OutlinedButton.icon(
+                    onPressed: _isProcessing
+                        ? null
+                        : () {
+                            // TODO: Integrate barcode scanner package (e.g., mobile_scanner)
+                            // For now, show manual entry dialog
+                            _showManualEntryDialog();
+                          },
+                    icon: Icon(Icons.qr_code_scanner, color: AppTheme.primaryOrange),
+                    label: Text(
+                      l10n.scanBarcode ?? 'Scan Barcode',
+                      style: TextStyle(
+                        color: AppTheme.primaryOrange,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(color: AppTheme.primaryOrange, width: 2),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                  ),
                 ),
               ),
               

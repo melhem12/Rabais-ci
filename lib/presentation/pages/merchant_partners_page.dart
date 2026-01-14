@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../../generated/l10n/app_localizations.dart';
 import '../widgets/common/app_widgets.dart';
+import '../widgets/animations/fade_in_widget.dart';
+import '../widgets/animations/scale_tap_widget.dart';
+import '../../core/theme/app_theme.dart';
 
 class MerchantPartnersPage extends StatefulWidget {
   const MerchantPartnersPage({super.key});
@@ -72,25 +75,69 @@ class _MerchantPartnersPageState extends State<MerchantPartnersPage> {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               itemCount: 5, // Mock data
               itemBuilder: (context, index) {
-                return Card(
-                  margin: const EdgeInsets.only(bottom: 12),
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: Colors.blue[100],
-                      child: Icon(
-                        Icons.business,
-                        color: Colors.blue[700],
-                      ),
-                    ),
-                    title: Text('Partner ${index + 1}'),
-                    subtitle: Text('Category: ${_getMockCategory(index)}'),
-                    trailing: const Icon(Icons.arrow_forward_ios),
+                return FadeInWidget(
+                  delay: index * 0.1,
+                  child: ScaleTapWidget(
                     onTap: () {
                       // Mock partner detail action
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('Partner ${index + 1} details coming soon')),
                       );
                     },
+                    child: Card(
+                      margin: const EdgeInsets.only(bottom: 12),
+                      elevation: 2,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          gradient: LinearGradient(
+                            colors: [
+                              Colors.white,
+                              AppTheme.primaryTurquoise.withValues(alpha: 0.05),
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                        ),
+                        child: ListTile(
+                          leading: Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  AppTheme.primaryOrange,
+                                  AppTheme.primaryTurquoise,
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Icon(
+                              Icons.business,
+                              color: Colors.white,
+                              size: 24,
+                            ),
+                          ),
+                          title: Text(
+                            'Partner ${index + 1}',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: AppTheme.navyBlue,
+                            ),
+                          ),
+                          subtitle: Text('Category: ${_getMockCategory(index)}'),
+                          trailing: Icon(
+                            Icons.arrow_forward_ios,
+                            size: 16,
+                            color: AppTheme.primaryOrange,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                 );
               },
@@ -110,8 +157,16 @@ class _MerchantPartnersPageState extends State<MerchantPartnersPage> {
           _selectedCategory = selected ? label : 'Tous';
         });
       },
-      selectedColor: Colors.blue[100],
-      checkmarkColor: Colors.blue[700],
+      selectedColor: AppTheme.primaryOrange.withValues(alpha: 0.2),
+      checkmarkColor: AppTheme.primaryOrange,
+      labelStyle: TextStyle(
+        color: isSelected ? AppTheme.primaryOrange : AppTheme.navyBlue,
+        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+      ),
+      side: BorderSide(
+        color: isSelected ? AppTheme.primaryOrange : Colors.grey[300]!,
+        width: isSelected ? 2 : 1,
+      ),
     );
   }
 

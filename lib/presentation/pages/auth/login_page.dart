@@ -6,6 +6,9 @@ import '../../features/auth/bloc/auth_event.dart';
 import '../../features/auth/bloc/auth_state.dart';
 import '../../../generated/l10n/app_localizations.dart';
 import '../../widgets/animations/custom_loader.dart';
+import '../../widgets/animations/fade_in_widget.dart';
+import '../../widgets/animations/slide_in_widget.dart';
+import '../../../core/theme/app_theme.dart';
 
 /// Login page for phone number entry
 class LoginPage extends StatefulWidget {
@@ -68,54 +71,126 @@ class _LoginPageState extends State<LoginPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                   // Logo image only
-                  SizedBox(
-                    width: 100,
-                    height: 60,
-                    child: Image.asset(
-                      'assets/icons/mylogo.png',
-                      fit: BoxFit.contain,
+                  SlideInWidget(
+                    begin: const Offset(0, -0.3),
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            AppTheme.primaryOrange,
+                            AppTheme.primaryTurquoise,
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: SizedBox(
+                        width: 80,
+                        height: 50,
+                        child: Image.asset(
+                          'assets/icons/mylogo.png',
+                          fit: BoxFit.contain,
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 16),
-                  Text(
-                    l10n.enterPhoneNumber,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+                  SlideInWidget(
+                    begin: const Offset(-0.3, 0),
+                    child: Text(
+                      l10n.enterPhoneNumber,
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.primaryOrange,
+                        letterSpacing: 1.2,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    l10n.weWillSendCode,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600],
+                  FadeInWidget(
+                    delay: 0.1,
+                    child: Text(
+                      l10n.weWillSendCode,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[600],
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 24),
-                  TextField(
-                    controller: _phoneController,
-                    keyboardType: TextInputType.phone,
-                    decoration: InputDecoration(
-                      labelText: l10n.phoneNumber,
-                      hintText: '+225012345678',
-                      prefixIcon: const Icon(Icons.phone),
+                  FadeInWidget(
+                    delay: 0.2,
+                    child: Card(
+                      elevation: 2,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: TextField(
+                        controller: _phoneController,
+                        keyboardType: TextInputType.phone,
+                        decoration: InputDecoration(
+                          labelText: l10n.phoneNumber,
+                          hintText: '+225012345678',
+                          prefixIcon: const Icon(Icons.phone),
+                          border: InputBorder.none,
+                          contentPadding: const EdgeInsets.all(16),
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 16),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: _handleRequestOtp,
-                      child: BlocBuilder<AuthBloc, AuthState>(
-                        builder: (context, state) {
-                          if (state is AuthLoading) {
-                            return const AppLoader(size: 20, color: Colors.white);
-                          }
-                          return Text(l10n.receiveOtpCode);
-                        },
+                  FadeInWidget(
+                    delay: 0.3,
+                    child: Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            AppTheme.primaryOrange,
+                            AppTheme.primaryTurquoise,
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppTheme.primaryOrange.withValues(alpha: 0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: ElevatedButton(
+                        onPressed: _handleRequestOtp,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        child: BlocBuilder<AuthBloc, AuthState>(
+                          builder: (context, state) {
+                            if (state is AuthLoading) {
+                              return const AppLoader(size: 20, color: Colors.white);
+                            }
+                            return Text(
+                              l10n.receiveOtpCode,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            );
+                          },
+                        ),
                       ),
                     ),
                   ),

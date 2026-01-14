@@ -5,7 +5,12 @@ import 'package:go_router/go_router.dart';
 import '../../features/auth/bloc/auth_bloc.dart';
 import '../../features/auth/bloc/auth_event.dart';
 import '../../features/auth/bloc/auth_state.dart';
+import '../../widgets/animations/custom_loader.dart';
 import '../../widgets/common/app_widgets.dart';
+import '../../widgets/animations/fade_in_widget.dart';
+import '../../widgets/animations/slide_in_widget.dart';
+import '../../widgets/animations/scale_tap_widget.dart';
+import '../../../core/theme/app_theme.dart';
 
 /// Professional registration page with responsive design
 class RegisterPage extends StatefulWidget {
@@ -61,9 +66,9 @@ class _RegisterPageState extends State<RegisterPage> {
       body: SafeArea(
         child: BlocListener<AuthBloc, AuthState>(
           listener: (context, state) {
-            if (state is _OtpVerificationRequired) {
+            if (state is OtpVerificationRequired) {
               context.go('/otp-verification');
-            } else if (state is _Error) {
+            } else if (state is AuthError) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(state.message),
@@ -100,19 +105,52 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget _buildHeader(BuildContext context) {
     return Column(
       children: [
-        Text(
-          'Créer un compte',
-          style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-            fontWeight: FontWeight.bold,
+        SlideInWidget(
+          begin: const Offset(0, -0.3),
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  AppTheme.primaryOrange,
+                  AppTheme.primaryTurquoise,
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.person_add,
+              size: 60,
+              color: Colors.white,
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
+        SlideInWidget(
+          begin: const Offset(-0.3, 0),
+          child: Text(
+            'Créer un compte',
+            style: TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              color: AppTheme.primaryOrange,
+              letterSpacing: 1.2,
+            ),
           ),
         ),
         const SizedBox(height: 8),
-        Text(
-          'Rejoignez RABAIS CI et commencez à économiser',
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+        FadeInWidget(
+          delay: 0.1,
+          child: Text(
+            'Rejoignez RABAIS CI et commencez à économiser',
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.grey[600],
+            ),
+            textAlign: TextAlign.center,
           ),
-          textAlign: TextAlign.center,
         ),
       ],
     );
@@ -132,11 +170,10 @@ class _RegisterPageState extends State<RegisterPage> {
             children: [
               Expanded(
                 child: AppTextField(
-                  label: 'Prénom',
-                  hint: 'Votre prénom',
+                  labelText: 'Prénom',
+                  hintText: 'Votre prénom',
                   controller: _firstNameController,
-                  textCapitalization: TextCapitalization.words,
-                  prefixIcon: const Icon(Icons.person_outlined),
+                  prefixIcon: Icons.person_outlined,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Veuillez entrer votre prénom';
@@ -148,11 +185,10 @@ class _RegisterPageState extends State<RegisterPage> {
               const SizedBox(width: 16),
               Expanded(
                 child: AppTextField(
-                  label: 'Nom',
-                  hint: 'Votre nom',
+                  labelText: 'Nom',
+                  hintText: 'Votre nom',
                   controller: _lastNameController,
-                  textCapitalization: TextCapitalization.words,
-                  prefixIcon: const Icon(Icons.person_outlined),
+                  prefixIcon: Icons.person_outlined,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Veuillez entrer votre nom';
@@ -166,11 +202,11 @@ class _RegisterPageState extends State<RegisterPage> {
           const SizedBox(height: 20),
           
           AppTextField(
-            label: 'Email',
-            hint: 'votre.email@exemple.com',
+            labelText: 'Email',
+            hintText: 'votre.email@exemple.com',
             controller: _emailController,
             keyboardType: TextInputType.emailAddress,
-            prefixIcon: const Icon(Icons.email_outlined),
+            prefixIcon: Icons.email_outlined,
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Veuillez entrer votre email';
@@ -184,11 +220,11 @@ class _RegisterPageState extends State<RegisterPage> {
           const SizedBox(height: 20),
           
           AppTextField(
-            label: 'Téléphone',
-            hint: '+225 XX XX XX XX',
+            labelText: 'Téléphone',
+            hintText: '+225 XX XX XX XX',
             controller: _phoneController,
             keyboardType: TextInputType.phone,
-            prefixIcon: const Icon(Icons.phone_outlined),
+            prefixIcon: Icons.phone_outlined,
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Veuillez entrer votre numéro de téléphone';
@@ -199,11 +235,11 @@ class _RegisterPageState extends State<RegisterPage> {
           const SizedBox(height: 20),
           
           AppTextField(
-            label: 'Mot de passe',
-            hint: 'Au moins 8 caractères',
+            labelText: 'Mot de passe',
+            hintText: 'Au moins 8 caractères',
             controller: _passwordController,
             obscureText: true,
-            prefixIcon: const Icon(Icons.lock_outlined),
+            prefixIcon: Icons.lock_outlined,
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Veuillez entrer un mot de passe';
@@ -217,11 +253,11 @@ class _RegisterPageState extends State<RegisterPage> {
           const SizedBox(height: 20),
           
           AppTextField(
-            label: 'Confirmer le mot de passe',
-            hint: 'Répétez votre mot de passe',
+            labelText: 'Confirmer le mot de passe',
+            hintText: 'Répétez votre mot de passe',
             controller: _confirmPasswordController,
             obscureText: true,
-            prefixIcon: const Icon(Icons.lock_outlined),
+            prefixIcon: Icons.lock_outlined,
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Veuillez confirmer votre mot de passe';
@@ -275,16 +311,61 @@ class _RegisterPageState extends State<RegisterPage> {
           const SizedBox(height: 24),
           
           // Register button
-          BlocBuilder<AuthBloc, AuthState>(
-            builder: (context, state) {
-              return AppButton(
-                text: 'Créer mon compte',
-                onPressed: _acceptTerms && !(state is _Loading) ? _handleRegister : null,
-                isLoading: state is _Loading,
-                icon: Icons.person_add,
-                width: double.infinity,
-              );
-            },
+          FadeInWidget(
+            delay: 0.5,
+            child: BlocBuilder<AuthBloc, AuthState>(
+              builder: (context, state) {
+                return Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        AppTheme.primaryOrange,
+                        AppTheme.primaryTurquoise,
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppTheme.primaryOrange.withValues(alpha: 0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: ElevatedButton(
+                    onPressed: _acceptTerms && !(state is AuthLoading) ? _handleRegister : null,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                    child: state is AuthLoading
+                        ? const AppLoader(size: 20, color: Colors.white)
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.person_add, color: Colors.white),
+                              const SizedBox(width: 8),
+                              const Text(
+                                'Créer mon compte',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                  ),
+                );
+              },
+            ),
           ),
         ],
       ),
@@ -332,7 +413,7 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget _buildRoleCard(BuildContext context, String role, String title, String subtitle, IconData icon) {
     final isSelected = _selectedRole == role;
     
-    return GestureDetector(
+    return ScaleTapWidget(
       onTap: () {
         setState(() {
           _selectedRole = role;
@@ -341,41 +422,73 @@ class _RegisterPageState extends State<RegisterPage> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isSelected 
-              ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
-              : Theme.of(context).colorScheme.surface,
+          gradient: isSelected
+              ? LinearGradient(
+                  colors: [
+                    AppTheme.primaryOrange.withValues(alpha: 0.15),
+                    AppTheme.primaryTurquoise.withValues(alpha: 0.15),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                )
+              : null,
+          color: isSelected ? null : Colors.white,
           border: Border.all(
             color: isSelected 
-                ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).colorScheme.outline,
+                ? AppTheme.primaryOrange
+                : Colors.grey[300]!,
             width: isSelected ? 2 : 1,
           ),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: AppTheme.primaryOrange.withValues(alpha: 0.3),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ]
+              : null,
         ),
         child: Column(
           children: [
-            Icon(
-              icon,
-              size: 32,
-              color: isSelected 
-                  ? Theme.of(context).colorScheme.primary
-                  : Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                gradient: isSelected
+                    ? LinearGradient(
+                        colors: [
+                          AppTheme.primaryOrange,
+                          AppTheme.primaryTurquoise,
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      )
+                    : null,
+                color: isSelected ? null : Colors.grey[200],
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(
+                icon,
+                size: 32,
+                color: isSelected ? Colors.white : Colors.grey[600],
+              ),
             ),
             const SizedBox(height: 8),
             Text(
               title,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: isSelected 
-                    ? Theme.of(context).colorScheme.primary
-                    : Theme.of(context).colorScheme.onSurface,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: isSelected ? AppTheme.primaryOrange : AppTheme.navyBlue,
               ),
             ),
             const SizedBox(height: 4),
             Text(
               subtitle,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey[600],
               ),
               textAlign: TextAlign.center,
             ),
@@ -403,17 +516,19 @@ class _RegisterPageState extends State<RegisterPage> {
 
   void _handleRegister() {
     if (_formKey.currentState?.validate() ?? false) {
-      context.read<AuthBloc>().add(
-        AuthEvent.registerRequested(
-          email: _emailController.text.trim(),
-          password: _passwordController.text,
-          confirmPassword: _confirmPasswordController.text,
-          firstName: _firstNameController.text.trim(),
-          lastName: _lastNameController.text.trim(),
-          phone: _phoneController.text.trim(),
-          role: _selectedRole,
-        ),
-      );
+      // Registration flow: Request OTP with phone number
+      // The backend should handle registration during OTP verification
+      final phone = _phoneController.text.trim();
+      if (phone.isNotEmpty) {
+        context.read<AuthBloc>().add(RequestOtpEvent(phone));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Veuillez entrer un numéro de téléphone'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 }
