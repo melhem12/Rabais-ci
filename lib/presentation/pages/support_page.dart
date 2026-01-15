@@ -282,7 +282,7 @@ class _SupportPageState extends State<SupportPage> {
       query: 'subject=Support RABAIS CI',
     );
     if (await canLaunchUrl(emailUri)) {
-      await launchUrl(emailUri);
+      await launchUrl(emailUri, mode: LaunchMode.externalApplication);
     } else {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -295,7 +295,9 @@ class _SupportPageState extends State<SupportPage> {
   }
 
   Future<void> _launchWhatsApp(String phone) async {
-    final Uri whatsappUri = Uri.parse('https://wa.me/$phone');
+    // WhatsApp "wa.me" requires digits only (no '+', spaces, etc.)
+    final digitsOnly = phone.replaceAll(RegExp(r'[^0-9]'), '');
+    final Uri whatsappUri = Uri.https('wa.me', '/$digitsOnly');
     if (await canLaunchUrl(whatsappUri)) {
       await launchUrl(whatsappUri, mode: LaunchMode.externalApplication);
     } else {
