@@ -20,9 +20,15 @@ import 'purchases_page.dart';
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
 
+  static const String _buildName =
+      String.fromEnvironment('FLUTTER_BUILD_NAME', defaultValue: '1.0.0');
+  static const String _buildNumber =
+      String.fromEnvironment('FLUTTER_BUILD_NUMBER', defaultValue: '0');
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final versionLabel = '$_buildName+$_buildNumber';
 
     return Scaffold(
       appBar: AppBar(
@@ -188,9 +194,9 @@ class SettingsPage extends StatelessWidget {
             context,
             icon: Icons.info,
             title: l10n.about,
-            subtitle: l10n.version,
+            subtitle: '${l10n.version} $versionLabel',
             onTap: () {
-              _showAboutDialog(context);
+              _showAboutDialog(context, l10n, versionLabel);
             },
           ),
           
@@ -307,18 +313,18 @@ class SettingsPage extends StatelessWidget {
     );
   }
 
-  void _showAboutDialog(BuildContext context) {
+  void _showAboutDialog(BuildContext context, AppLocalizations l10n, String versionLabel) {
     showAboutDialog(
       context: context,
       applicationName: 'RABAIS CI',
-      applicationVersion: '1.0.0',
+      applicationVersion: versionLabel,
       applicationIcon: const Icon(
         Icons.shopping_bag_outlined,
         size: 48,
         color: Color(0xFF1976D2),
       ),
       children: [
-        const Text(
+        Text(
           'RABAIS CI est une application mobile qui permet aux clients de découvrir et d\'acheter des bons de réduction auprès de commerçants locaux.',
         ),
       ],
