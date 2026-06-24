@@ -31,6 +31,7 @@ class AppConstants {
   static const String walletPackagesEndpoint = '/wallet/packages';
   static const String walletTopupEndpoint = '/wallet/topup';
   static const String walletPaiementProTopupEndpoint = '/wallet/topup/paiementpro';
+  static const String walletPaymentMethodsEndpoint = '/wallet/payment-methods';
 
   static const String vouchersEndpoint = '/vouchers';
   static const String purchasesEndpoint = '/purchases';

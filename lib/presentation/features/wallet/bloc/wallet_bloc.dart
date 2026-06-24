@@ -129,6 +129,7 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
         packageId: event.packageId,
         amount: event.amount,
         currency: event.currency,
+        method: event.method,
       );
       emit(PaiementProInitSuccess(url));
     } on ServerFailure catch (e) {

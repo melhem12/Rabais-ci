@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'payment_webview_page.dart';
 
 import '../../di/service_locator.dart';
+import '../../data/datasources/wallet_remote_datasource.dart';
+import '../../domain/entities/payment_method.dart';
 import '../../domain/entities/wallet.dart';
 import '../../domain/entities/wallet.dart' as wallet_entities show CoinPackage;
 import '../features/wallet/bloc/wallet_bloc.dart';
@@ -36,10 +37,6 @@ class WalletRechargePage extends StatefulWidget {
 
 class _WalletRechargePageState extends State<WalletRechargePage> {
   bool _isSubmitting = false;
-
-  List<_ProviderOption> get _providers => const [
-        _ProviderOption(id: 'paiementpro', labelKey: 'PaiementPro'),
-      ];
 
   @override
   Widget build(BuildContext context) {
@@ -139,17 +136,30 @@ class _WalletRechargePageState extends State<WalletRechargePage> {
     AppLocalizations l10n,
   ) async {
     if (_isSubmitting) return;
-    final selected = _providers.first;
+
+    // Ask the user which payment method to use before starting the top-up.
+    final method = await showModalBottomSheet<String>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (_) => const _PaymentMethodPicker(),
+    );
+    if (method == null || !mounted) return; // dismissed
 
     setState(() => _isSubmitting = true);
     context.read<WalletBloc>().add(
           InitPaiementProTopupEvent(
             packageId: package.id,
+            method: method,
           ),
         );
   }
 
   Future<void> _launchPaymentUrl(String url) async {
+    final l10n = AppLocalizations.of(context);
     final uri = Uri.tryParse(url);
     if (uri == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -161,20 +171,21 @@ class _WalletRechargePageState extends State<WalletRechargePage> {
       MaterialPageRoute(
         builder: (_) => PaymentWebViewPage(
           paymentUrl: url,
-          returnUrl: 'https://72.61.163.98/payment/result',
+          returnUrl: 'http://72.61.163.98/payment/result',
         ),
       ),
     );
+    if (!mounted) return;
     if (result == true) {
-      if (mounted) {
-        context.read<WalletBloc>().add(const LoadWalletEvent());
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Payment finished. Refreshing wallet...')),
-        );
-      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.topUpSuccessful)),
+      );
+      // Pop back to the wallet page, which reloads and shows the new balance.
+      Navigator.of(context).pop(true);
     } else {
-      // Fallback to external browser if WebView was dismissed without success
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
+      // WebView dismissed without completing: reload packages so the page
+      // doesn't get stuck on an empty state.
+      context.read<WalletBloc>().add(const LoadCoinPackagesEvent());
     }
   }
 }
@@ -304,7 +315,8 @@ class _CoinPackageCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
-    final priceMajor = package.priceMinor / 100;
+    // CFA (XOF) is a zero-decimal currency, so priceMinor is already whole CFA.
+    final priceMajor = package.priceMinor.toDouble();
     final formatter = NumberFormat.currency(
       locale: 'fr-FR',
       symbol: 'CFA',
@@ -312,7 +324,7 @@ class _CoinPackageCard extends StatelessWidget {
     );
     final priceText = formatter.format(priceMajor);
     final pricePerCoin = package.coinAmount > 0
-        ? (package.priceMinor / package.coinAmount) / 100
+        ? package.priceMinor / package.coinAmount
         : null;
     final cfaEstimate = coinPriceUsd != null
         ? (package.coinAmount * coinPriceUsd!)
@@ -461,27 +473,166 @@ class _CoinPackageCard extends StatelessWidget {
   }
 }
 
-class _ProviderOption {
-  const _ProviderOption({required this.id, required this.labelKey});
+/// Bottom sheet that lists available payment methods (fetched from the API)
+/// and returns the selected method key via Navigator.pop.
+class _PaymentMethodPicker extends StatefulWidget {
+  const _PaymentMethodPicker();
 
-  final String id;
-  final String labelKey;
+  @override
+  State<_PaymentMethodPicker> createState() => _PaymentMethodPickerState();
+}
 
-  String displayLabel(AppLocalizations l10n) {
-    switch (id) {
-      case 'paiementpro':
-        return l10n.paymentMethodPaiementPro;
+class _PaymentMethodPickerState extends State<_PaymentMethodPicker> {
+  late Future<List<PaymentMethodOption>> _future;
+
+  @override
+  void initState() {
+    super.initState();
+    _future = getIt<WalletRemoteDataSource>().getPaymentMethods();
+  }
+
+  IconData _iconFor(String method) {
+    switch (method) {
+      case 'card':
+        return Icons.credit_card_rounded;
+      case 'orange_money':
+        return Icons.account_balance_wallet_rounded;
+      case 'mtn_momo':
+        return Icons.smartphone_rounded;
+      case 'moov':
+        return Icons.phone_android_rounded;
+      case 'wave':
+        return Icons.waves_rounded;
       default:
-        return labelKey;
+        return Icons.payments_rounded;
     }
   }
 
-  IconData icon(AppLocalizations l10n) {
-    switch (id) {
-      case 'paiementpro':
-        return Icons.language_rounded;
+  Color _colorFor(String method, BuildContext context) {
+    switch (method) {
+      case 'orange_money':
+        return const Color(0xFFFF7900);
+      case 'mtn_momo':
+        return const Color(0xFFFFB300);
+      case 'moov':
+        return const Color(0xFF0066B3);
+      case 'wave':
+        return const Color(0xFF1DC8FF);
       default:
-        return Icons.payment_rounded;
+        return Theme.of(context).colorScheme.primary;
     }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Center(
+              child: Container(
+                width: 44,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.outlineVariant,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+            ),
+            Text(
+              'Choisir le mode de paiement',
+              style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Sélectionnez comment vous souhaitez payer',
+              style: theme.textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
+            ),
+            const SizedBox(height: 16),
+            FutureBuilder<List<PaymentMethodOption>>(
+              future: _future,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 32),
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                }
+                if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 24),
+                    child: Column(
+                      children: [
+                        Icon(Icons.error_outline_rounded,
+                            color: theme.colorScheme.error, size: 40),
+                        const SizedBox(height: 12),
+                        Text(
+                          'Aucun mode de paiement disponible',
+                          style: theme.textTheme.bodyMedium,
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  );
+                }
+                final methods = snapshot.data!;
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: methods.map((m) {
+                    final color = _colorFor(m.method, context);
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: Material(
+                        color: theme.colorScheme.surface,
+                        borderRadius: BorderRadius.circular(16),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(16),
+                          onTap: () => Navigator.of(context).pop(m.method),
+                          child: Ink(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(color: theme.colorScheme.outlineVariant),
+                            ),
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 44,
+                                  height: 44,
+                                  decoration: BoxDecoration(
+                                    color: color.withOpacity(0.12),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Icon(_iconFor(m.method), color: color),
+                                ),
+                                const SizedBox(width: 14),
+                                Expanded(
+                                  child: Text(
+                                    m.label,
+                                    style: theme.textTheme.titleMedium
+                                        ?.copyWith(fontWeight: FontWeight.w600),
+                                  ),
+                                ),
+                                Icon(Icons.chevron_right_rounded,
+                                    color: theme.colorScheme.outline),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

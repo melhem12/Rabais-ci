@@ -41,15 +41,17 @@ class InitPaiementProTopupEvent extends WalletEvent {
   final String? packageId;
   final double? amount;
   final String? currency;
+  final String method;
 
   const InitPaiementProTopupEvent({
     this.packageId,
     this.amount,
     this.currency,
+    this.method = 'card',
   }) : assert(packageId != null || amount != null, 'Either packageId or amount must be provided');
 
   @override
-  List<Object?> get props => [packageId, amount, currency];
+  List<Object?> get props => [packageId, amount, currency, method];
 }
 
 

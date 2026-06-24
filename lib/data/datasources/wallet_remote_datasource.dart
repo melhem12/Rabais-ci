@@ -3,6 +3,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../core/constants/app_constants.dart';
 import '../../domain/entities/wallet.dart';
+import '../../domain/entities/payment_method.dart';
 import '../../core/network/api_client.dart';
 
 /// Remote data source for wallet operations
@@ -108,17 +109,41 @@ class WalletRemoteDataSource {
     }
   }
 
+  /// Get the payment methods available for the current environment.
+  Future<List<PaymentMethodOption>> getPaymentMethods() async {
+    try {
+      final response =
+          await _apiClient.dio.get(AppConstants.walletPaymentMethodsEndpoint);
+
+      if (response.statusCode == AppConstants.httpOk) {
+        final List<dynamic> data = (response.data['methods'] as List?) ?? const [];
+        return data
+            .map((json) =>
+                PaymentMethodOption.fromJson(json as Map<String, dynamic>))
+            .toList();
+      } else {
+        throw Exception('Failed to get payment methods: ${response.data['detail']}');
+      }
+    } on DioException catch (e) {
+      throw Exception('Network error: ${e.message}');
+    } catch (e) {
+      throw Exception('Unknown error: $e');
+    }
+  }
+
   /// Init PaiementPro top-up and return redirect URL
   Future<String> initPaiementProTopup({
     String? packageId,
     double? amount,
     String? currency,
+    String method = 'card',
   }) async {
     if (packageId == null && amount == null) {
       throw Exception('Either package_id or amount must be provided');
     }
     try {
       final requestData = <String, dynamic>{
+        'method': method,
         if (packageId != null) 'package_id': packageId,
         if (amount != null) 'amount': amount,
         if (currency != null) 'currency': currency,
