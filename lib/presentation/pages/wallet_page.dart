@@ -244,7 +244,7 @@ class _WalletPageState extends State<WalletPage> {
     return Column(
       children: [
         ...recentTransactions.map((transaction) {
-          return _buildTransactionTile(transaction, 'CFA', l10n); // Always use CFA
+          return _buildTransactionTile(context, transaction, 'CFA', l10n); // Always use CFA
         }),
         if (transactions.length > 3)
           Card(
@@ -326,7 +326,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
                 final transaction = state.transactions[index];
                 return FadeInWidget(
                   delay: 0.05 * index,
-                  child: _buildTransactionTile(transaction, state.currency, l10n),
+                  child: _buildTransactionTile(context, transaction, state.currency, l10n),
                 );
               },
             );
@@ -345,36 +345,72 @@ class _TransactionsPageState extends State<TransactionsPage> {
   }
 }
 
+// CFA (XOF) is a zero-decimal currency, so amount_minor is already whole CFA.
+String _formatCfa(int amountMinor) => '${amountMinor.abs()} CFA';
+
+Color _statusColor(String status) {
+  switch (status.toLowerCase()) {
+    case 'success':
+    case 'completed':
+    case 'succeeded':
+      return const Color(0xFF16A34A); // green
+    case 'pending':
+    case 'processing':
+      return const Color(0xFFD97706); // amber
+    case 'failed':
+    case 'error':
+    case 'cancelled':
+    case 'canceled':
+      return const Color(0xFFDC2626); // red
+    default:
+      return const Color(0xFF64748B); // slate
+  }
+}
+
+IconData _statusIcon(String status, bool isCredit) {
+  switch (status.toLowerCase()) {
+    case 'failed':
+    case 'error':
+    case 'cancelled':
+    case 'canceled':
+      return Icons.error_outline_rounded;
+    case 'pending':
+    case 'processing':
+      return Icons.schedule_rounded;
+    default:
+      return isCredit ? Icons.add_circle_rounded : Icons.remove_circle_rounded;
+  }
+}
+
+String _reasonFromMeta(Map<String, dynamic>? meta) {
+  if (meta == null) return '';
+  final r = meta['reason'] ?? meta['kind'];
+  return r?.toString() ?? '';
+}
+
 Widget _buildTransactionTile(
+  BuildContext context,
   Transaction transaction,
   String currency,
   AppLocalizations l10n,
 ) {
   final hasAmount = transaction.amountMinor != 0;
   final hasCoinDelta = transaction.coinDelta != 0;
-
   final bool isCredit = transaction.isCredit;
-  IconData icon;
-  Color color;
-  String trailing;
 
+  // Color is driven by the transaction STATUS.
+  final Color statusColor = _statusColor(transaction.status);
+  final IconData icon = _statusIcon(transaction.status, isCredit);
+
+  String trailing;
   if (hasAmount) {
-    // Always display in CFA
-    final amountMajor = transaction.amountMajor.abs();
-    final formattedAmount = '${amountMajor.toStringAsFixed(0)} CFA';
-    final sign = transaction.amountMajor == 0 ? '' : (isCredit ? '+' : '-');
-    trailing = sign.isEmpty ? formattedAmount : '$sign $formattedAmount';
-    color = isCredit ? Colors.green : Colors.red;
-    icon = isCredit ? Icons.add_circle : Icons.remove_circle;
+    final sign = isCredit ? '+' : '-';
+    trailing = '$sign ${_formatCfa(transaction.amountMinor)}';
   } else if (hasCoinDelta) {
     final sign = transaction.coinDelta > 0 ? '+' : '-';
     trailing = '$sign${transaction.coinDelta.abs()} ${l10n.coins}';
-    color = transaction.coinDelta > 0 ? Colors.green : Colors.red;
-    icon = transaction.coinDelta > 0 ? Icons.add_circle : Icons.remove_circle;
   } else {
     trailing = transaction.status;
-    color = Colors.grey;
-    icon = Icons.sync_alt;
   }
 
   final dateFormat = DateFormat.yMMMd(l10n.localeName).add_Hm();
@@ -384,58 +420,187 @@ Widget _buildTransactionTile(
   return Card(
     elevation: 1,
     margin: const EdgeInsets.only(bottom: 12),
+    clipBehavior: Clip.antiAlias,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(16),
     ),
-    child: Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Colors.white,
-            color.withOpacity(0.05),
-          ],
-        ),
-      ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        leading: Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Icon(icon, color: color, size: 24),
-        ),
-        title: Text(
-          title,
-          style: const TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: 15,
-            letterSpacing: 0.2,
+    child: InkWell(
+      onTap: () => _showTransactionDetails(context, transaction, l10n),
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border(left: BorderSide(color: statusColor, width: 4)),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.white,
+              statusColor.withOpacity(0.06),
+            ],
           ),
         ),
-        subtitle: Padding(
-          padding: const EdgeInsets.only(top: 4),
-          child: Text(
-            subtitle,
+        child: ListTile(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          leading: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: statusColor.withOpacity(0.12),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: statusColor, size: 24),
+          ),
+          title: Text(
+            title,
+            style: const TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 15,
+              letterSpacing: 0.2,
+            ),
+          ),
+          subtitle: Padding(
+            padding: const EdgeInsets.only(top: 6),
+            child: Row(
+              children: [
+                _StatusBadge(color: statusColor, label: _titleCase(transaction.status)),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    subtitle,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          trailing: Text(
+            trailing,
             style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey[600],
+              fontWeight: FontWeight.bold,
+              fontSize: 15,
+              color: statusColor,
             ),
           ),
         ),
-        trailing: Text(
-          trailing,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 15,
-            color: color,
-          ),
+      ),
+    ),
+  );
+}
+
+class _StatusBadge extends StatelessWidget {
+  const _StatusBadge({required this.color, required this.label});
+  final Color color;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.12),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.w700),
+      ),
+    );
+  }
+}
+
+void _showTransactionDetails(
+  BuildContext context,
+  Transaction t,
+  AppLocalizations l10n,
+) {
+  final statusColor = _statusColor(t.status);
+  final dateFormat = DateFormat.yMMMMd(l10n.localeName).add_Hms();
+  final reason = _reasonFromMeta(t.metadata);
+
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+    ),
+    builder: (ctx) => SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Center(
+              child: Container(
+                width: 44,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+            ),
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: statusColor.withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Icon(_statusIcon(t.status, t.isCredit), color: statusColor, size: 26),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        _describeTransaction(t, l10n),
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                      ),
+                      const SizedBox(height: 4),
+                      _StatusBadge(color: statusColor, label: _titleCase(t.status)),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            if (t.amountMinor != 0) _detailRow('Montant', _formatCfa(t.amountMinor)),
+            if (t.coinDelta != 0)
+              _detailRow('Pièces', '${t.coinDelta > 0 ? '+' : ''}${t.coinDelta}'),
+            _detailRow('Type', _titleCase(t.type)),
+            _detailRow('Statut', _titleCase(t.status)),
+            _detailRow('Date', dateFormat.format(t.createdAt.toLocal())),
+            if (t.reference != null && t.reference!.isNotEmpty)
+              _detailRow('Référence', t.reference!),
+            if (reason.isNotEmpty) _detailRow('Raison', reason),
+          ],
         ),
       ),
+    ),
+  );
+}
+
+Widget _detailRow(String label, String value) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 8),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 110,
+          child: Text(label, style: TextStyle(color: Colors.grey[600], fontSize: 13)),
+        ),
+        Expanded(
+          child: Text(
+            value,
+            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+          ),
+        ),
+      ],
     ),
   );
 }
