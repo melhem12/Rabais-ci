@@ -36,7 +36,51 @@ class _PaymentWebViewPageState extends State<PaymentWebViewPage> {
           },
         ),
       )
+      // PaiementPro's payment page uses JS confirm()/alert() dialogs. Without
+      // these handlers the dialogs are ignored and the buttons do nothing.
+      ..setOnJavaScriptAlertDialog((request) async {
+        await _showAlert(request.message);
+      })
+      ..setOnJavaScriptConfirmDialog((request) => _showConfirm(request.message))
+      ..setOnJavaScriptTextInputDialog((request) async {
+        return request.defaultText ?? '';
+      })
       ..loadRequest(Uri.parse(widget.paymentUrl));
+  }
+
+  Future<void> _showAlert(String message) {
+    return showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<bool> _showConfirm(String message) async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Annuler'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+    return result ?? false;
   }
 
   bool _isReturnUrl(String url) {

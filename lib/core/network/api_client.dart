@@ -220,8 +220,11 @@ class _AuthInterceptor extends Interceptor {
       return false;
     }
 
+    // Expired/invalid tokens come back as 401; a missing token (e.g. after the
+    // app dropped it) is rejected by the API's bearer guard as 403. Refresh on both.
     final statusCode = err.response?.statusCode;
-    return statusCode == AppConstants.httpUnauthorized;
+    return statusCode == AppConstants.httpUnauthorized ||
+        statusCode == AppConstants.httpForbidden;
   }
 
   Future<void> _handleRefreshFailure() async {
