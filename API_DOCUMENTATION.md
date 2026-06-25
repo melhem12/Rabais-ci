@@ -312,6 +312,75 @@ Authorization: Bearer <access_token>
 
 ---
 
+### 2.5 Get Available Payment Methods
+**Endpoint**: `GET /wallet/payment-methods`
+**Authentication**: Required
+
+Returns the payment methods enabled for the current environment. The app uses this to
+render the payment options (do **not** hardcode the list). The environment (sandbox vs
+production) is controlled server-side by the admin **Dev Mode** toggle.
+
+**Response** (200 OK):
+```json
+{
+  "sandbox": false,
+  "methods": [
+    { "method": "card",         "channel": "CARD",   "label": "Card" },
+    { "method": "orange_money", "channel": "OMCIV2", "label": "Orange Money" },
+    { "method": "mtn_momo",     "channel": "MOMOCI", "label": "MTN Mobile Money" },
+    { "method": "moov",         "channel": "FLOOZ",  "label": "Moov Money" },
+    { "method": "wave",         "channel": "WAVECI", "label": "Wave" }
+  ]
+}
+```
+- `method` — key to send back when starting a top-up.
+- `channel` — underlying PaiementPro channel (informational).
+- `label` — display name for the button.
+
+---
+
+### 2.6 Initialize PaiementPro Top-Up
+**Endpoint**: `POST /wallet/topup/paiementpro`
+**Authentication**: Required
+
+Starts a hosted PaiementPro payment for the chosen method and returns a `url` to open in a
+WebView. All methods (card + mobile money) go through PaiementPro; only the `method` differs.
+
+**Request Body** (send either `package_id` or `amount`):
+```json
+{
+  "method": "orange_money",
+  "package_id": "pkg_123"
+}
+```
+| Field | Required | Notes |
+|-------|----------|-------|
+| `method` | no (default `card`) | One of `card`, `orange_money`, `mtn_momo`, `moov`, `wave` |
+| `package_id` | one of these | A coin package id |
+| `amount` | one of these | Amount in XOF major units (currency `952`) |
+
+**Response** (200 OK):
+```json
+{
+  "url": "https://...paiementpro.../pay/...",
+  "reference": "pp-xxxxxxxx",
+  "provider": "paiementpro",
+  "currency_code": "952",
+  "amount": 1000,
+  "tx_id": "trans_127",
+  "hash_required": false
+}
+```
+Open `url` in a WebView. On completion PaiementPro redirects to the return URL and calls the
+backend webhook, which credits the wallet. Then refresh `GET /wallet`.
+
+**Errors**:
+- `400 "Unsupported payment method: X"` — `method` not allowed.
+- `400 "<Method> is not available (production|sandbox)."` — that method has no active account
+  in the current environment.
+
+---
+
 ## 3. Voucher Operations
 
 ### 3.1 Get Vouchers
