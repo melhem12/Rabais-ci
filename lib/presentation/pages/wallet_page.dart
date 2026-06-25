@@ -402,13 +402,14 @@ Widget _buildTransactionTile(
   final Color statusColor = _statusColor(transaction.status);
   final IconData icon = _statusIcon(transaction.status, isCredit);
 
+  // Prefer showing the coins delta over the CFA price.
   String trailing;
-  if (hasAmount) {
-    final sign = isCredit ? '+' : '-';
-    trailing = '$sign ${_formatCfa(transaction.amountMinor)}';
-  } else if (hasCoinDelta) {
+  if (hasCoinDelta) {
     final sign = transaction.coinDelta > 0 ? '+' : '-';
     trailing = '$sign${transaction.coinDelta.abs()} ${l10n.coins}';
+  } else if (hasAmount) {
+    final sign = isCredit ? '+' : '-';
+    trailing = '$sign ${_formatCfa(transaction.amountMinor)}';
   } else {
     trailing = transaction.status;
   }
@@ -605,22 +606,23 @@ Widget _detailRow(String label, String value) {
   );
 }
 
+// Human label for the transaction TYPE (the reference is intentionally not
+// shown on the list item; it's available in the details sheet).
 String _describeTransaction(Transaction transaction, AppLocalizations l10n) {
-  if (transaction.reference != null && transaction.reference!.isNotEmpty) {
-    return transaction.reference!;
-  }
-
-  switch (transaction.type) {
+  switch (transaction.type.toLowerCase()) {
     case 'topup':
       return l10n.topUp;
     case 'withdraw':
-      return _titleCase(transaction.type);
+      return 'Retrait';
     case 'voucher':
-      return 'Voucher';
+    case 'purchase':
+      return 'Achat';
     case 'charge':
       return 'Charge';
     case 'promo':
-      return 'Promotion';
+      return 'Bonus';
+    case 'refund':
+      return 'Remboursement';
     default:
       return _titleCase(transaction.type);
   }
