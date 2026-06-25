@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 
 import '../../features/auth/bloc/auth_bloc.dart';
 import '../../features/auth/bloc/auth_event.dart';
@@ -19,13 +20,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final _phoneController = TextEditingController();
-
-  @override
-  void dispose() {
-    _phoneController.dispose();
-    super.dispose();
-  }
+  // Full international number (e.g. +225XXXXXXXX) from the phone field.
+  String _completePhone = '';
 
   @override
   Widget build(BuildContext context) {
@@ -130,16 +126,20 @@ class _LoginPageState extends State<LoginPage> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: TextField(
-                        controller: _phoneController,
-                        keyboardType: TextInputType.phone,
+                      child: IntlPhoneField(
+                        initialCountryCode: 'CI', // Côte d'Ivoire (+225) by default
+                        showCountryFlag: true,
+                        disableLengthCheck: false,
+                        flagsButtonPadding: const EdgeInsets.only(left: 8),
+                        dropdownIconPosition: IconPosition.trailing,
                         decoration: InputDecoration(
                           labelText: l10n.phoneNumber,
-                          hintText: '+225012345678',
-                          prefixIcon: const Icon(Icons.phone),
                           border: InputBorder.none,
-                          contentPadding: const EdgeInsets.all(16),
+                          contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
                         ),
+                        onChanged: (phone) {
+                          _completePhone = phone.completeNumber;
+                        },
                       ),
                     ),
                   ),
@@ -207,9 +207,10 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _handleRequestOtp() {
-    final phone = _phoneController.text.trim();
-    if (phone.isEmpty) {
-      final l10n = AppLocalizations.of(context);
+    final phone = _completePhone.trim();
+    final l10n = AppLocalizations.of(context);
+    // Must contain a dial code plus at least a few digits.
+    if (phone.isEmpty || phone.replaceAll(RegExp(r'\D'), '').length < 8) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(l10n.pleaseEnterPhoneNumber),
