@@ -12,6 +12,7 @@ import '../features/wallet/bloc/wallet_state.dart';
 import '../../domain/entities/voucher.dart';
 import '../../domain/entities/business_options.dart';
 import '../../data/datasources/business_remote_datasource.dart';
+import '../../data/datasources/wallet_remote_datasource.dart';
 import '../../../core/utils/image_url_helper.dart';
 import '../widgets/animations/custom_loader.dart';
 import '../widgets/animations/fade_in_widget.dart';
@@ -739,30 +740,14 @@ class _VouchersPageState extends State<VouchersPage> {
   }
 
   void _purchaseVoucher(BuildContext context, Voucher voucher) async {
-    // Load wallet first and wait for it to load
+    // Refresh the wallet in the background (for the rest of the UI)…
     context.read<WalletBloc>().add(const LoadWalletEvent());
 
-    // Wait for wallet to load
-    await Future.delayed(const Duration(milliseconds: 300));
-
-    // Get wallet state after loading
-    double walletBalance = 0;
-    double coinBalance = 0;
-
-    // Listen to wallet state to get balance
-    final walletState = context.read<WalletBloc>().state;
-    if (walletState is WalletLoaded) {
-      walletBalance = walletState.wallet.balanceMinor;
-      coinBalance = walletState.wallet.coins;
-    } else {
-      // If wallet not loaded yet, wait a bit more
-      await Future.delayed(const Duration(milliseconds: 500));
-      final updatedWalletState = context.read<WalletBloc>().state;
-      if (updatedWalletState is WalletLoaded) {
-        walletBalance = updatedWalletState.wallet.balanceMinor;
-        coinBalance = updatedWalletState.wallet.coins;
-      }
-    }
+    // …but fetch the live balance directly so the payment dialog is accurate
+    // regardless of bloc state timing.
+    final balances = await _fetchBalances(context);
+    final double walletBalance = balances.$1;
+    final double coinBalance = balances.$2;
 
     // Show payment method selection
     final paymentMethod = await PaymentMethodDialog.show(
@@ -1412,18 +1397,13 @@ class VoucherDetailsPage extends StatelessWidget {
   }
 
   void _purchaseVoucher(BuildContext context) async {
-    // Load wallet first
+    // Refresh the wallet in the background…
     context.read<WalletBloc>().add(const LoadWalletEvent());
 
-    // Show dialog with wallet balance
-    final walletState = context.read<WalletBloc>().state;
-    double walletBalance = 0;
-    double coinBalance = 0;
-
-    if (walletState is WalletLoaded) {
-      walletBalance = walletState.wallet.balanceMinor;
-      coinBalance = walletState.wallet.coins;
-    }
+    // …and fetch the live balance directly for an accurate payment dialog.
+    final balances = await _fetchBalances(context);
+    final double walletBalance = balances.$1;
+    final double coinBalance = balances.$2;
 
     // Show payment method selection
     final paymentMethod = await PaymentMethodDialog.show(
@@ -1502,5 +1482,22 @@ class VoucherDetailsPage extends StatelessWidget {
       // Dispatch claim event
       context.read<VoucherBloc>().add(ClaimVoucherEvent(voucher.id));
     }
+  }
+}
+
+/// Fetches the user's live wallet balance (money + coins) for the payment
+/// dialog. Reads directly from the API so it doesn't depend on WalletBloc
+/// state timing; falls back to the current bloc state, then to zero.
+Future<(double, double)> _fetchBalances(BuildContext context) async {
+  final walletBloc = context.read<WalletBloc>();
+  try {
+    final wallet = await getIt<WalletRemoteDataSource>().getWallet();
+    return (wallet.balanceMinor, wallet.coins);
+  } catch (_) {
+    final s = walletBloc.state;
+    if (s is WalletLoaded) {
+      return (s.wallet.balanceMinor, s.wallet.coins);
+    }
+    return (0.0, 0.0);
   }
 }
