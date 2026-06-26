@@ -20,7 +20,9 @@ import '../../core/theme/app_theme.dart';
 
 /// Merchant redemption page
 class RedemptionPage extends StatefulWidget {
-  const RedemptionPage({super.key});
+  /// Which tab to open on: 0 = Scan QR, 1 = Manual entry.
+  final int initialTab;
+  const RedemptionPage({super.key, this.initialTab = 0});
 
   @override
   State<RedemptionPage> createState() => _RedemptionPageState();
@@ -41,11 +43,17 @@ class _RedemptionPageState extends State<RedemptionPage> with TickerProviderStat
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _selectedTab = widget.initialTab;
+    _tabController = TabController(
+      length: 2,
+      vsync: this,
+      initialIndex: widget.initialTab,
+    );
     _tabController.addListener(_handleTabChange);
     context.read<RedemptionBloc>().add(const LoadRedemptionsEvent());
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Only fire up the camera if we opened on the scanner tab.
       if (mounted && _selectedTab == 0) {
         _startScanning(showRequestUI: false);
       }
@@ -1058,80 +1066,137 @@ class _RedemptionHistoryPageState extends State<RedemptionHistoryPage> {
   }
 
   Widget _buildRedemptionCard(Redemption redemption, AppLocalizations l10n) {
-    final theme = Theme.of(context);
-    return Card(
-      margin: EdgeInsets.zero,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    redemption.voucherTitle,
-                    style: theme.textTheme.titleMedium,
+    final statusColor = _getStatusColor(redemption.status);
+    final hasAmount = _formatAmount(redemption) != '0' && _formatAmount(redemption).isNotEmpty;
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: statusColor.withValues(alpha: 0.2)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(18),
+        child: IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Container(width: 5, color: statusColor),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(14),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              redemption.voucherTitle,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            decoration: BoxDecoration(
+                              color: statusColor,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              _statusLabel(redemption.status, l10n),
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          if (hasAmount)
+                            _histChip(Icons.payments,
+                                '${_formatAmount(redemption)} CFA', AppTheme.primaryTurquoise),
+                          if (redemption.coinAmount > 0)
+                            _histChip(Icons.monetization_on,
+                                '${redemption.coinAmount} ${l10n.coins}', AppTheme.primaryOrange),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      if (redemption.customerPhone != null &&
+                          redemption.customerPhone!.isNotEmpty)
+                        _histInfo(Icons.person_outline, redemption.customerPhone!),
+                      if (redemption.method != null &&
+                          redemption.method!.isNotEmpty)
+                        _histInfo(Icons.touch_app_outlined,
+                            _methodLabel(redemption.method!, l10n)),
+                      if (redemption.businessName != null &&
+                          redemption.businessName!.isNotEmpty)
+                        _histInfo(Icons.storefront_outlined, redemption.businessName!),
+                      _histInfo(
+                          Icons.access_time,
+                          '${_formatDate(redemption.redemptionDate)} • ${_formatTime(redemption.redemptionDate)}'),
+                    ],
                   ),
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: _getStatusColor(redemption.status),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    _statusLabel(redemption.status, l10n),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Text(
-              '${l10n.amount}: ${_formatAmount(redemption)} ${redemption.currency}',
-              style: theme.textTheme.bodyMedium,
-            ),
-            if (redemption.coinAmount > 0) ...[
-              const SizedBox(height: 4),
-              Text(
-                '${l10n.coins}: ${redemption.coinAmount}',
-                style: theme.textTheme.bodyMedium,
               ),
             ],
-            if (redemption.customerPhone != null && redemption.customerPhone!.isNotEmpty) ...[
-              const SizedBox(height: 4),
-              Text(
-                '${l10n.customer}: ${redemption.customerPhone}',
-                style: theme.textTheme.bodyMedium,
-              ),
-            ],
-            if (redemption.method != null && redemption.method!.isNotEmpty) ...[
-              const SizedBox(height: 4),
-              Text(
-                '${l10n.method}: ${_methodLabel(redemption.method!, l10n)}',
-                style: theme.textTheme.bodyMedium,
-              ),
-            ],
-            if (redemption.businessName != null && redemption.businessName!.isNotEmpty) ...[
-              const SizedBox(height: 4),
-              Text(
-                '${l10n.business}: ${redemption.businessName}',
-                style: theme.textTheme.bodyMedium,
-              ),
-            ],
-            const SizedBox(height: 8),
-            Text(
-              '${l10n.date}: ${_formatDate(redemption.redemptionDate)} • ${_formatTime(redemption.redemptionDate)}',
-              style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
-            ),
-          ],
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _histChip(IconData icon, String text, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: color),
+          const SizedBox(width: 5),
+          Text(text,
+              style: TextStyle(
+                  color: color, fontWeight: FontWeight.w700, fontSize: 13)),
+        ],
+      ),
+    );
+  }
+
+  Widget _histInfo(IconData icon, String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Row(
+        children: [
+          Icon(icon, size: 15, color: Colors.grey[500]),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(text,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: 13, color: Colors.grey[700])),
+          ),
+        ],
       ),
     );
   }
