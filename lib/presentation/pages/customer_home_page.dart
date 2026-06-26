@@ -364,7 +364,7 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
                                                         crossAxisAlignment: CrossAxisAlignment.center,
                                                         children: [
                                                           Text(
-                                                            'Coupons', // Will be localized
+                                                            l10n.coupons,
                                                             style: TextStyle(
                                                               fontSize: 12,
                                                               color: Colors.grey[600],
@@ -380,7 +380,7 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
                                                       crossAxisAlignment: CrossAxisAlignment.center,
                                                       children: [
                                                         Text(
-                                                          'Coupons', // Will be localized
+                                                          l10n.coupons,
                                                           style: TextStyle(
                                                             fontSize: 12,
                                                             color: Colors.grey[600],
@@ -529,7 +529,7 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
                             begin: const Offset(0.2, 0),
                             child: _buildThemedFeatureCard(
                               context,
-                              'Coupons',
+                              l10n.coupons,
                               AppIcons.voucherIcon,
                               () {
                                 Navigator.push(

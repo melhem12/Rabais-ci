@@ -250,7 +250,7 @@ class _WalletPageState extends State<WalletPage> {
           Card(
             child: ListTile(
               title: Text(
-                'Voir tout', // Will be localized
+                l10n.seeAll,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: AppTheme.primaryOrange,

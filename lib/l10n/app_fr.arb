@@ -46,15 +46,15 @@
   },
   "specialOffers": "Offres Spéciales",
   "@specialOffers": {
-    "description": "Titre des offres spéciales"
+    "description": "Titre section offres spéciales"
   },
   "discoverExclusive": "Découvrez nos offres exclusives",
   "@discoverExclusive": {
-    "description": "Message pour découvrir les offres exclusives"
+    "description": "Texte découvrir offres exclusives"
   },
-  "purchases": "Mes Coupons",
+  "purchases": "Achats",
   "@purchases": {
-    "description": "Titre de la page mes coupons"
+    "description": "Nom de la fonctionnalité achats"
   },
   "noPurchasesFound": "Aucun achat trouvé",
   "@noPurchasesFound": {
@@ -98,7 +98,7 @@
   },
   "amount": "Montant",
   "@amount": {
-    "description": "Libellé du montant"
+    "description": "Libellé montant"
   },
   "voucher": "Coupon",
   "@voucher": {
@@ -112,7 +112,6 @@
   "@availableFeatures": {
     "description": "Titre des fonctionnalités disponibles"
   },
-  
   "login": "Connexion",
   "@login": {
     "description": "Texte du bouton de connexion"
@@ -137,7 +136,6 @@
   "@receiveOtpCode": {
     "description": "Texte du bouton de demande OTP"
   },
-  
   "otpVerification": "Vérification OTP",
   "@otpVerification": {
     "description": "Titre de la page de vérification OTP"
@@ -162,7 +160,6 @@
   "@resendCode": {
     "description": "Texte du bouton de renvoi OTP"
   },
-  
   "profileCompletion": "Compléter le profil",
   "@profileCompletion": {
     "description": "Titre de la page de complétion du profil"
@@ -283,7 +280,6 @@
   "@helpPersonalizeExperience": {
     "description": "Texte d'aide pour complétion profil"
   },
-  
   "customerHome": "Accueil Client",
   "@customerHome": {
     "description": "Titre de la page d'accueil client"
@@ -304,10 +300,6 @@
   "@vouchers": {
     "description": "Nom de la fonctionnalité coupons"
   },
-  "purchases": "Achats",
-  "@purchases": {
-    "description": "Nom de la fonctionnalité achats"
-  },
   "profile": "Profil",
   "@profile": {
     "description": "Nom de la fonctionnalité profil"
@@ -316,15 +308,14 @@
   "@qrScanner": {
     "description": "Nom de la fonctionnalité scanner QR"
   },
-  "manualEntry": "Saisie manuelle",
+  "manualEntry": "Saisie Manuelle",
   "@manualEntry": {
-    "description": "Nom de la fonctionnalité saisie manuelle"
+    "description": "Titre de l'onglet saisie manuelle"
   },
   "history": "Historique",
   "@history": {
     "description": "Nom de la fonctionnalité historique"
   },
-  
   "walletPage": "Portefeuille",
   "@walletPage": {
     "description": "Titre de la page portefeuille"
@@ -351,7 +342,7 @@
   },
   "recentTransactions": "Transactions Récentes",
   "@recentTransactions": {
-    "description": "Titre de la section transactions récentes"
+    "description": "Titre section transactions récentes"
   },
   "noRecentTransactions": "Aucune transaction récente",
   "@noRecentTransactions": {
@@ -365,7 +356,6 @@
   "@debit": {
     "description": "Type de transaction débit"
   },
-  
   "vouchersPage": "Coupons",
   "@vouchersPage": {
     "description": "Titre de la page coupons"
@@ -416,7 +406,7 @@
   },
   "clearFilters": "Réinitialiser les filtres",
   "@clearFilters": {
-    "description": "Libellé du bouton pour réinitialiser les filtres"
+    "description": "Bouton pour réinitialiser tous les filtres"
   },
   "noVouchersFound": "Aucun coupon trouvé",
   "@noVouchersFound": {
@@ -489,7 +479,6 @@
   "@confirm": {
     "description": "Texte du bouton confirmer"
   },
-  
   "redemption": "Rédemption",
   "@redemption": {
     "description": "Titre de la page rédemption"
@@ -497,10 +486,6 @@
   "scanQr": "Scanner QR",
   "@scanQr": {
     "description": "Titre de l'onglet scanner QR"
-  },
-  "manualEntry": "Saisie Manuelle",
-  "@manualEntry": {
-    "description": "Titre de l'onglet saisie manuelle"
   },
   "scanQrCode": "Scanner QR Code",
   "@scanQrCode": {
@@ -542,14 +527,6 @@
   "@noRedemptionsFound": {
     "description": "Message de rédemptions vides"
   },
-  "amount": "Montant",
-  "@amount": {
-    "description": "Libellé montant"
-  },
-  "customer": "Client",
-  "@customer": {
-    "description": "Libellé client"
-  },
   "method": "Méthode",
   "@method": {
     "description": "Libellé méthode"
@@ -561,10 +538,6 @@
   "filters": "Filtres",
   "@filters": {
     "description": "Titre de la section des filtres"
-  },
-  "clearFilters": "Réinitialiser les filtres",
-  "@clearFilters": {
-    "description": "Bouton pour réinitialiser tous les filtres"
   },
   "dateRange": "Plage de dates",
   "@dateRange": {
@@ -622,7 +595,6 @@
   "@failed": {
     "description": "Statut échec"
   },
-  
   "settings": "Paramètres",
   "@settings": {
     "description": "Titre de la page paramètres"
@@ -715,7 +687,6 @@
   "@logoutConfirmationMessage": {
     "description": "Message de confirmation de déconnexion"
   },
-  
   "notificationsPage": "Notifications",
   "@notificationsPage": {
     "description": "Titre de la page notifications"
@@ -812,7 +783,6 @@
   "@testNotificationSent": {
     "description": "Message de succès notification de test"
   },
-  
   "error": "Erreur",
   "@error": {
     "description": "Titre d'erreur"
@@ -853,7 +823,6 @@
   "@ok": {
     "description": "Texte du bouton OK"
   },
-  
   "loading": "Chargement...",
   "@loading": {
     "description": "Message de chargement"
@@ -868,8 +837,8 @@
   },
   "featureWillBeAvailableSoon": "Cette fonctionnalité sera disponible prochainement",
   "@featureWillBeAvailableSoon": {
-    "description": "Description bientôt disponible"  },
-  
+    "description": "Description bientôt disponible"
+  },
   "pleaseEnterPhoneNumber": "Veuillez entrer votre numéro de téléphone",
   "@pleaseEnterPhoneNumber": {
     "description": "Message de validation du numéro de téléphone"
@@ -1002,10 +971,6 @@
   "@qrScannerComingSoon": {
     "description": "Message scanner QR bientôt disponible"
   },
-  "recentTransactions": "Transactions Récentes",
-  "@recentTransactions": {
-    "description": "Titre section transactions récentes"
-  },
   "noTransactionsFound": "Aucune transaction trouvée",
   "@noTransactionsFound": {
     "description": "Message transactions vides"
@@ -1071,14 +1036,6 @@
   "@activeVouchers": {
     "description": "Libellé nombre de coupons actifs"
   },
-  "specialOffers": "Offres Spéciales",
-  "@specialOffers": {
-    "description": "Titre section offres spéciales"
-  },
-  "discoverExclusive": "Découvrez nos offres exclusives",
-  "@discoverExclusive": {
-    "description": "Texte découvrir offres exclusives"
-  },
   "cameraPermissionRequired": "La permission de la caméra est requise pour scanner les codes QR",
   "@cameraPermissionRequired": {
     "description": "Message permission caméra requise"
@@ -1113,5 +1070,14 @@
       }
     }
   },
-  "merchant": "Commerçant"
+  "merchant": "Commerçant",
+  "faq": "FAQ",
+  "myCoupons": "Mes Coupons",
+  "coupons": "Coupons",
+  "seeAll": "Voir tout",
+  "sortBy": "Trier par",
+  "apply": "Appliquer",
+  "choosePhoto": "Choisir une photo",
+  "ourPartners": "Nos Partenaires",
+  "contactUsTitle": "Nous contacter"
 }

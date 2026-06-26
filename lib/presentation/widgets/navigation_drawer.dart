@@ -272,7 +272,7 @@ class AppNavigationDrawer extends StatelessWidget {
                   child: _buildDrawerItem(
                     context,
                     icon: Icons.help_outline,
-                    title: 'FAQ',
+                    title: l10n.faq,
                     onTap: () {
                       Navigator.pop(context);
                       Navigator.push(
@@ -306,7 +306,7 @@ class AppNavigationDrawer extends StatelessWidget {
                   child: _buildDrawerItem(
                     context,
                     icon: Icons.support_agent,
-                    title: 'Support',
+                    title: l10n.support,
                     onTap: () {
                       Navigator.pop(context);
                       Navigator.push(

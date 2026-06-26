@@ -53,7 +53,7 @@ class _PartnersDirectoryPageState extends State<PartnersDirectoryPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Nos Partenaires'), // Will be localized
+        title: Text(AppLocalizations.of(context).ourPartners),
         centerTitle: true,
       ),
       body: Column(

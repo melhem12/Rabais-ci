@@ -1673,6 +1673,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Merchant'**
   String get merchant;
+
+  /// No description provided for @faq.
+  ///
+  /// In en, this message translates to:
+  /// **'FAQ'**
+  String get faq;
+
+  /// No description provided for @myCoupons.
+  ///
+  /// In en, this message translates to:
+  /// **'My Coupons'**
+  String get myCoupons;
+
+  /// No description provided for @coupons.
+  ///
+  /// In en, this message translates to:
+  /// **'Coupons'**
+  String get coupons;
+
+  /// No description provided for @seeAll.
+  ///
+  /// In en, this message translates to:
+  /// **'See all'**
+  String get seeAll;
+
+  /// No description provided for @sortBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort by'**
+  String get sortBy;
+
+  /// No description provided for @apply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get apply;
+
+  /// No description provided for @choosePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a photo'**
+  String get choosePhoto;
+
+  /// No description provided for @ourPartners.
+  ///
+  /// In en, this message translates to:
+  /// **'Our Partners'**
+  String get ourPartners;
+
+  /// No description provided for @contactUsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact us'**
+  String get contactUsTitle;
 }
 
 class _AppLocalizationsDelegate

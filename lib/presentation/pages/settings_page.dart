@@ -68,7 +68,7 @@ class SettingsPage extends StatelessWidget {
             child: _buildSettingsTile(
               context,
               icon: Icons.local_offer,
-              title: 'Mes Coupons', // Will be localized
+              title: l10n.myCoupons,
               subtitle: 'Voir tous vos coupons achetés',
               onTap: () {
                 Navigator.of(context).push(

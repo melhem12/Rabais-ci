@@ -46,15 +46,15 @@
   },
   "specialOffers": "Special Offers",
   "@specialOffers": {
-    "description": "Special offers title"
+    "description": "Special offers section title"
   },
-  "discoverExclusive": "Discover our exclusive offers",
+  "discoverExclusive": "Discover Exclusive Offers",
   "@discoverExclusive": {
-    "description": "Message to discover exclusive offers"
+    "description": "Discover exclusive offers text"
   },
   "purchases": "Purchases",
   "@purchases": {
-    "description": "Purchases page title"
+    "description": "Purchases feature name"
   },
   "noPurchasesFound": "No purchases found",
   "@noPurchasesFound": {
@@ -112,7 +112,6 @@
   "@availableFeatures": {
     "description": "Available features title"
   },
-  
   "login": "Login",
   "@login": {
     "description": "Login button text"
@@ -137,7 +136,6 @@
   "@receiveOtpCode": {
     "description": "OTP request button text"
   },
-  
   "otpVerification": "OTP Verification",
   "@otpVerification": {
     "description": "OTP verification page title"
@@ -162,7 +160,6 @@
   "@resendCode": {
     "description": "Resend OTP button text"
   },
-  
   "profileCompletion": "Complete Profile",
   "@profileCompletion": {
     "description": "Profile completion page title"
@@ -283,7 +280,6 @@
   "@helpPersonalizeExperience": {
     "description": "Help text for profile completion"
   },
-  
   "customerHome": "Customer Home",
   "@customerHome": {
     "description": "Customer home page title"
@@ -304,10 +300,6 @@
   "@vouchers": {
     "description": "Vouchers feature name"
   },
-  "purchases": "Purchases",
-  "@purchases": {
-    "description": "Purchases feature name"
-  },
   "profile": "Profile",
   "@profile": {
     "description": "Profile feature name"
@@ -318,13 +310,12 @@
   },
   "manualEntry": "Manual Entry",
   "@manualEntry": {
-    "description": "Manual entry feature name"
+    "description": "Manual entry tab title"
   },
   "history": "History",
   "@history": {
     "description": "History feature name"
   },
-  
   "walletPage": "Wallet",
   "@walletPage": {
     "description": "Wallet page title"
@@ -365,7 +356,6 @@
   "@debit": {
     "description": "Debit transaction type"
   },
-  
   "vouchersPage": "Discount Vouchers",
   "@vouchersPage": {
     "description": "Vouchers page title"
@@ -416,7 +406,7 @@
   },
   "clearFilters": "Clear filters",
   "@clearFilters": {
-    "description": "Button label to clear voucher filters"
+    "description": "Button to clear all filters"
   },
   "noVouchersFound": "No vouchers found",
   "@noVouchersFound": {
@@ -489,7 +479,6 @@
   "@confirm": {
     "description": "Confirm button text"
   },
-  
   "redemption": "Redemption",
   "@redemption": {
     "description": "Redemption page title"
@@ -497,10 +486,6 @@
   "scanQr": "Scan QR",
   "@scanQr": {
     "description": "Scan QR tab title"
-  },
-  "manualEntry": "Manual Entry",
-  "@manualEntry": {
-    "description": "Manual entry tab title"
   },
   "scanQrCode": "Scan QR Code",
   "@scanQrCode": {
@@ -542,14 +527,6 @@
   "@noRedemptionsFound": {
     "description": "Empty redemptions message"
   },
-  "amount": "Amount",
-  "@amount": {
-    "description": "Amount label"
-  },
-  "customer": "Customer",
-  "@customer": {
-    "description": "Customer label"
-  },
   "method": "Method",
   "@method": {
     "description": "Method label"
@@ -561,10 +538,6 @@
   "filters": "Filters",
   "@filters": {
     "description": "Filters section title"
-  },
-  "clearFilters": "Clear filters",
-  "@clearFilters": {
-    "description": "Button to clear all filters"
   },
   "dateRange": "Date range",
   "@dateRange": {
@@ -622,7 +595,6 @@
   "@failed": {
     "description": "Failed status"
   },
-  
   "settings": "Settings",
   "@settings": {
     "description": "Settings page title"
@@ -715,7 +687,6 @@
   "@logoutConfirmationMessage": {
     "description": "Logout confirmation message"
   },
-  
   "notificationsPage": "Notifications",
   "@notificationsPage": {
     "description": "Notifications page title"
@@ -812,7 +783,6 @@
   "@testNotificationSent": {
     "description": "Test notification success message"
   },
-  
   "error": "Error",
   "@error": {
     "description": "Error title"
@@ -853,7 +823,6 @@
   "@ok": {
     "description": "OK button text"
   },
-  
   "loading": "Loading...",
   "@loading": {
     "description": "Loading message"
@@ -870,7 +839,6 @@
   "@featureWillBeAvailableSoon": {
     "description": "Coming soon description"
   },
-  
   "pleaseEnterPhoneNumber": "Please enter your phone number",
   "@pleaseEnterPhoneNumber": {
     "description": "Phone number validation message"
@@ -1003,10 +971,6 @@
   "@qrScannerComingSoon": {
     "description": "QR scanner coming soon message"
   },
-  "recentTransactions": "Recent Transactions",
-  "@recentTransactions": {
-    "description": "Recent transactions section title"
-  },
   "noTransactionsFound": "No transactions found",
   "@noTransactionsFound": {
     "description": "Empty transactions message"
@@ -1072,14 +1036,6 @@
   "@activeVouchers": {
     "description": "Active vouchers count label"
   },
-  "specialOffers": "Special Offers",
-  "@specialOffers": {
-    "description": "Special offers section title"
-  },
-  "discoverExclusive": "Discover Exclusive Offers",
-  "@discoverExclusive": {
-    "description": "Discover exclusive offers text"
-  },
   "cameraPermissionRequired": "Camera permission is required to scan QR codes",
   "@cameraPermissionRequired": {
     "description": "Camera permission required message"
@@ -1114,5 +1070,14 @@
       }
     }
   },
-  "merchant": "Merchant"
+  "merchant": "Merchant",
+  "faq": "FAQ",
+  "myCoupons": "My Coupons",
+  "coupons": "Coupons",
+  "seeAll": "See all",
+  "sortBy": "Sort by",
+  "apply": "Apply",
+  "choosePhoto": "Choose a photo",
+  "ourPartners": "Our Partners",
+  "contactUsTitle": "Contact us"
 }

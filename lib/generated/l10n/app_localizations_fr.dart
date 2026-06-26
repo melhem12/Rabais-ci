@@ -826,4 +826,31 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get merchant => 'Commerçant';
+
+  @override
+  String get faq => 'FAQ';
+
+  @override
+  String get myCoupons => 'Mes Coupons';
+
+  @override
+  String get coupons => 'Coupons';
+
+  @override
+  String get seeAll => 'Voir tout';
+
+  @override
+  String get sortBy => 'Trier par';
+
+  @override
+  String get apply => 'Appliquer';
+
+  @override
+  String get choosePhoto => 'Choisir une photo';
+
+  @override
+  String get ourPartners => 'Nos Partenaires';
+
+  @override
+  String get contactUsTitle => 'Nous contacter';
 }

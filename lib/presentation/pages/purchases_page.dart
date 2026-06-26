@@ -33,7 +33,7 @@ class _PurchasesPageState extends State<PurchasesPage> {
     final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Mes Coupons'), // Will be localized
+        title: Text(AppLocalizations.of(context).myCoupons),
         centerTitle: true,
         actions: [
           IconButton(

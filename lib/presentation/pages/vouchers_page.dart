@@ -9,6 +9,8 @@ import '../features/voucher/bloc/voucher_state.dart';
 import '../features/wallet/bloc/wallet_bloc.dart';
 import '../features/wallet/bloc/wallet_event.dart';
 import '../features/wallet/bloc/wallet_state.dart';
+import '../features/purchase/bloc/purchase_bloc.dart';
+import '../features/purchase/bloc/purchase_event.dart' as purchase_evt;
 import '../../domain/entities/voucher.dart';
 import '../../domain/entities/business_options.dart';
 import '../../data/datasources/business_remote_datasource.dart';
@@ -254,7 +256,7 @@ class _VouchersPageState extends State<VouchersPage> {
     return DropdownButtonFormField<String>(
       value: _sortBy,
       decoration: InputDecoration(
-        labelText: 'Trier par', // Will be localized
+        labelText: l10n.sortBy,
         border: const OutlineInputBorder(),
         contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       ),
@@ -324,13 +326,17 @@ class _VouchersPageState extends State<VouchersPage> {
             });
           }
 
+          // Refresh purchases now so the home "Coupons" count updates.
+          context.read<PurchaseBloc>().add(const purchase_evt.LoadPurchasesEvent());
+
           // Reload vouchers to update remaining quantity (after a delay to ensure navigation completes)
           Future.delayed(const Duration(milliseconds: 800), () {
             if (!context.mounted) return;
             _reloadVouchers();
 
-            // Reload wallet to update balance
+            // Reload wallet to update balance + purchases for the coupons count.
             context.read<WalletBloc>().add(const LoadWalletEvent());
+            context.read<PurchaseBloc>().add(const purchase_evt.LoadPurchasesEvent());
           });
         } else if (state is VoucherError) {
           // Show error message - check if this is from a purchase operation
@@ -404,7 +410,7 @@ class _VouchersPageState extends State<VouchersPage> {
                               const SizedBox(width: 8),
                               ElevatedButton(
                                 onPressed: _filtersChanged ? _applyFilters : null,
-                                child: const Text('Appliquer'), // Will be localized
+                                child: Text(l10n.apply),
                               ),
                             ],
                           ),
@@ -487,245 +493,11 @@ class _VouchersPageState extends State<VouchersPage> {
     final l10n = AppLocalizations.of(context);
     return ScaleTapWidget(
       onTap: () => _showVoucherDetails(context, voucher),
-      child: Card(
-        elevation: 2,
-        margin: const EdgeInsets.only(bottom: 16),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Colors.white,
-                voucher.status == 'active'
-                    ? AppTheme.primaryOrange.withOpacity(0.05)
-                    : Colors.grey.withOpacity(0.05),
-              ],
-            ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    // Business Logo
-                    Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: AppTheme.primaryOrange.withOpacity(0.2),
-                          width: 2,
-                        ),
-                      ),
-                      child: CircleAvatar(
-                        radius: 28,
-                        backgroundColor: AppTheme.primaryOrange.withOpacity(0.1),
-                        backgroundImage: voucher.imageUrl != null
-                            ? NetworkImage(
-                                ImageUrlHelper.buildImageUrl(voucher.imageUrl),
-                              )
-                            : null,
-                        child: voucher.imageUrl == null
-                            ? const Icon(Icons.local_offer, color: AppTheme.primaryOrange, size: 28)
-                            : null,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            voucher.title,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 0.2,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: voucher.type == 'free'
-                                  ? Colors.green.withOpacity(0.1)
-                                  : AppTheme.primaryTurquoise.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(
-                                color: voucher.type == 'free'
-                                    ? Colors.green.withOpacity(0.3)
-                                    : AppTheme.primaryTurquoise.withOpacity(0.3),
-                                width: 1,
-                              ),
-                            ),
-                            child: Text(
-                              voucher.type == 'free' ? l10n.free : l10n.paid,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: voucher.type == 'free' ? Colors.green[700] : AppTheme.primaryTurquoise,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    // Status Badge
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: voucher.status == 'active'
-                            ? Colors.green
-                            : Colors.red,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: (voucher.status == 'active' ? Colors.green : Colors.red).withOpacity(0.3),
-                            blurRadius: 4,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Text(
-                        voucher.status == 'active' ? l10n.active : l10n.inactive,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  voucher.description,
-                  style: const TextStyle(fontSize: 14, height: 1.4),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (voucher.priceMinor > 0)
-                          Text(
-                            '${voucher.priceMinor.toStringAsFixed(0)} CFA',
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: AppTheme.primaryTurquoise,
-                            ),
-                          ),
-                        if (voucher.coinPrice > 0)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 4),
-                            child: Text(
-                              '${voucher.coinPrice.toStringAsFixed(0)} ${l10n.coins}',
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: AppTheme.primaryOrange,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        if (voucher.priceMinor == 0 && voucher.coinPrice == 0)
-                          Text(
-                            l10n.free,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.green,
-                            ),
-                          ),
-                      ],
-                    ),
-                    ElevatedButton(
-                      onPressed:
-                          voucher.status == 'active' &&
-                              voucher.remainingQuantity > 0
-                          ? () {
-                              // For free vouchers, use claim instead of purchase
-                              if (voucher.priceMinor == 0 &&
-                                  voucher.coinPrice == 0) {
-                                _claimFreeVoucher(context, voucher);
-                              } else {
-                                _purchaseVoucher(context, voucher);
-                              }
-                            }
-                          : null,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: voucher.status == 'active' &&
-                                voucher.remainingQuantity > 0
-                            ? AppTheme.primaryOrange
-                            : Colors.grey,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                      ),
-                      child: Text(
-                        voucher.status == 'active' &&
-                                voucher.remainingQuantity > 0
-                            ? (voucher.priceMinor == 0 && voucher.coinPrice == 0
-                                  ? l10n.claim
-                                  : l10n.buy)
-                            : l10n.unavailable,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      '${l10n.quantity}: ${voucher.remainingQuantity}/${voucher.quantity}',
-                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                    ),
-                    if (voucher.discountValue > 0)
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: Colors.green.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: Colors.green.withOpacity(0.3),
-                            width: 1,
-                          ),
-                        ),
-                        child: Text(
-                          '${l10n.discount}: ${voucher.discountValue.toStringAsFixed(0)}%',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.green[700],
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
+      child: _ModernVoucherCard(
+        voucher: voucher,
+        l10n: l10n,
+        onBuy: () => _purchaseVoucher(context, voucher),
+        onClaim: () => _claimFreeVoucher(context, voucher),
       ),
     );
   }
@@ -1499,5 +1271,239 @@ Future<(double, double)> _fetchBalances(BuildContext context) async {
       return (s.wallet.balanceMinor, s.wallet.coins);
     }
     return (0.0, 0.0);
+  }
+}
+
+/// Modern, attractive voucher card (browse list) — banner image, overlaid
+/// badges, discount ribbon, quantity progress bar and a clear buy/claim CTA.
+class _ModernVoucherCard extends StatelessWidget {
+  const _ModernVoucherCard({
+    required this.voucher,
+    required this.l10n,
+    required this.onBuy,
+    required this.onClaim,
+  });
+
+  final Voucher voucher;
+  final AppLocalizations l10n;
+  final VoidCallback onBuy;
+  final VoidCallback onClaim;
+
+  @override
+  Widget build(BuildContext context) {
+    final isActive = voucher.status == 'active' && voucher.remainingQuantity > 0;
+    final isFree = voucher.priceMinor == 0 && voucher.coinPrice == 0;
+    final hasLimit = voucher.quantity > 0;
+    final soldRatio = hasLimit
+        ? (1 - (voucher.remainingQuantity / voucher.quantity)).clamp(0.0, 1.0)
+        : 0.0;
+
+    return Card(
+      elevation: 3,
+      margin: const EdgeInsets.only(bottom: 16),
+      clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Stack(
+            children: [
+              SizedBox(
+                height: 150,
+                width: double.infinity,
+                child: voucher.imageUrl != null
+                    ? Image.network(
+                        ImageUrlHelper.buildImageUrl(voucher.imageUrl),
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => _fallback(),
+                        loadingBuilder: (c, child, p) =>
+                            p == null ? child : _fallback(loading: true),
+                      )
+                    : _fallback(),
+              ),
+              Positioned.fill(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [Colors.transparent, Colors.black.withOpacity(0.45)],
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 12,
+                left: 12,
+                child: _badge(isFree ? l10n.free : l10n.paid,
+                    isFree ? Colors.green : AppTheme.primaryTurquoise),
+              ),
+              Positioned(
+                top: 12,
+                right: 12,
+                child: _badge(
+                    voucher.status == 'active' ? l10n.active : l10n.inactive,
+                    voucher.status == 'active' ? Colors.green : Colors.red),
+              ),
+              if (voucher.discountValue > 0)
+                Positioned(
+                  bottom: 12,
+                  left: 12,
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: AppTheme.primaryOrange,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.black.withOpacity(0.25), blurRadius: 6),
+                      ],
+                    ),
+                    child: Text(
+                      '-${voucher.discountValue.toStringAsFixed(0)}%',
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(voucher.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                        fontSize: 17, fontWeight: FontWeight.bold)),
+                if (voucher.description.isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  Text(voucher.description,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          fontSize: 13, color: Colors.grey[600], height: 1.3)),
+                ],
+                const SizedBox(height: 12),
+                if (hasLimit) ...[
+                  Text(
+                      '${l10n.quantity}: ${voucher.remainingQuantity}/${voucher.quantity}',
+                      style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+                  const SizedBox(height: 6),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(6),
+                    child: LinearProgressIndicator(
+                      value: soldRatio,
+                      minHeight: 6,
+                      backgroundColor: AppTheme.primaryOrange.withOpacity(0.12),
+                      valueColor: const AlwaysStoppedAnimation(
+                          AppTheme.primaryOrange),
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                ],
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (voucher.priceMinor > 0)
+                          Text('${voucher.priceMinor.toStringAsFixed(0)} CFA',
+                              style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppTheme.primaryTurquoise)),
+                        if (voucher.coinPrice > 0)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 2),
+                            child: Row(children: [
+                              const Icon(Icons.monetization_on,
+                                  size: 16, color: AppTheme.primaryOrange),
+                              const SizedBox(width: 4),
+                              Text(
+                                  '${voucher.coinPrice.toStringAsFixed(0)} ${l10n.coins}',
+                                  style: const TextStyle(
+                                      fontSize: 14,
+                                      color: AppTheme.primaryOrange,
+                                      fontWeight: FontWeight.w700)),
+                            ]),
+                          ),
+                        if (isFree)
+                          Text(l10n.free,
+                              style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.green)),
+                      ],
+                    ),
+                    ElevatedButton(
+                      onPressed: isActive ? (isFree ? onClaim : onBuy) : null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            isActive ? AppTheme.primaryOrange : Colors.grey,
+                        foregroundColor: Colors.white,
+                        elevation: isActive ? 2 : 0,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14)),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 22, vertical: 12),
+                      ),
+                      child: Text(
+                          isActive
+                              ? (isFree ? l10n.claim : l10n.buy)
+                              : l10n.unavailable,
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 14)),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _fallback({bool loading = false}) {
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [AppTheme.primaryOrange, AppTheme.primaryTurquoise],
+        ),
+      ),
+      child: Center(
+        child: loading
+            ? const SizedBox(
+                width: 28,
+                height: 28,
+                child: CircularProgressIndicator(
+                    strokeWidth: 2, color: Colors.white))
+            : const Icon(Icons.local_offer, color: Colors.white, size: 44),
+      ),
+    );
+  }
+
+  Widget _badge(String text, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.15), blurRadius: 4)],
+      ),
+      child: Text(text,
+          style: const TextStyle(
+              color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
+    );
   }
 }
