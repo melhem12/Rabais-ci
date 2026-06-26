@@ -693,478 +693,285 @@ class VoucherDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return Scaffold(
-      appBar: AppBar(title: Text(l10n.voucherDetails), centerTitle: true),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Voucher Image
-            FadeInWidget(
-              delay: 0.1,
-              child: SlideInWidget(
-                delay: 0.1,
-                begin: const Offset(0, -0.2),
-                child: Card(
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Container(
-                    width: double.infinity,
-                    height: 200,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          AppTheme.primaryOrange.withOpacity(0.1),
-                          AppTheme.primaryTurquoise.withOpacity(0.1),
-                        ],
-                      ),
-                    ),
-                    child: voucher.imageUrl != null
-                        ? ClipRRect(
-                            borderRadius: BorderRadius.circular(20),
-                            child: Image.network(
-                              ImageUrlHelper.buildImageUrl(voucher.imageUrl),
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return const Icon(Icons.image, size: 64, color: AppTheme.primaryOrange);
-                              },
-                            ),
-                          )
-                        : const Icon(Icons.image, size: 64, color: AppTheme.primaryOrange),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
+    final isActive = voucher.status == 'active' && voucher.remainingQuantity > 0;
+    final isFree = voucher.priceMinor == 0 && voucher.coinPrice == 0;
+    final hasLimit = voucher.quantity > 0;
+    final soldRatio = hasLimit
+        ? (1 - (voucher.remainingQuantity / voucher.quantity)).clamp(0.0, 1.0)
+        : 0.0;
 
-            // Voucher Info
-            FadeInWidget(
-              delay: 0.2,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+    return Scaffold(
+      backgroundColor: const Color(0xFFF6F7FB),
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 290,
+            pinned: true,
+            stretch: true,
+            backgroundColor: AppTheme.primaryOrange,
+            foregroundColor: Colors.white,
+            flexibleSpace: FlexibleSpaceBar(
+              collapseMode: CollapseMode.parallax,
+              background: Stack(
+                fit: StackFit.expand,
                 children: [
-                  Text(
-                    voucher.title,
-                    style: const TextStyle(
-                      fontSize: 26,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 0.3,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  voucher.imageUrl != null
+                      ? Image.network(
+                          ImageUrlHelper.buildImageUrl(voucher.imageUrl),
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => _heroFallback(),
+                        )
+                      : _heroFallback(),
+                  const DecoratedBox(
                     decoration: BoxDecoration(
-                      color: AppTheme.primaryTurquoise.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: AppTheme.primaryTurquoise.withOpacity(0.3),
-                        width: 1,
-                      ),
-                    ),
-                    child: Text(
-                      voucher.business?.name ?? 'Voucher',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: AppTheme.primaryTurquoise,
-                        fontWeight: FontWeight.w600,
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [Colors.black54, Colors.transparent, Colors.black87],
+                        stops: [0.0, 0.45, 1.0],
                       ),
                     ),
                   ),
-                  const SizedBox(height: 16),
-                  Text(
-                    voucher.description,
-                    style: const TextStyle(fontSize: 16, height: 1.5),
+                  if (voucher.discountValue > 0)
+                    Positioned(
+                      top: 104,
+                      left: 16,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: AppTheme.primaryOrange,
+                          borderRadius: BorderRadius.circular(14),
+                          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.3), blurRadius: 8)],
+                        ),
+                        child: Text('-${voucher.discountValue.toInt()}%',
+                            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
+                      ),
+                    ),
+                  Positioned(
+                    left: 20,
+                    right: 20,
+                    bottom: 18,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Row(children: [
+                          _heroBadge(isFree ? l10n.free : l10n.paid, isFree ? Colors.green : AppTheme.primaryTurquoise),
+                          const SizedBox(width: 8),
+                          _heroBadge(voucher.status == 'active' ? l10n.active : l10n.inactive,
+                              voucher.status == 'active' ? Colors.green : Colors.red),
+                        ]),
+                        const SizedBox(height: 10),
+                        Text(voucher.title,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold, letterSpacing: 0.2)),
+                        if (voucher.business?.name != null) ...[
+                          const SizedBox(height: 4),
+                          Row(children: [
+                            const Icon(Icons.storefront, color: Colors.white70, size: 16),
+                            const SizedBox(width: 6),
+                            Expanded(
+                              child: Text(voucher.business!.name,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(color: Colors.white70, fontSize: 14, fontWeight: FontWeight.w600)),
+                            ),
+                          ]),
+                        ],
+                      ],
+                    ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 24),
-
-            // Price and Discount
-            FadeInWidget(
-              delay: 0.3,
-              child: Card(
-                elevation: 1,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        Colors.white,
-                        AppTheme.primaryTurquoise.withOpacity(0.05),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(18),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 14, offset: const Offset(0, 6))],
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(l10n.price, style: TextStyle(color: Colors.grey[600], fontSize: 13)),
+                            const SizedBox(height: 6),
+                            if (voucher.priceMinor > 0)
+                              Text('${voucher.priceMinor.toStringAsFixed(0)} CFA',
+                                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppTheme.primaryTurquoise)),
+                            if (voucher.coinPrice > 0)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 2),
+                                child: Row(children: [
+                                  const Icon(Icons.monetization_on, size: 18, color: AppTheme.primaryOrange),
+                                  const SizedBox(width: 4),
+                                  Text('${voucher.coinPrice.toStringAsFixed(0)} ${l10n.coins}',
+                                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppTheme.primaryOrange)),
+                                ]),
+                              ),
+                            if (isFree)
+                              Text(l10n.free, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.green)),
+                          ],
+                        ),
+                        if (voucher.discountValue > 0)
+                          Container(
+                            width: 64,
+                            height: 64,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(color: AppTheme.primaryOrange.withOpacity(0.1), shape: BoxShape.circle),
+                            child: Text('-${voucher.discountValue.toInt()}%',
+                                style: const TextStyle(color: AppTheme.primaryOrange, fontWeight: FontWeight.bold, fontSize: 17)),
+                          ),
                       ],
                     ),
                   ),
-                  padding: const EdgeInsets.all(20),
-                  child: Row(
-                    children: [
-                      Column(
+                  const SizedBox(height: 18),
+                  if (voucher.description.isNotEmpty) ...[
+                    Text(l10n.description, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 8),
+                    Text(voucher.description, style: TextStyle(fontSize: 15, height: 1.5, color: Colors.grey[800])),
+                    const SizedBox(height: 18),
+                  ],
+                  if (hasLimit) ...[
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 10)],
+                      ),
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          if (voucher.priceMinor > 0)
-                            Text(
-                              '${voucher.priceMinor.toStringAsFixed(0)} CFA',
-                              style: const TextStyle(
-                                fontSize: 28,
-                                fontWeight: FontWeight.bold,
-                                color: AppTheme.primaryTurquoise,
-                              ),
+                          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                            Text(l10n.availableQuantity, style: TextStyle(color: Colors.grey[700], fontWeight: FontWeight.w600)),
+                            Text('${voucher.remainingQuantity}/${voucher.quantity}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                          ]),
+                          const SizedBox(height: 8),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(6),
+                            child: LinearProgressIndicator(
+                              value: soldRatio,
+                              minHeight: 8,
+                              backgroundColor: AppTheme.primaryOrange.withOpacity(0.12),
+                              valueColor: const AlwaysStoppedAnimation(AppTheme.primaryOrange),
                             ),
-                          if (voucher.coinPrice > 0)
-                            Padding(
-                              padding: const EdgeInsets.only(top: 4),
-                              child: Text(
-                                '${voucher.coinPrice.toStringAsFixed(0)} ${l10n.coins}',
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  color: AppTheme.primaryOrange,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          if (voucher.priceMinor == 0 && voucher.coinPrice == 0)
-                            Text(
-                              l10n.free,
-                              style: const TextStyle(
-                                fontSize: 28,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.green,
-                              ),
-                            ),
-                        ],
-                      ),
-                      const Spacer(),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [AppTheme.primaryOrange, AppTheme.primaryTurquoise],
                           ),
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppTheme.primaryOrange.withOpacity(0.3),
-                              blurRadius: 8,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: Text(
-                          '-${voucher.discountValue.toStringAsFixed(0)}%',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
-
-            // Business Information
-            if (voucher.business != null)
-              FadeInWidget(
-                delay: 0.4,
-                child: Card(
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          Colors.white,
-                          AppTheme.primaryOrange.withOpacity(0.05),
                         ],
                       ),
                     ),
-                    padding: const EdgeInsets.all(20.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          l10n.businessInformation,
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 0.3,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        Row(
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: AppTheme.primaryOrange.withOpacity(0.2),
-                                  width: 2,
-                                ),
-                              ),
-                              child: CircleAvatar(
-                                radius: 28,
-                                backgroundColor: AppTheme.primaryOrange.withOpacity(0.1),
-                                backgroundImage: voucher.business!.logoUrl != null
-                                    ? NetworkImage(
-                                        ImageUrlHelper.buildImageUrl(
-                                          voucher.business!.logoUrl,
-                                        ),
-                                      )
-                                    : null,
-                                child: voucher.business!.logoUrl == null
-                                    ? const Icon(Icons.business, color: AppTheme.primaryOrange, size: 28)
-                                    : null,
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    voucher.business!.name,
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      letterSpacing: 0.2,
-                                    ),
-                                  ),
-                                  if (voucher.business!.category != null) ...[
-                                    const SizedBox(height: 6),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                      decoration: BoxDecoration(
-                                        color: AppTheme.primaryTurquoise.withOpacity(0.1),
-                                        borderRadius: BorderRadius.circular(8),
-                                        border: Border.all(
-                                          color: AppTheme.primaryTurquoise.withOpacity(0.3),
-                                          width: 1,
-                                        ),
-                                      ),
-                                      child: Text(
-                                        voucher.business!.category!,
-                                        style: const TextStyle(
-                                          fontSize: 12,
-                                          color: AppTheme.primaryTurquoise,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        if (voucher.business!.contactPhone != null) ...[
-                          const SizedBox(height: 16),
-                          Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: AppTheme.primaryOrange.withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: const Icon(
-                                  Icons.phone,
-                                  size: 18,
-                                  color: AppTheme.primaryOrange,
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Text(
-                                voucher.business!.contactPhone!,
-                                style: const TextStyle(fontSize: 15),
-                              ),
-                            ],
-                          ),
-                        ],
-                        if (voucher.business!.contactEmail != null) ...[
-                          const SizedBox(height: 12),
-                          Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: AppTheme.primaryTurquoise.withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: const Icon(
-                                  Icons.email,
-                                  size: 18,
-                                  color: AppTheme.primaryTurquoise,
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Text(
-                                  voucher.business!.contactEmail!,
-                                  style: const TextStyle(fontSize: 15),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-
-            const SizedBox(height: 24),
-
-            // Validity
-            FadeInWidget(
-              delay: 0.5,
-              child: Card(
-                elevation: 2,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        Colors.white,
-                        AppTheme.primaryTurquoise.withOpacity(0.05),
-                      ],
-                    ),
-                  ),
-                  padding: const EdgeInsets.all(20.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        l10n.validity,
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 0.3,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: Colors.green.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: Colors.green.withOpacity(0.3),
-                            width: 1,
-                          ),
-                        ),
-                        child: Text(
-                          l10n.active,
-                          style: TextStyle(
-                            color: Colors.green[700],
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        '${l10n.availableQuantity}: ${voucher.remainingQuantity}',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          color: AppTheme.primaryTurquoise,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
-
-            // Purchase/Claim Button
-            FadeInWidget(
-              delay: 0.6,
-              child: ScaleTapWidget(
-                onTap: () {
-                  // For free vouchers, use claim instead of purchase
-                  if (voucher.priceMinor == 0 && voucher.coinPrice == 0) {
-                    _claimFreeVoucher(context);
-                  } else {
-                    _purchaseVoucher(context);
-                  }
-                },
-                child: Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [AppTheme.primaryOrange, AppTheme.primaryTurquoise],
-                    ),
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppTheme.primaryOrange.withOpacity(0.4),
-                        blurRadius: 12,
-                        offset: const Offset(0, 6),
-                      ),
-                    ],
-                  ),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      // For free vouchers, use claim instead of purchase
-                      if (voucher.priceMinor == 0 && voucher.coinPrice == 0) {
-                        _claimFreeVoucher(context);
-                      } else {
-                        _purchaseVoucher(context);
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                      shadowColor: Colors.transparent,
-                      padding: const EdgeInsets.symmetric(vertical: 18),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
-                    child: Text(
-                      voucher.priceMinor == 0 && voucher.coinPrice == 0
-                          ? l10n.claim
-                          : l10n.buyNow,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                    const SizedBox(height: 18),
+                  ],
+                  if (voucher.business != null)
+                    Container(
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
                         color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 10)],
                       ),
+                      child: Row(children: [
+                        CircleAvatar(
+                          radius: 26,
+                          backgroundColor: AppTheme.primaryOrange.withOpacity(0.1),
+                          backgroundImage: voucher.business!.logoUrl != null
+                              ? NetworkImage(ImageUrlHelper.buildImageUrl(voucher.business!.logoUrl))
+                              : null,
+                          child: voucher.business!.logoUrl == null
+                              ? const Icon(Icons.storefront, color: AppTheme.primaryOrange)
+                              : null,
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(voucher.business!.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                              if (voucher.business!.category != null && voucher.business!.category!.isNotEmpty)
+                                Text(voucher.business!.category!, style: TextStyle(color: Colors.grey[600], fontSize: 13)),
+                            ],
+                          ),
+                        ),
+                      ]),
                     ),
-                  ),
+                  const SizedBox(height: 90),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 14, offset: const Offset(0, -4))],
+        ),
+        child: SafeArea(
+          top: false,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+            child: SizedBox(
+              width: double.infinity,
+              height: 54,
+              child: ElevatedButton(
+                onPressed: isActive
+                    ? () {
+                        if (isFree) {
+                          _claimFreeVoucher(context);
+                        } else {
+                          _purchaseVoucher(context);
+                        }
+                      }
+                    : null,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: isActive ? AppTheme.primaryOrange : Colors.grey,
+                  foregroundColor: Colors.white,
+                  elevation: isActive ? 2 : 0,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                ),
+                child: Text(
+                  isActive ? (isFree ? l10n.claim : l10n.buyNow) : l10n.unavailable,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
             ),
-          ],
+          ),
         ),
       ),
+    );
+  }
+
+  Widget _heroFallback() {
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [AppTheme.primaryOrange, AppTheme.primaryTurquoise],
+        ),
+      ),
+      child: const Center(child: Icon(Icons.local_offer, color: Colors.white, size: 64)),
+    );
+  }
+
+  Widget _heroBadge(String text, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(10)),
+      child: Text(text, style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
     );
   }
 
