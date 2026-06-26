@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../generated/l10n/app_localizations.dart';
@@ -91,156 +92,180 @@ class _PurchasesPageState extends State<PurchasesPage> {
     final codeForDisplay =
         sanitizedCode.isEmpty ? purchase.qrCode ?? 'N/A' : sanitizedCode;
     final statusColor = _getStatusColor(purchase.status);
+    // Value paid: coins or CFA — never the wallet's raw 'USD' currency code.
+    String valueLabel;
+    Color valueColor;
+    if (purchase.amountMinor > 0) {
+      valueLabel = '${purchase.amountMinor.toInt()} CFA';
+      valueColor = AppTheme.primaryTurquoise;
+    } else if ((purchase.coinAmount ?? 0) > 0) {
+      valueLabel = '${purchase.coinAmount!.toInt()} ${l10n.coins}';
+      valueColor = AppTheme.primaryOrange;
+    } else {
+      valueLabel = l10n.free;
+      valueColor = Colors.green;
+    }
+
     return ScaleTapWidget(
       onTap: () async {
         final bloc = context.read<PurchaseBloc>();
         final navigator = Navigator.of(context);
-
         await navigator.push<bool>(
           MaterialPageRoute(
             builder: (context) => PurchaseDetailPage(purchaseId: purchase.id),
           ),
         );
-
         if (!mounted) return;
-
         bloc.add(const LoadPurchasesEvent());
       },
-      child: Card(
-        elevation: 2,
-        margin: const EdgeInsets.only(bottom: 16.0),
-        shape: RoundedRectangleBorder(
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        decoration: BoxDecoration(
+          color: Colors.white,
           borderRadius: BorderRadius.circular(20),
-        ),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Colors.white,
-                statusColor.withOpacity(0.05),
-              ],
+          border: Border.all(color: statusColor.withOpacity(0.22)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 14,
+              offset: const Offset(0, 6),
             ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        purchase.voucherTitle,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 0.2,
+                Container(width: 6, color: statusColor),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                purchase.voucherTitle,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 0.2),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: statusColor,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                _getStatusText(purchase.status, l10n),
+                                style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: statusColor,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: statusColor.withOpacity(0.3),
-                            blurRadius: 4,
-                            offset: const Offset(0, 2),
+                        const SizedBox(height: 12),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: valueColor.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(10),
+                            border:
+                                Border.all(color: valueColor.withOpacity(0.3)),
                           ),
-                        ],
-                      ),
-                      child: Text(
-                        _getStatusText(purchase.status, l10n),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                  purchase.amountMinor > 0
+                                      ? Icons.payments
+                                      : Icons.monetization_on,
+                                  size: 15,
+                                  color: valueColor),
+                              const SizedBox(width: 6),
+                              Text(valueLabel,
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      color: valueColor,
+                                      fontWeight: FontWeight.w700)),
+                            ],
+                          ),
                         ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: AppTheme.primaryTurquoise.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: AppTheme.primaryTurquoise.withOpacity(0.3),
-                      width: 1,
+                        const SizedBox(height: 14),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.withOpacity(0.06),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.confirmation_number,
+                                  size: 16, color: AppTheme.primaryOrange),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  codeForDisplay,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w700,
+                                      letterSpacing: 1.2),
+                                ),
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  Clipboard.setData(
+                                      ClipboardData(text: codeForDisplay));
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('${l10n.code} ✓'),
+                                      duration: const Duration(seconds: 1),
+                                    ),
+                                  );
+                                },
+                                child: const Padding(
+                                  padding: EdgeInsets.all(4),
+                                  child: Icon(Icons.copy,
+                                      size: 16, color: Colors.grey),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                          children: [
+                            Icon(Icons.access_time,
+                                size: 15, color: Colors.grey[500]),
+                            const SizedBox(width: 6),
+                            Text(
+                              '${l10n.purchasedOn}: ${_formatDate(purchase.purchaseDate)}',
+                              style: TextStyle(
+                                  fontSize: 13,
+                                  color: Colors.grey[600],
+                                  fontWeight: FontWeight.w500),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-                  child: Text(
-                    '${purchase.amount.toInt()} ${purchase.currency}',
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: AppTheme.primaryTurquoise,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: AppTheme.primaryOrange.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: const Icon(
-                        Icons.confirmation_number,
-                        size: 16,
-                        color: AppTheme.primaryOrange,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        '${l10n.code}: $codeForDisplay',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey[700],
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: AppTheme.primaryTurquoise.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: const Icon(
-                        Icons.access_time,
-                        size: 16,
-                        color: AppTheme.primaryTurquoise,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      '${l10n.purchasedOn}: ${_formatDate(purchase.purchaseDate)}',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[700],
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
                 ),
               ],
             ),
