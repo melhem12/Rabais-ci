@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../generated/l10n/app_localizations.dart';
 import '../../core/utils/code_formatter.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/utils/image_url_helper.dart';
 import '../../domain/entities/voucher.dart';
 import '../features/purchase/bloc/purchase_bloc.dart';
 import '../features/purchase/bloc/purchase_event.dart';
@@ -118,159 +119,211 @@ class _PurchasesPageState extends State<PurchasesPage> {
         if (!mounted) return;
         bloc.add(const LoadPurchasesEvent());
       },
-      child: Container(
+      child: Card(
+        elevation: 3,
         margin: const EdgeInsets.only(bottom: 16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: statusColor.withOpacity(0.22)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 14,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
-          child: IntrinsicHeight(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Stack(
               children: [
-                Container(width: 6, color: statusColor),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                SizedBox(
+                  height: 140,
+                  width: double.infinity,
+                  child: (purchase.voucherDetails?.imageUrl != null)
+                      ? Image.network(
+                          ImageUrlHelper.buildImageUrl(
+                              purchase.voucherDetails!.imageUrl),
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => _purchaseImageFallback(),
+                        )
+                      : _purchaseImageFallback(),
+                ),
+                Positioned.fill(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.transparent,
+                          Colors.black.withOpacity(0.45)
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 12,
+                  right: 12,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: statusColor,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.black.withOpacity(0.2), blurRadius: 4),
+                      ],
+                    ),
+                    child: Text(
+                      _getStatusText(purchase.status, l10n),
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+                if ((purchase.voucherDetails?.discountValue ?? 0) > 0)
+                  Positioned(
+                    bottom: 12,
+                    left: 12,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: AppTheme.primaryOrange,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                              color: Colors.black.withOpacity(0.25),
+                              blurRadius: 6),
+                        ],
+                      ),
+                      child: Text(
+                        '-${purchase.voucherDetails!.discountValue.toInt()}%',
+                        style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    purchase.voucherTitle,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.2),
+                  ),
+                  const SizedBox(height: 10),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: valueColor.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: valueColor.withOpacity(0.3)),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                purchase.voucherTitle,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 0.2),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 6),
-                              decoration: BoxDecoration(
-                                color: statusColor,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Text(
-                                _getStatusText(purchase.status, l10n),
-                                style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: valueColor.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(10),
-                            border:
-                                Border.all(color: valueColor.withOpacity(0.3)),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                  purchase.amountMinor > 0
-                                      ? Icons.payments
-                                      : Icons.monetization_on,
-                                  size: 15,
-                                  color: valueColor),
-                              const SizedBox(width: 6),
-                              Text(valueLabel,
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      color: valueColor,
-                                      fontWeight: FontWeight.w700)),
-                            ],
+                        Icon(
+                            purchase.amountMinor > 0
+                                ? Icons.payments
+                                : Icons.monetization_on,
+                            size: 15,
+                            color: valueColor),
+                        const SizedBox(width: 6),
+                        Text(valueLabel,
+                            style: TextStyle(
+                                fontSize: 14,
+                                color: valueColor,
+                                fontWeight: FontWeight.w700)),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.withOpacity(0.06),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.confirmation_number,
+                            size: 16, color: AppTheme.primaryOrange),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            codeForDisplay,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 1.2),
                           ),
                         ),
-                        const SizedBox(height: 14),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 8),
-                          decoration: BoxDecoration(
-                            color: Colors.grey.withOpacity(0.06),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Row(
-                            children: [
-                              const Icon(Icons.confirmation_number,
-                                  size: 16, color: AppTheme.primaryOrange),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  codeForDisplay,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w700,
-                                      letterSpacing: 1.2),
-                                ),
+                        InkWell(
+                          onTap: () {
+                            Clipboard.setData(
+                                ClipboardData(text: codeForDisplay));
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('${l10n.code} ✓'),
+                                duration: const Duration(seconds: 1),
                               ),
-                              InkWell(
-                                onTap: () {
-                                  Clipboard.setData(
-                                      ClipboardData(text: codeForDisplay));
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text('${l10n.code} ✓'),
-                                      duration: const Duration(seconds: 1),
-                                    ),
-                                  );
-                                },
-                                child: const Padding(
-                                  padding: EdgeInsets.all(4),
-                                  child: Icon(Icons.copy,
-                                      size: 16, color: Colors.grey),
-                                ),
-                              ),
-                            ],
+                            );
+                          },
+                          child: const Padding(
+                            padding: EdgeInsets.all(4),
+                            child: Icon(Icons.copy,
+                                size: 16, color: Colors.grey),
                           ),
-                        ),
-                        const SizedBox(height: 10),
-                        Row(
-                          children: [
-                            Icon(Icons.access_time,
-                                size: 15, color: Colors.grey[500]),
-                            const SizedBox(width: 6),
-                            Text(
-                              '${l10n.purchasedOn}: ${_formatDate(purchase.purchaseDate)}',
-                              style: TextStyle(
-                                  fontSize: 13,
-                                  color: Colors.grey[600],
-                                  fontWeight: FontWeight.w500),
-                            ),
-                          ],
                         ),
                       ],
                     ),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Icon(Icons.access_time,
+                          size: 15, color: Colors.grey[500]),
+                      const SizedBox(width: 6),
+                      Text(
+                        '${l10n.purchasedOn}: ${_formatDate(purchase.purchaseDate)}',
+                        style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.grey[600],
+                            fontWeight: FontWeight.w500),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
+          ],
         ),
+      ),
+    );
+  }
+
+  Widget _purchaseImageFallback() {
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [AppTheme.primaryOrange, AppTheme.primaryTurquoise],
+        ),
+      ),
+      child: const Center(
+        child: Icon(Icons.local_offer, color: Colors.white, size: 44),
       ),
     );
   }
