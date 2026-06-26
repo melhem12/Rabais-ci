@@ -2,7 +2,7 @@ name: rabais_ci
 description: "RABAIS CI Mobile App - Clean Architecture Flutter App"
 publish_to: 'none'
 
-version: 1.0.0+2
+version: 1.0.1+3
 
 environment:
   sdk: ^3.9.0
@@ -114,8 +114,10 @@ flutter_launcher_icons:
   android: true
   ios: true
   image_path: assets/icons/mylogo.png
+  # Padded foreground so Android's adaptive-icon zoom doesn't crop the logo
+  # (keeps it visually the same size as the iOS icon).
   adaptive_icon_background: "#FFFFFF"
-  adaptive_icon_foreground: assets/icons/mylogo.png
+  adaptive_icon_foreground: assets/icons/icon_foreground.png
 
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
