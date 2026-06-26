@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
@@ -126,239 +127,194 @@ class _PurchaseDetailPageState extends State<PurchaseDetailPage> {
     final displayCodeText = displayCode.isEmpty
         ? (purchase.redeemCode ?? purchase.qrCode ?? _qrCode ?? 'N/A')
         : displayCode;
+    final statusColor = _getStatusColor(purchase.status);
+    final qrData = purchase.qrPayload ?? purchase.qrCode ?? _qrCode;
+
+    String valueLabel;
+    if (purchase.amountMinor > 0) {
+      valueLabel = '${purchase.amountMinor.toInt()} CFA';
+    } else if ((purchase.coinAmount ?? 0) > 0) {
+      valueLabel = '${purchase.coinAmount!.toInt()} ${l10n.coins}';
+    } else {
+      valueLabel = l10n.free;
+    }
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Voucher Info Card
+          // Status header
           FadeInWidget(
-            child: Card(
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.white,
-                      AppTheme.primaryOrange.withValues(alpha: 0.05),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(22),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [statusColor, statusColor.withValues(alpha: 0.78)],
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
+                boxShadow: [
+                  BoxShadow(
+                    color: statusColor.withValues(alpha: 0.32),
+                    blurRadius: 18,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        purchase.voucherTitle,
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: AppTheme.navyBlue,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        purchase.coinAmount != null
-                            ? '${purchase.coinAmount!.toInt()} coins'
-                            : '${purchase.amount.toInt()} ${purchase.currency}',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
-                            ),
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  _getStatusColor(purchase.status),
-                                  _getStatusColor(purchase.status).withValues(alpha: 0.8),
-                                ],
-                              ),
-                              borderRadius: BorderRadius.circular(16),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: _getStatusColor(purchase.status).withValues(alpha: 0.3),
-                                  blurRadius: 4,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            child: Text(
-                              _getStatusText(purchase.status, l10n),
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                      Expanded(
+                        child: Text(
+                          purchase.voucherTitle,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            letterSpacing: 0.2,
                           ),
-                        ],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.22),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          _getStatusText(purchase.status, l10n),
+                          style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+                        ),
                       ),
                     ],
                   ),
-                ),
+                  const SizedBox(height: 14),
+                  Row(
+                    children: [
+                      Icon(
+                        purchase.amountMinor > 0 ? Icons.payments : Icons.monetization_on,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        valueLabel,
+                        style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w800),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 20),
 
-          // QR Code Section
+          // QR code card — the star (scan to redeem)
           SlideInWidget(
-            begin: const Offset(0, 0.3),
-            child: Card(
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+            begin: const Offset(0, 0.2),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(22),
+                boxShadow: [
+                  BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 16, offset: const Offset(0, 6)),
+                ],
               ),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.white,
-                      AppTheme.primaryTurquoise.withValues(alpha: 0.05),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
+              child: Column(
+                children: [
+                  Text(l10n.qrCode, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 16),
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: AppTheme.primaryOrange.withValues(alpha: 0.25), width: 2),
+                    ),
+                    child: qrData != null
+                        ? QrImageView(data: qrData, version: QrVersions.auto, size: 200.0)
+                        : const SizedBox(width: 200, height: 200, child: Center(child: AppLoader())),
                   ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        l10n.qrCode,
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: AppTheme.navyBlue,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Center(
-                        child: Container(
-                          padding: const EdgeInsets.all(16.0),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: AppTheme.primaryOrange, width: 2),
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppTheme.primaryOrange.withValues(alpha: 0.2),
-                                blurRadius: 8,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: (purchase.qrPayload ?? purchase.qrCode ?? _qrCode) != null
-                              ? QrImageView(
-                                  data: purchase.qrPayload ?? purchase.qrCode ?? _qrCode ?? '',
-                                  version: QrVersions.auto,
-                                  size: 200.0,
-                                )
-                              : const AppLoader(),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Center(
-                        child: Text(
+                  const SizedBox(height: 16),
+                  // Code with copy
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: AppTheme.primaryOrange.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
                           displayCodeText,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 2,
                             color: AppTheme.primaryOrange,
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 8),
-                      Center(
-                        child: Text(
-                          l10n.showQrToMerchant,
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey[600],
-                          ),
-                          textAlign: TextAlign.center,
+                        const SizedBox(width: 10),
+                        InkWell(
+                          onTap: () {
+                            Clipboard.setData(ClipboardData(text: displayCodeText));
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('${l10n.code} ✓'), duration: const Duration(seconds: 1)),
+                            );
+                          },
+                          child: const Icon(Icons.copy, size: 18, color: AppTheme.primaryOrange),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
+                  const SizedBox(height: 12),
+                  Text(
+                    l10n.showQrToMerchant,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+                  ),
+                ],
               ),
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 20),
 
-          // Purchase Details
+          // Details card
           FadeInWidget(
             delay: 0.2,
-            child: Card(
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(18),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 14, offset: const Offset(0, 6)),
+                ],
               ),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.white,
-                      AppTheme.primaryTurquoise.withValues(alpha: 0.05),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        l10n.purchaseDetails,
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: AppTheme.navyBlue,
-                        ),
-                      ),
-                  const SizedBox(height: 16),
-                  _buildDetailRow(l10n.code,
-                      displayCode.isEmpty ? (purchase.qrCode ?? 'N/A') : displayCode),
-                  _buildDetailRow(
-                    l10n.purchasedOn,
-                    _formatDate(purchase.purchaseDate),
-                  ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(l10n.purchaseDetails, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 14),
+                  _buildDetailRow(l10n.code, displayCodeText),
+                  _buildDetailRow(l10n.purchasedOn, _formatDate(purchase.purchaseDate)),
                   if (purchase.validUntil != null)
-                    _buildDetailRow(
-                      l10n.expiresOn,
-                      _formatDate(purchase.validUntil!),
-                    ),
-                  _buildDetailRow(
-                    l10n.amount,
-                    purchase.coinAmount != null
-                        ? '${purchase.coinAmount!.toInt()} coins'
-                        : '${purchase.amount.toInt()} ${purchase.currency}',
-                  ),
-                    ],
-                  ),
-                ),
+                    _buildDetailRow(l10n.expiresOn, _formatDate(purchase.validUntil!)),
+                  _buildDetailRow(l10n.amount, valueLabel),
+                ],
               ),
             ),
           ),
