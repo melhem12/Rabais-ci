@@ -4,6 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../features/business/bloc/business_bloc.dart';
 import '../features/business/bloc/business_event.dart';
 import '../features/business/bloc/business_state.dart';
+import '../../data/datasources/business_remote_datasource.dart';
+import '../../di/service_locator.dart';
+import '../../domain/entities/business_options.dart';
 import '../../domain/entities/voucher.dart';
 import '../../generated/l10n/app_localizations.dart';
 import '../../core/utils/image_url_helper.dart';
@@ -25,20 +28,28 @@ class PartnersDirectoryPage extends StatefulWidget {
 class _PartnersDirectoryPageState extends State<PartnersDirectoryPage> {
   final TextEditingController _searchController = TextEditingController();
   String? _selectedCategory;
-  
-  // Category values that match the API (not localized)
-  // These are the actual category values sent to the backend
-  static const List<Map<String, String?>> _categoryOptions = [
-    {'value': null, 'key': 'all'}, // null means all
-    {'value': 'Restaurant', 'key': 'restaurants'},
-    {'value': 'Shopping', 'key': 'shopping'},
-    {'value': 'Services', 'key': 'services'},
-  ];
+
+  // Real categories loaded from the backend (`/business/options`). The chip
+  // value sent to the partners endpoint is the category NAME, which the
+  // backend matches case-insensitively against the business category.
+  List<BusinessCategoryOption> _categories = [];
 
   @override
   void initState() {
     super.initState();
     context.read<BusinessBloc>().add(const LoadBusinessPartnersEvent());
+    _loadCategories();
+  }
+
+  Future<void> _loadCategories() async {
+    try {
+      final categories = await getIt<BusinessRemoteDataSource>()
+          .getBusinessOptions();
+      if (!mounted) return;
+      setState(() => _categories = categories);
+    } catch (_) {
+      // Filters are optional; ignore load failures and keep the "All" chip.
+    }
   }
 
   @override
@@ -88,26 +99,37 @@ class _PartnersDirectoryPageState extends State<PartnersDirectoryPage> {
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
-                    children: _categoryOptions.map((option) {
-                      final categoryValue = option['value'];
-                      final localizationKey = option['key']!;
-                      final categoryLabel = _getLocalizedCategory(localizationKey);
-                      final isSelected = _selectedCategory == categoryValue;
-                      
-                      return Padding(
+                    children: [
+                      // "All" chip clears the category filter.
+                      Padding(
                         padding: const EdgeInsets.only(right: 8),
                         child: FilterChip(
-                          label: Text(categoryLabel),
-                          selected: isSelected,
-                          onSelected: (selected) {
-                            setState(() {
-                              _selectedCategory = selected ? categoryValue : null;
-                            });
+                          label: Text(l10n.all),
+                          selected: _selectedCategory == null,
+                          onSelected: (_) {
+                            setState(() => _selectedCategory = null);
                             _applyFilters();
                           },
                         ),
-                      );
-                    }).toList(),
+                      ),
+                      ..._categories.map((category) {
+                        final isSelected = _selectedCategory == category.name;
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 8),
+                          child: FilterChip(
+                            label: Text(category.name),
+                            selected: isSelected,
+                            onSelected: (selected) {
+                              setState(() {
+                                _selectedCategory =
+                                    selected ? category.name : null;
+                              });
+                              _applyFilters();
+                            },
+                          ),
+                        );
+                      }),
+                    ],
                   ),
                 ),
               ],
@@ -156,22 +178,6 @@ class _PartnersDirectoryPageState extends State<PartnersDirectoryPage> {
         ],
       ),
     );
-  }
-
-  String _getLocalizedCategory(String key) {
-    final l10n = AppLocalizations.of(context);
-    switch (key) {
-      case 'all':
-        return l10n.all;
-      case 'restaurants':
-        return l10n.restaurants;
-      case 'shopping':
-        return l10n.shopping;
-      case 'services':
-        return l10n.services;
-      default:
-        return key;
-    }
   }
 
   void _applyFilters() {
