@@ -1159,8 +1159,10 @@ backend webhook, which credits the wallet. Then refresh `GET /wallet`.
 **Authentication**: Optional
 
 **Query Parameters**:
-- `category` (string, optional): Filter by category
-- `search` (string, optional): Search in name
+- `category` (string, optional): Filter by category **name** (case-insensitive, matched against the business category). Use one of the names returned by `GET /business/options`.
+- `search` (string, optional): Substring match against business name or category.
+
+> The mobile partners directory builds its filter chips from `GET /business/options`, then sends the selected category **name** here. Do not hardcode category values — they are admin-managed and change over time.
 
 **Response** (200 OK):
 ```json
