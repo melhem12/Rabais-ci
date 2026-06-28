@@ -171,7 +171,7 @@ class _WalletRechargePageState extends State<WalletRechargePage> {
       MaterialPageRoute(
         builder: (_) => PaymentWebViewPage(
           paymentUrl: url,
-          returnUrl: 'http://72.61.163.98/payment/result',
+          returnUrl: 'https://rabais-ci.com/payment/result',
         ),
       ),
     );

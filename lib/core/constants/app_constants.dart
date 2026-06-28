@@ -1,8 +1,8 @@
 /// Application-wide constants and configuration
 class AppConstants {
   // API Configuration
-  static const String baseUrl = 'http://72.61.163.98/api';
-  static const String stagingBaseUrl = 'http://72.61.163.98/api';
+  static const String baseUrl = 'https://rabais-ci.com/api';
+  static const String stagingBaseUrl = 'https://rabais-ci.com/api';
 
   // Storage Keys
   static const String accessTokenKey = 'access_token';
