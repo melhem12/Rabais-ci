@@ -88,5 +88,6 @@ class AppConstants {
 
   // OTP Configuration
   static const int otpLength = 4;
-  static const String devOtpCode = '1234';
+  // Fallback resend cooldown when the backend does not send `resend_after`.
+  static const int otpResendCooldownSeconds = 60;
 }

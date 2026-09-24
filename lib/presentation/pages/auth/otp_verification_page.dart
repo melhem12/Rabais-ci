@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../core/constants/app_constants.dart';
 import '../../features/auth/bloc/auth_bloc.dart';
 import '../../features/auth/bloc/auth_event.dart';
 import '../../features/auth/bloc/auth_state.dart';
@@ -30,15 +33,41 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
   final List<TextEditingController> _controllers = List.generate(4, (index) => TextEditingController());
   final List<FocusNode> _focusNodes = List.generate(4, (index) => FocusNode());
   late String _phone;
+  // Resend cooldown driven by the backend's `resend_after`.
+  Timer? _resendTimer;
+  int _resendSeconds = 0;
+  // Channel the last code was sent on; offers "resend via SMS" for WhatsApp.
+  String _channel = 'sms';
 
   @override
   void initState() {
     super.initState();
     _phone = widget.phone;
+    _channel = widget.otpResponse?.channel ?? 'sms';
+    _startCooldown(widget.otpResponse?.resendAfter ?? AppConstants.otpResendCooldownSeconds);
+  }
+
+  void _startCooldown(int seconds) {
+    _resendTimer?.cancel();
+    setState(() => _resendSeconds = seconds);
+    if (seconds <= 0) return;
+    _resendTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+      if (_resendSeconds <= 1) {
+        timer.cancel();
+        setState(() => _resendSeconds = 0);
+      } else {
+        setState(() => _resendSeconds -= 1);
+      }
+    });
   }
 
   @override
   void dispose() {
+    _resendTimer?.cancel();
     for (var controller in _controllers) {
       controller.dispose();
     }
@@ -61,6 +90,10 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
         listener: (context, state) {
           if (state is Authenticated || state is ProfileCompletionRequired) {
             // RouterWrapper will swap to the appropriate home/profile page.
+          } else if (state is OtpVerificationRequired) {
+            // A new code was sent (resend): restart the cooldown.
+            _channel = state.response.channel;
+            _startCooldown(state.response.resendAfter);
           } else if (state is AuthError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -257,14 +290,28 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
                     ),
                     SizedBox(height: isSmallScreen ? 12.0 : 16.0),
                     TextButton(
-                      onPressed: _handleResend,
+                      onPressed: _resendSeconds > 0 ? null : _handleResend,
                       child: Text(
-                        l10n.resendCode,
+                        _resendSeconds > 0
+                            ? l10n.resendCodeIn(_resendSeconds)
+                            : l10n.resendCode,
                         style: TextStyle(
                           fontSize: isSmallScreen ? 14.0 : 16.0,
                         ),
                       ),
                     ),
+                    if (_channel == 'whatsapp')
+                      TextButton(
+                        onPressed: _resendSeconds > 0
+                            ? null
+                            : () => _handleResend(channel: 'sms'),
+                        child: Text(
+                          l10n.resendViaSms,
+                          style: TextStyle(
+                            fontSize: isSmallScreen ? 14.0 : 16.0,
+                          ),
+                        ),
+                      ),
                   ],
                 ),
               ),
@@ -291,7 +338,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
     context.read<AuthBloc>().add(VerifyOtpEvent(_phone, otp));
   }
 
-  void _handleResend() {
-    context.read<AuthBloc>().add(RequestOtpEvent(_phone));
+  void _handleResend({String? channel}) {
+    context.read<AuthBloc>().add(RequestOtpEvent(_phone, channel: channel));
   }
 }

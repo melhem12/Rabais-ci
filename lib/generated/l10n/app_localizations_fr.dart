@@ -130,6 +130,14 @@ class AppLocalizationsFr extends AppLocalizations {
   String get resendCode => 'Renvoyer le code';
 
   @override
+  String resendCodeIn(int seconds) {
+    return 'Renvoyer dans ${seconds}s';
+  }
+
+  @override
+  String get resendViaSms => 'Renvoyer par SMS';
+
+  @override
   String get profileCompletion => 'Compléter le profil';
 
   @override

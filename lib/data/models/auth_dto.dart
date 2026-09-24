@@ -17,7 +17,8 @@ class OtpRequestResponseDto {
   factory OtpRequestResponseDto.fromJson(Map<String, dynamic> json) {
     return OtpRequestResponseDto(
       ok: json['ok'] as bool,
-      otp: json['otp'] as String,
+      // Only present when the backend runs the fake (dev) provider.
+      otp: (json['otp'] as String?) ?? '',
       userExists: json['user_exists'] as bool,
       role: json['role'] as String,
       phoneVerified: json['phone_verified'] as bool,

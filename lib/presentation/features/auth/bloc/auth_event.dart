@@ -11,10 +11,12 @@ abstract class AuthEvent extends Equatable {
 /// Request OTP event
 class RequestOtpEvent extends AuthEvent {
   final String phone;
-  const RequestOtpEvent(this.phone);
-  
+  /// Optional delivery channel override (sms | whatsapp).
+  final String? channel;
+  const RequestOtpEvent(this.phone, {this.channel});
+
   @override
-  List<Object?> get props => [phone];
+  List<Object?> get props => [phone, channel];
 }
 
 /// Verify OTP event

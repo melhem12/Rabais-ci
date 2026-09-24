@@ -100,6 +100,10 @@ class OtpRequestResponse {
   final bool userExists;
   final String role;
   final bool phoneVerified;
+  /// Channel actually used by the backend: sms, whatsapp, or fake (dev).
+  final String channel;
+  /// Seconds before another code can be requested.
+  final int resendAfter;
 
   const OtpRequestResponse({
     required this.ok,
@@ -107,6 +111,8 @@ class OtpRequestResponse {
     required this.userExists,
     required this.role,
     required this.phoneVerified,
+    this.channel = 'sms',
+    this.resendAfter = 60,
   });
 
   factory OtpRequestResponse.fromJson(Map<String, dynamic> json) {
@@ -116,6 +122,8 @@ class OtpRequestResponse {
       userExists: json['user_exists'] ?? false,
       role: json['role'] ?? 'client',
       phoneVerified: json['phone_verified'] ?? false,
+      channel: json['channel'] ?? 'sms',
+      resendAfter: (json['resend_after'] as num?)?.toInt() ?? 60,
     );
   }
 
@@ -126,6 +134,8 @@ class OtpRequestResponse {
       'user_exists': userExists,
       'role': role,
       'phone_verified': phoneVerified,
+      'channel': channel,
+      'resend_after': resendAfter,
     };
   }
 }

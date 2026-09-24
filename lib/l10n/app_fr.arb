@@ -160,6 +160,19 @@
   "@resendCode": {
     "description": "Texte du bouton de renvoi OTP"
   },
+  "resendCodeIn": "Renvoyer dans {seconds}s",
+  "@resendCodeIn": {
+    "description": "Texte du bouton de renvoi pendant le délai d'attente",
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "resendViaSms": "Renvoyer par SMS",
+  "@resendViaSms": {
+    "description": "Bouton de secours quand le code a été envoyé sur WhatsApp"
+  },
   "profileCompletion": "Compléter le profil",
   "@profileCompletion": {
     "description": "Titre de la page de complétion du profil"

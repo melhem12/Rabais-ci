@@ -15,12 +15,16 @@ class AuthRemoteDataSource {
 
   AuthRemoteDataSource(this._apiClient);
 
-  /// Request OTP for phone number
-  Future<OtpRequestResponse> requestOtp(String phone) async {
+  /// Request OTP for phone number. [channel] (sms | whatsapp) overrides the
+  /// server default when given.
+  Future<OtpRequestResponse> requestOtp(String phone, {String? channel}) async {
     try {
       final response = await _apiClient.dio.post(
         AppConstants.authPhoneOtpRequestEndpoint,
-        data: {'phone': phone},
+        data: {
+          'phone': phone,
+          if (channel != null) 'channel': channel,
+        },
       );
 
       if (response.statusCode == AppConstants.httpOk || 

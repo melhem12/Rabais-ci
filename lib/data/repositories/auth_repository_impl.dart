@@ -9,7 +9,7 @@ import '../datasources/auth_remote_datasource.dart';
 
 /// Abstract repository for authentication operations
 abstract class AuthRepository {
-  Future<OtpRequestResponse> requestOtp(String phone);
+  Future<OtpRequestResponse> requestOtp(String phone, {String? channel});
   Future<AuthSession> verifyOtp(String phone, String otp);
   Future<User> getCurrentUser();
   Future<User> updateProfile(Map<String, dynamic> profileData);
@@ -32,9 +32,9 @@ class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl(this._remoteDataSource, this._localDataSource);
 
   @override
-  Future<OtpRequestResponse> requestOtp(String phone) async {
+  Future<OtpRequestResponse> requestOtp(String phone, {String? channel}) async {
     try {
-      return await _remoteDataSource.requestOtp(phone);
+      return await _remoteDataSource.requestOtp(phone, channel: channel);
     } catch (e) {
       throw ServerFailure(message: e.toString());
     }

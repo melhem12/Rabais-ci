@@ -160,6 +160,19 @@
   "@resendCode": {
     "description": "Resend OTP button text"
   },
+  "resendCodeIn": "Resend in {seconds}s",
+  "@resendCodeIn": {
+    "description": "Resend OTP button text while the cooldown is running",
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "resendViaSms": "Resend via SMS",
+  "@resendViaSms": {
+    "description": "Fallback button when the code was sent on WhatsApp"
+  },
   "profileCompletion": "Complete Profile",
   "@profileCompletion": {
     "description": "Profile completion page title"

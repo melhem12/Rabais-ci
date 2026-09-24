@@ -338,6 +338,18 @@ abstract class AppLocalizations {
   /// **'Resend Code'**
   String get resendCode;
 
+  /// Resend OTP button text while the cooldown is running
+  ///
+  /// In en, this message translates to:
+  /// **'Resend in {seconds}s'**
+  String resendCodeIn(int seconds);
+
+  /// Fallback button when the code was sent on WhatsApp
+  ///
+  /// In en, this message translates to:
+  /// **'Resend via SMS'**
+  String get resendViaSms;
+
   /// Profile completion page title
   ///
   /// In en, this message translates to:

@@ -26,10 +26,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
     
     try {
-      final response = await _authRepository.requestOtp(event.phone);
+      final response = await _authRepository.requestOtp(event.phone, channel: event.channel);
       emit(OtpVerificationRequired(event.phone, response));
     } on ServerFailure catch (e) {
-      emit(AuthError(e.message));
+      // Backend OTP errors carry a user-facing French `detail`; drop the
+      // "Exception: " prefix added by the datasource wrapping.
+      emit(AuthError(e.message.replaceFirst(RegExp(r'^Exception:\s*'), '')));
     } catch (e) {
       // Extract user-friendly error message
       String errorMessage = 'Une erreur est survenue';
