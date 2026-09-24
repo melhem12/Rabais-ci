@@ -2,7 +2,7 @@ name: rabais_ci
 description: "RABAIS CI Mobile App - Clean Architecture Flutter App"
 publish_to: 'none'
 
-version: 1.0.3+5
+version: 1.0.4+6
 
 environment:
   sdk: ^3.9.0
