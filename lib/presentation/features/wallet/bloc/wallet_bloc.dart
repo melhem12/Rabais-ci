@@ -125,13 +125,21 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
     emit(WalletLoading());
 
     try {
-      final url = await _walletDataSource.initPaiementProTopup(
+      final result = await _walletDataSource.initPaiementProTopup(
         packageId: event.packageId,
         amount: event.amount,
         currency: event.currency,
         method: event.method,
       );
-      emit(PaiementProInitSuccess(url));
+      if (result.isManualLink) {
+        emit(WaveManualPaymentReady(
+          paymentUrl: result.url,
+          amount: result.amount ?? 0,
+          coins: result.coins ?? 0,
+        ));
+      } else {
+        emit(PaiementProInitSuccess(result.url));
+      }
     } on ServerFailure catch (e) {
       emit(WalletError(e.message));
     } catch (e) {

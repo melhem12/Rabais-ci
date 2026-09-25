@@ -69,3 +69,20 @@ class PaiementProInitSuccess extends WalletState {
   @override
   List<Object?> get props => [redirectUrl];
 }
+
+/// Wave: a pending request was recorded; the user now pays [amount] CFA
+/// through [paymentUrl] and an admin credits [coins] within 24 hours.
+class WaveManualPaymentReady extends WalletState {
+  final String paymentUrl;
+  final int amount;
+  final int coins;
+
+  const WaveManualPaymentReady({
+    required this.paymentUrl,
+    required this.amount,
+    required this.coins,
+  });
+
+  @override
+  List<Object?> get props => [paymentUrl, amount, coins];
+}

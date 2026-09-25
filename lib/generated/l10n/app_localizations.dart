@@ -1476,6 +1476,42 @@ abstract class AppLocalizations {
   /// **'Redirecting to PaiementPro…'**
   String get redirectingPaiementPro;
 
+  /// Title of the Wave payment dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Pay with Wave'**
+  String get wavePayTitle;
+
+  /// Instructions shown before opening the Wave payment link
+  ///
+  /// In en, this message translates to:
+  /// **'Please pay exactly this amount in the Wave app. Your {coins} coins will be credited to your account after your payment has been verified.'**
+  String wavePayInstructions(String coins);
+
+  /// Button that opens the Wave payment link
+  ///
+  /// In en, this message translates to:
+  /// **'Pay with Wave'**
+  String get wavePayButton;
+
+  /// Title shown after the user returns from Wave
+  ///
+  /// In en, this message translates to:
+  /// **'Payment being verified'**
+  String get wavePendingTitle;
+
+  /// Message shown after the user returns from Wave
+  ///
+  /// In en, this message translates to:
+  /// **'Thank you! Your Wave payment is being verified. Your coins will be credited to your account within 24 hours.'**
+  String get wavePendingMessage;
+
+  /// Error when the Wave link cannot be opened
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to open Wave. Please make sure the Wave app is installed or try again.'**
+  String get waveOpenFailed;
+
   /// Code validation message
   ///
   /// In en, this message translates to:

@@ -932,6 +932,35 @@
   "@redirectingPaiementPro": {
     "description": "Snackbar lors de l'ouverture de PaiementPro"
   },
+  "wavePayTitle": "Payer avec Wave",
+  "@wavePayTitle": {
+    "description": "Titre de la boîte de dialogue de paiement Wave"
+  },
+  "wavePayInstructions": "Veuillez payer exactement ce montant dans l'application Wave. Vos {coins} coins seront crédités sur votre compte après vérification de votre paiement.",
+  "@wavePayInstructions": {
+    "description": "Instructions avant l'ouverture du lien Wave",
+    "placeholders": {
+      "coins": {
+        "type": "String"
+      }
+    }
+  },
+  "wavePayButton": "Payer avec Wave",
+  "@wavePayButton": {
+    "description": "Bouton qui ouvre le lien de paiement Wave"
+  },
+  "wavePendingTitle": "Paiement en cours de vérification",
+  "@wavePendingTitle": {
+    "description": "Titre affiché au retour de Wave"
+  },
+  "wavePendingMessage": "Merci ! Votre paiement Wave est en cours de vérification. Vos coins seront crédités sur votre compte dans un délai maximum de 24 heures.",
+  "@wavePendingMessage": {
+    "description": "Message affiché au retour de Wave"
+  },
+  "waveOpenFailed": "Impossible d'ouvrir Wave. Vérifiez que l'application Wave est installée ou réessayez.",
+  "@waveOpenFailed": {
+    "description": "Erreur quand le lien Wave ne peut pas être ouvert"
+  },
   "pleaseEnterCode": "Veuillez entrer un code",
   "@pleaseEnterCode": {
     "description": "Message de validation de code"

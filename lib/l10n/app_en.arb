@@ -932,6 +932,35 @@
   "@redirectingPaiementPro": {
     "description": "Snackbar when opening PaiementPro flow"
   },
+  "wavePayTitle": "Pay with Wave",
+  "@wavePayTitle": {
+    "description": "Title of the Wave payment dialog"
+  },
+  "wavePayInstructions": "Please pay exactly this amount in the Wave app. Your {coins} coins will be credited to your account after your payment has been verified.",
+  "@wavePayInstructions": {
+    "description": "Instructions shown before opening the Wave payment link",
+    "placeholders": {
+      "coins": {
+        "type": "String"
+      }
+    }
+  },
+  "wavePayButton": "Pay with Wave",
+  "@wavePayButton": {
+    "description": "Button that opens the Wave payment link"
+  },
+  "wavePendingTitle": "Payment being verified",
+  "@wavePendingTitle": {
+    "description": "Title shown after the user returns from Wave"
+  },
+  "wavePendingMessage": "Thank you! Your Wave payment is being verified. Your coins will be credited to your account within 24 hours.",
+  "@wavePendingMessage": {
+    "description": "Message shown after the user returns from Wave"
+  },
+  "waveOpenFailed": "Unable to open Wave. Please make sure the Wave app is installed or try again.",
+  "@waveOpenFailed": {
+    "description": "Error when the Wave link cannot be opened"
+  },
   "pleaseEnterCode": "Please enter a code",
   "@pleaseEnterCode": {
     "description": "Code validation message"

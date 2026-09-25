@@ -22,3 +22,24 @@ class PaymentMethodOption {
     );
   }
 }
+
+/// Result of POST /wallet/topup/paiementpro.
+///
+/// `flow` is "redirect" for PaiementPro (open [url] in the in-app WebView) or
+/// "manual_link" for Wave: the user pays [amount] CFA through the merchant
+/// link and an admin credits [coins] after checking the payment.
+class TopupInitResult {
+  final String url;
+  final String flow;
+  final int? amount;
+  final int? coins;
+
+  const TopupInitResult({
+    required this.url,
+    this.flow = 'redirect',
+    this.amount,
+    this.coins,
+  });
+
+  bool get isManualLink => flow == 'manual_link';
+}

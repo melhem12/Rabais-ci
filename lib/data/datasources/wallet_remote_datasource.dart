@@ -131,8 +131,8 @@ class WalletRemoteDataSource {
     }
   }
 
-  /// Init PaiementPro top-up and return redirect URL
-  Future<String> initPaiementProTopup({
+  /// Init a top-up: PaiementPro redirect, or the Wave manual link.
+  Future<TopupInitResult> initPaiementProTopup({
     String? packageId,
     double? amount,
     String? currency,
@@ -156,9 +156,15 @@ class WalletRemoteDataSource {
 
       if (response.statusCode == AppConstants.httpOk ||
           response.statusCode == AppConstants.httpCreated) {
-        final url = response.data['url'] ?? response.data['payment_url'];
+        final data = response.data as Map<String, dynamic>;
+        final url = data['url'] ?? data['payment_url'];
         if (url is String && url.isNotEmpty) {
-          return url;
+          return TopupInitResult(
+            url: url,
+            flow: data['flow']?.toString() ?? 'redirect',
+            amount: (data['amount'] as num?)?.toInt(),
+            coins: (data['coins'] as num?)?.toInt(),
+          );
         }
         throw Exception('PaiementPro URL not returned by server');
       } else {

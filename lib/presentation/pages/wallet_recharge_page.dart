@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'payment_webview_page.dart';
 
 import '../../di/service_locator.dart';
@@ -67,6 +68,9 @@ class _WalletRechargePageState extends State<WalletRechargePage> {
               SnackBar(content: Text(l10n.redirectingPaiementPro)),
             );
             _launchPaymentUrl(state.redirectUrl);
+          } else if (state is WaveManualPaymentReady) {
+            setState(() => _isSubmitting = false);
+            _startWavePayment(state);
           } else if (state is WalletLoading && !_isSubmitting) {
             // ignore, handled in builder
           }
@@ -187,6 +191,156 @@ class _WalletRechargePageState extends State<WalletRechargePage> {
       // doesn't get stuck on an empty state.
       context.read<WalletBloc>().add(const LoadCoinPackagesEvent());
     }
+  }
+
+  /// Wave: show the exact amount, open the Wave merchant link, then tell the
+  /// user the coins will be credited after manual verification.
+  Future<void> _startWavePayment(WaveManualPaymentReady state) async {
+    final l10n = AppLocalizations.of(context);
+    final amountText = NumberFormat.currency(
+      locale: 'fr-FR',
+      symbol: 'CFA',
+      decimalDigits: 0,
+    ).format(state.amount);
+    final coinsText = NumberFormat.decimalPattern('fr-FR').format(state.coins);
+
+    final proceed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => _WaveDialog(
+        icon: Icons.waves_rounded,
+        iconColor: const Color(0xFF1DC8FF),
+        title: l10n.wavePayTitle,
+        highlight: amountText,
+        message: l10n.wavePayInstructions(coinsText),
+        primaryLabel: l10n.wavePayButton,
+        secondaryLabel: l10n.cancel,
+      ),
+    );
+    if (!mounted) return;
+    if (proceed != true) {
+      context.read<WalletBloc>().add(const LoadCoinPackagesEvent());
+      return;
+    }
+
+    final uri = Uri.parse(state.paymentUrl);
+    var opened = false;
+    try {
+      opened = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } catch (_) {
+      opened = false;
+    }
+    if (!mounted) return;
+    if (!opened) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.waveOpenFailed)),
+      );
+      context.read<WalletBloc>().add(const LoadCoinPackagesEvent());
+      return;
+    }
+
+    // Shown when the user comes back from Wave.
+    await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => _WaveDialog(
+        icon: Icons.schedule_rounded,
+        iconColor: Theme.of(ctx).colorScheme.primary,
+        title: l10n.wavePendingTitle,
+        message: l10n.wavePendingMessage,
+        primaryLabel: l10n.ok,
+      ),
+    );
+    if (!mounted) return;
+    // Back to the wallet page, which reloads and shows the pending transaction.
+    Navigator.of(context).pop(true);
+  }
+}
+
+class _WaveDialog extends StatelessWidget {
+  const _WaveDialog({
+    required this.icon,
+    required this.iconColor,
+    required this.title,
+    required this.message,
+    required this.primaryLabel,
+    this.highlight,
+    this.secondaryLabel,
+  });
+
+  final IconData icon;
+  final Color iconColor;
+  final String title;
+  final String message;
+  final String primaryLabel;
+  final String? highlight;
+  final String? secondaryLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      contentPadding: const EdgeInsets.fromLTRB(24, 28, 24, 8),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 64,
+            height: 64,
+            decoration: BoxDecoration(
+              color: iconColor.withOpacity(0.12),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: iconColor, size: 34),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+          ),
+          if (highlight != null) ...[
+            const SizedBox(height: 12),
+            Text(
+              highlight!,
+              textAlign: TextAlign.center,
+              style: theme.textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.w800,
+                color: iconColor,
+              ),
+            ),
+          ],
+          const SizedBox(height: 12),
+          Text(
+            message,
+            textAlign: TextAlign.center,
+            style: theme.textTheme.bodyMedium?.copyWith(color: Colors.grey[700], height: 1.4),
+          ),
+        ],
+      ),
+      actionsPadding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+      actions: [
+        Row(
+          children: [
+            if (secondaryLabel != null) ...[
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: Text(secondaryLabel!),
+                ),
+              ),
+              const SizedBox(width: 12),
+            ],
+            Expanded(
+              child: FilledButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: Text(primaryLabel),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
   }
 }
 

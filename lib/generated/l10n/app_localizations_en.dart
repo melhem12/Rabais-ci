@@ -711,6 +711,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redirectingPaiementPro => 'Redirecting to PaiementPro…';
 
   @override
+  String get wavePayTitle => 'Pay with Wave';
+
+  @override
+  String wavePayInstructions(String coins) {
+    return 'Please pay exactly this amount in the Wave app. Your $coins coins will be credited to your account after your payment has been verified.';
+  }
+
+  @override
+  String get wavePayButton => 'Pay with Wave';
+
+  @override
+  String get wavePendingTitle => 'Payment being verified';
+
+  @override
+  String get wavePendingMessage =>
+      'Thank you! Your Wave payment is being verified. Your coins will be credited to your account within 24 hours.';
+
+  @override
+  String get waveOpenFailed =>
+      'Unable to open Wave. Please make sure the Wave app is installed or try again.';
+
+  @override
   String get pleaseEnterCode => 'Please enter a code';
 
   @override
