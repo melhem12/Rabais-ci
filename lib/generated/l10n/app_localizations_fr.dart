@@ -734,7 +734,23 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get wavePendingMessage =>
-      'Merci ! Votre paiement Wave est en cours de vérification. Vos coins seront crédités sur votre compte dans un délai maximum de 24 heures.';
+      'Merci ! Votre paiement est en cours de vérification. Vos coins seront crédités sur votre compte dans un délai maximum de 24 heures.';
+
+  @override
+  String manualTransferTitle(String method) {
+    return 'Payer avec $method';
+  }
+
+  @override
+  String manualTransferInstructions(String method, String coins) {
+    return 'Envoyez exactement ce montant via $method au numéro ci-dessus, puis appuyez sur « J\'ai effectué le paiement ». Vos $coins coins seront crédités après vérification.';
+  }
+
+  @override
+  String get manualTransferConfirm => 'J\'ai effectué le paiement';
+
+  @override
+  String get manualNumberCopied => 'Numéro copié';
 
   @override
   String get waveOpenFailed =>

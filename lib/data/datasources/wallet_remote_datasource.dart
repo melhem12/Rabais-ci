@@ -109,11 +109,34 @@ class WalletRemoteDataSource {
     }
   }
 
+  /// Record a manual payment (Wave link / Orange Money / MTN transfer) once the
+  /// user confirms they are paying; an admin credits the coins after checking.
+  Future<void> submitManualTopup({
+    required String packageId,
+    required String method,
+  }) async {
+    try {
+      await _apiClient.dio.post(
+        AppConstants.walletManualTopupEndpoint,
+        data: {'package_id': packageId, 'method': method},
+      );
+    } on DioException catch (e) {
+      final data = e.response?.data;
+      if (data is Map && data['detail'] is String) {
+        throw Exception(data['detail']);
+      }
+      throw Exception('Network error: ${e.message}');
+    }
+  }
+
   /// Get the payment methods available for the current environment.
   Future<List<PaymentMethodOption>> getPaymentMethods() async {
     try {
-      final response =
-          await _apiClient.dio.get(AppConstants.walletPaymentMethodsEndpoint);
+      final response = await _apiClient.dio.get(
+        AppConstants.walletPaymentMethodsEndpoint,
+        // This build supports manual Wave / Orange Money / MTN payments.
+        queryParameters: {'include_manual': true},
+      );
 
       if (response.statusCode == AppConstants.httpOk) {
         final List<dynamic> data = (response.data['methods'] as List?) ?? const [];

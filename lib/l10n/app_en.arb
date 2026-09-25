@@ -953,9 +953,38 @@
   "@wavePendingTitle": {
     "description": "Title shown after the user returns from Wave"
   },
-  "wavePendingMessage": "Thank you! Your Wave payment is being verified. Your coins will be credited to your account within 24 hours.",
+  "wavePendingMessage": "Thank you! Your payment is being verified. Your coins will be credited to your account within 24 hours.",
   "@wavePendingMessage": {
-    "description": "Message shown after the user returns from Wave"
+    "description": "Message shown after a manual payment (Wave, Orange Money, MTN)"
+  },
+  "manualTransferTitle": "Pay with {method}",
+  "@manualTransferTitle": {
+    "description": "Title of the Orange Money / MTN transfer payment",
+    "placeholders": {
+      "method": {
+        "type": "String"
+      }
+    }
+  },
+  "manualTransferInstructions": "Send exactly this amount with {method} to the number above, then tap \"I have paid\". Your {coins} coins will be credited after verification.",
+  "@manualTransferInstructions": {
+    "description": "Transfer payment instructions",
+    "placeholders": {
+      "method": {
+        "type": "String"
+      },
+      "coins": {
+        "type": "String"
+      }
+    }
+  },
+  "manualTransferConfirm": "I have paid",
+  "@manualTransferConfirm": {
+    "description": "Confirmation button after the transfer"
+  },
+  "manualNumberCopied": "Number copied",
+  "@manualNumberCopied": {
+    "description": "Snackbar after copying the number"
   },
   "waveOpenFailed": "Unable to open Wave. Please make sure the Wave app is installed or try again.",
   "@waveOpenFailed": {

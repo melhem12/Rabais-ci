@@ -726,7 +726,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get wavePendingMessage =>
-      'Thank you! Your Wave payment is being verified. Your coins will be credited to your account within 24 hours.';
+      'Thank you! Your payment is being verified. Your coins will be credited to your account within 24 hours.';
+
+  @override
+  String manualTransferTitle(String method) {
+    return 'Pay with $method';
+  }
+
+  @override
+  String manualTransferInstructions(String method, String coins) {
+    return 'Send exactly this amount with $method to the number above, then tap \"I have paid\". Your $coins coins will be credited after verification.';
+  }
+
+  @override
+  String get manualTransferConfirm => 'I have paid';
+
+  @override
+  String get manualNumberCopied => 'Number copied';
 
   @override
   String get waveOpenFailed =>

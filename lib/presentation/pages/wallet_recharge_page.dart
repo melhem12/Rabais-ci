@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -142,7 +143,7 @@ class _WalletRechargePageState extends State<WalletRechargePage> {
     if (_isSubmitting) return;
 
     // Ask the user which payment method to use before starting the top-up.
-    final method = await showModalBottomSheet<String>(
+    final option = await showModalBottomSheet<PaymentMethodOption>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -151,15 +152,115 @@ class _WalletRechargePageState extends State<WalletRechargePage> {
       ),
       builder: (_) => const _PaymentMethodPicker(),
     );
-    if (method == null || !mounted) return; // dismissed
+    if (option == null || !mounted) return; // dismissed
+
+    if (option.isManual) {
+      await _startManualPayment(package, option);
+      return;
+    }
 
     setState(() => _isSubmitting = true);
     context.read<WalletBloc>().add(
           InitPaiementProTopupEvent(
             packageId: package.id,
-            method: method,
+            method: option.method,
           ),
         );
+  }
+
+  /// Wave link / Orange Money / MTN transfer: show the exact amount (and the
+  /// number to send it to), record the request once the user confirms, then
+  /// tell them the coins will be credited after manual verification.
+  Future<void> _startManualPayment(
+    wallet_entities.CoinPackage package,
+    PaymentMethodOption option,
+  ) async {
+    final l10n = AppLocalizations.of(context);
+    final amountText = NumberFormat.currency(
+      locale: 'fr-FR',
+      symbol: 'CFA',
+      decimalDigits: 0,
+    ).format(package.priceMinor);
+    final coinsText =
+        NumberFormat.decimalPattern('fr-FR').format(package.coinAmount);
+    final color = _PaymentMethodPickerState.colorFor(option.method, context);
+    final isTransfer = option.isManualTransfer;
+
+    final proceed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => _WaveDialog(
+        icon: isTransfer
+            ? Icons.phone_iphone_rounded
+            : Icons.waves_rounded,
+        iconColor: color,
+        title: isTransfer
+            ? l10n.manualTransferTitle(option.label)
+            : l10n.wavePayTitle,
+        highlight: amountText,
+        message: isTransfer
+            ? l10n.manualTransferInstructions(option.label, coinsText)
+            : l10n.wavePayInstructions(coinsText),
+        copyValue: isTransfer ? option.phone : null,
+        copyLabel: l10n.manualNumberCopied,
+        primaryLabel:
+            isTransfer ? l10n.manualTransferConfirm : l10n.wavePayButton,
+        secondaryLabel: l10n.cancel,
+      ),
+    );
+    if (!mounted || proceed != true) return;
+
+    setState(() => _isSubmitting = true);
+    try {
+      await getIt<WalletRemoteDataSource>().submitManualTopup(
+        packageId: package.id,
+        method: option.method,
+      );
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _isSubmitting = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString().replaceFirst(RegExp(r'^Exception:\s*'), '')),
+        ),
+      );
+      return;
+    }
+    if (!mounted) return;
+    setState(() => _isSubmitting = false);
+
+    if (!isTransfer && option.url != null) {
+      var opened = false;
+      try {
+        opened = await launchUrl(
+          Uri.parse(option.url!),
+          mode: LaunchMode.externalApplication,
+        );
+      } catch (_) {
+        opened = false;
+      }
+      if (!mounted) return;
+      if (!opened) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.waveOpenFailed)),
+        );
+      }
+    }
+
+    // For Wave this shows when the user comes back from the Wave app.
+    await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => _WaveDialog(
+        icon: Icons.schedule_rounded,
+        iconColor: Theme.of(ctx).colorScheme.primary,
+        title: l10n.wavePendingTitle,
+        message: l10n.wavePendingMessage,
+        primaryLabel: l10n.ok,
+      ),
+    );
+    if (!mounted) return;
+    // Back to the wallet page, which reloads and shows the pending transaction.
+    Navigator.of(context).pop(true);
   }
 
   Future<void> _launchPaymentUrl(String url) async {
@@ -265,6 +366,8 @@ class _WaveDialog extends StatelessWidget {
     required this.primaryLabel,
     this.highlight,
     this.secondaryLabel,
+    this.copyValue,
+    this.copyLabel,
   });
 
   final IconData icon;
@@ -274,6 +377,18 @@ class _WaveDialog extends StatelessWidget {
   final String primaryLabel;
   final String? highlight;
   final String? secondaryLabel;
+  /// Phone number shown in a tap-to-copy box (Orange Money / MTN transfer).
+  final String? copyValue;
+  /// Snackbar text after copying [copyValue].
+  final String? copyLabel;
+
+  /// +2250720612525 -> +225 07 20 61 25 25
+  static String _formatPhone(String phone) {
+    final m = RegExp(r'^\+225(\d{10})$').firstMatch(phone);
+    if (m == null) return phone;
+    final d = m.group(1)!;
+    return '+225 ${[for (var i = 0; i < 10; i += 2) d.substring(i, i + 2)].join(' ')}';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -307,6 +422,43 @@ class _WaveDialog extends StatelessWidget {
               style: theme.textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.w800,
                 color: iconColor,
+              ),
+            ),
+          ],
+          if (copyValue != null) ...[
+            const SizedBox(height: 12),
+            Material(
+              color: iconColor.withOpacity(0.08),
+              borderRadius: BorderRadius.circular(14),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(14),
+                onTap: () {
+                  Clipboard.setData(ClipboardData(text: copyValue!));
+                  if (copyLabel != null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(copyLabel!), duration: const Duration(seconds: 2)),
+                    );
+                  }
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          _formatPhone(copyValue!),
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Icon(Icons.copy_rounded, size: 20, color: iconColor),
+                    ],
+                  ),
+                ),
               ),
             ),
           ],
@@ -662,7 +814,13 @@ class _PaymentMethodPickerState extends State<_PaymentMethodPicker> {
     }
   }
 
-  Color _colorFor(String method, BuildContext context) {
+  static Color colorFor(String method, BuildContext context) =>
+      _colorForMethod(method, context);
+
+  Color _colorFor(String method, BuildContext context) =>
+      _colorForMethod(method, context);
+
+  static Color _colorForMethod(String method, BuildContext context) {
     switch (method) {
       case 'orange_money':
         return const Color(0xFFFF7900);
@@ -746,7 +904,7 @@ class _PaymentMethodPickerState extends State<_PaymentMethodPicker> {
                         borderRadius: BorderRadius.circular(16),
                         child: InkWell(
                           borderRadius: BorderRadius.circular(16),
-                          onTap: () => Navigator.of(context).pop(m.method),
+                          onTap: () => Navigator.of(context).pop(m),
                           child: Ink(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(16),

@@ -1500,11 +1500,35 @@ abstract class AppLocalizations {
   /// **'Payment being verified'**
   String get wavePendingTitle;
 
-  /// Message shown after the user returns from Wave
+  /// Message shown after a manual payment (Wave, Orange Money, MTN)
   ///
   /// In en, this message translates to:
-  /// **'Thank you! Your Wave payment is being verified. Your coins will be credited to your account within 24 hours.'**
+  /// **'Thank you! Your payment is being verified. Your coins will be credited to your account within 24 hours.'**
   String get wavePendingMessage;
+
+  /// Title of the Orange Money / MTN transfer payment
+  ///
+  /// In en, this message translates to:
+  /// **'Pay with {method}'**
+  String manualTransferTitle(String method);
+
+  /// Transfer payment instructions
+  ///
+  /// In en, this message translates to:
+  /// **'Send exactly this amount with {method} to the number above, then tap \"I have paid\". Your {coins} coins will be credited after verification.'**
+  String manualTransferInstructions(String method, String coins);
+
+  /// Confirmation button after the transfer
+  ///
+  /// In en, this message translates to:
+  /// **'I have paid'**
+  String get manualTransferConfirm;
+
+  /// Snackbar after copying the number
+  ///
+  /// In en, this message translates to:
+  /// **'Number copied'**
+  String get manualNumberCopied;
 
   /// Error when the Wave link cannot be opened
   ///
