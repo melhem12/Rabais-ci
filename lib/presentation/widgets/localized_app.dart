@@ -126,59 +126,44 @@ class RouterWrapper extends StatefulWidget {
 }
 
 class _RouterWrapperState extends State<RouterWrapper> {
-  AuthState? _lastNonLoadingState;
+  /// Last state that owns a page (not AuthLoading / AuthError).
+  AuthState? _lastPageState;
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AuthBloc, AuthState>(
-      listener: (context, state) {
-        // Track the last non-loading state to preserve context during loading
-        if (state is! AuthLoading) {
-          _lastNonLoadingState = state;
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
+        if (state is AuthLoading || state is AuthError) {
+          // Keep the current page while a request runs or after it fails, so
+          // the page shows its own spinner / error. Falling back to SplashPage
+          // here re-ran CheckAuthStatus and flashed an empty LoginPage.
+          final last = _lastPageState;
+          if (last != null) return _pageFor(last);
+          return state is AuthError ? const LoginPage() : const SplashPage();
         }
+        _lastPageState = state;
+        return _pageFor(state);
       },
-      child: BlocBuilder<AuthBloc, AuthState>(
-        builder: (context, state) {
-          if (state is Authenticated) {
-            if (state.user.role == 'merchant') {
-              return const MerchantHomePage();
-            }
-            return const CustomerHomePage();
-          } else if (state is ProfileCompletionRequired) {
-            return const ProfileCompletionPage();
-          } else if (state is OtpVerificationRequired) {
-            return OtpVerificationPage(
-              phone: state.phone,
-              otpResponse: state.response,
-            );
-          } else if (state is AuthLoading) {
-            // During loading, preserve the current page context
-            // This prevents showing login page during OTP verification
-            if (_lastNonLoadingState is OtpVerificationRequired) {
-              final lastState = _lastNonLoadingState as OtpVerificationRequired;
-              return OtpVerificationPage(
-                phone: lastState.phone,
-                otpResponse: lastState.response,
-              );
-            } else if (_lastNonLoadingState is Authenticated) {
-              final lastState = _lastNonLoadingState as Authenticated;
-              if (lastState.user.role == 'merchant') {
-                return const MerchantHomePage();
-              }
-              return const CustomerHomePage();
-            } else if (_lastNonLoadingState is ProfileCompletionRequired) {
-              return const ProfileCompletionPage();
-            }
-            // Default to splash during loading if no previous state
-            return const SplashPage();
-          } else if (state is Unauthenticated) {
-            return const LoginPage();
-          } else {
-            return const SplashPage();
-          }
-        },
-      ),
     );
+  }
+
+  Widget _pageFor(AuthState state) {
+    if (state is Authenticated) {
+      if (state.user.role == 'merchant') {
+        return const MerchantHomePage();
+      }
+      return const CustomerHomePage();
+    } else if (state is ProfileCompletionRequired) {
+      return const ProfileCompletionPage();
+    } else if (state is OtpVerificationRequired) {
+      return OtpVerificationPage(
+        phone: state.phone,
+        otpResponse: state.response,
+      );
+    } else if (state is Unauthenticated) {
+      return const LoginPage();
+    }
+    return const SplashPage();
   }
 }
 
