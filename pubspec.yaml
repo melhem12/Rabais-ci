@@ -113,6 +113,8 @@ flutter:
 flutter_launcher_icons:
   android: true
   ios: true
+  # App Store rejects iOS icons with an alpha channel.
+  remove_alpha_ios: true
   image_path: assets/icons/mylogo.png
   # Padded foreground so Android's adaptive-icon zoom doesn't crop the logo
   # (keeps it visually the same size as the iOS icon).
