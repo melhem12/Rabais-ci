@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../features/auth/bloc/auth_bloc.dart';
+import '../features/auth/bloc/auth_state.dart';
 import '../../core/theme/app_theme.dart';
 import '../widgets/animations/fade_in_widget.dart';
 import '../widgets/animations/slide_in_widget.dart';
@@ -142,6 +145,33 @@ class _SupportPageState extends State<SupportPage> {
                 },
               ),
             ),
+            const SizedBox(height: 12),
+
+            // Privacy policy
+            FadeInWidget(
+              delay: 0.4,
+              child: _buildContactCard(
+                icon: Icons.privacy_tip_outlined,
+                title: 'Politique de confidentialité',
+                subtitle: 'rabaisci.com/politique-de-confidentialite',
+                onTap: () => launchUrl(
+                  Uri.parse('https://rabaisci.com/politique-de-confidentialite'),
+                  mode: LaunchMode.externalApplication,
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            // Account deletion request (handled by support, not automatic)
+            FadeInWidget(
+              delay: 0.5,
+              child: _buildContactCard(
+                icon: Icons.person_remove_outlined,
+                title: 'Demande de suppression de compte',
+                subtitle: 'Envoyez-nous une demande par e-mail',
+                onTap: _requestAccountDeletion,
+              ),
+            ),
           ],
         ),
       ),
@@ -273,6 +303,29 @@ class _SupportPageState extends State<SupportPage> {
         ),
       ),
     );
+  }
+
+  Future<void> _requestAccountDeletion() async {
+    final state = context.read<AuthBloc>().state;
+    final phone = state is Authenticated ? state.user.phone : '';
+    final uri = Uri(
+      scheme: 'mailto',
+      path: 'support@rabaisci.com',
+      query: Uri(queryParameters: {
+        'subject': 'Demande de suppression de compte',
+        'body': 'Bonjour,\n\nJe souhaite la suppression de mon compte Rabais CI '
+            'et des données associées.\n\nNuméro de téléphone du compte : $phone\n\nMerci.',
+      }).query,
+    );
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Écrivez-nous à support@rabaisci.com pour supprimer votre compte.'),
+        ),
+      );
+    }
   }
 
   Future<void> _launchEmail(String email) async {

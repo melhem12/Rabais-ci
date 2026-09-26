@@ -1,6 +1,8 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../features/auth/bloc/auth_bloc.dart';
 import '../../features/auth/bloc/auth_event.dart';
@@ -301,6 +303,11 @@ class _RegisterPageState extends State<RegisterPage> {
                           color: Theme.of(context).colorScheme.primary,
                           decoration: TextDecoration.underline,
                         ),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () => launchUrl(
+                                Uri.parse('https://rabaisci.com/politique-de-confidentialite'),
+                                mode: LaunchMode.externalApplication,
+                              ),
                       ),
                     ],
                   ),
