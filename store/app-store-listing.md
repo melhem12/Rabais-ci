@@ -108,7 +108,7 @@ Not collected: location, contacts, health, browsing history, search history, dia
 
 ## Screenshots
 
-In `store/screenshots/iphone-6.9/`: 5 screenshots, 1320 × 2868 (iPhone 17 Pro Max), no alpha.
+Upload `store/screenshots/iphone-6.9-marketing/` (5 branded screenshots with captions, 1320 × 2868, no alpha). Raw app captures are in `iphone-6.9/`.
 Upload them in the **iPhone 6.9" Display** slot, in file-name order. Apple scales them for the smaller iPhones.
 
 The app is **iPhone only** (`TARGETED_DEVICE_FAMILY = 1`), so no iPad screenshots are needed.
