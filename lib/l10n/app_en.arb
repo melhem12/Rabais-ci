@@ -1170,5 +1170,9 @@
   "deleteAccountDone": "Your account has been deleted.",
   "@deleteAccountDone": {
     "description": "Snackbar after the account is deleted"
+  },
+  "deleteAccountSubtitle": "Permanently delete your account and personal data",
+  "@deleteAccountSubtitle": {
+    "description": "Subtitle of the delete account entry in settings"
   }
 }

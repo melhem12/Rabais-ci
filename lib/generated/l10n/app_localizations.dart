@@ -1829,6 +1829,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your account has been deleted.'**
   String get deleteAccountDone;
+
+  /// Subtitle of the delete account entry in settings
+  ///
+  /// In en, this message translates to:
+  /// **'Permanently delete your account and personal data'**
+  String get deleteAccountSubtitle;
 }
 
 class _AppLocalizationsDelegate

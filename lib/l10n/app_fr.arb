@@ -1170,5 +1170,9 @@
   "deleteAccountDone": "Votre compte a été supprimé.",
   "@deleteAccountDone": {
     "description": "Message après suppression du compte"
+  },
+  "deleteAccountSubtitle": "Supprimer définitivement votre compte et vos données",
+  "@deleteAccountSubtitle": {
+    "description": "Sous-titre de l'entrée Supprimer mon compte"
   }
 }

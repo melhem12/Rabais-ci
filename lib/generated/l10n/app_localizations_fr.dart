@@ -915,4 +915,8 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get deleteAccountDone => 'Votre compte a été supprimé.';
+
+  @override
+  String get deleteAccountSubtitle =>
+      'Supprimer définitivement votre compte et vos données';
 }

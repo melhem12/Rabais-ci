@@ -904,4 +904,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deleteAccountDone => 'Your account has been deleted.';
+
+  @override
+  String get deleteAccountSubtitle =>
+      'Permanently delete your account and personal data';
 }

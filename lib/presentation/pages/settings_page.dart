@@ -8,6 +8,9 @@ import '../features/localization/bloc/localization_event.dart';
 import '../features/localization/bloc/localization_state.dart';
 import '../../generated/l10n/app_localizations.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/errors/failures.dart';
+import '../../data/repositories/auth_repository_impl.dart';
+import '../../di/service_locator.dart';
 import '../widgets/localized_app.dart';
 import '../widgets/animations/fade_in_widget.dart';
 import '../widgets/animations/slide_in_widget.dart';
@@ -222,6 +225,17 @@ class SettingsPage extends StatelessWidget {
               textColor: Colors.red,
             ),
           ),
+          FadeInWidget(
+            delay: 0.7,
+            child: _buildSettingsTile(
+              context,
+              icon: Icons.delete_forever_outlined,
+              title: l10n.deleteAccount,
+              subtitle: l10n.deleteAccountSubtitle,
+              onTap: () => _confirmDeleteAccount(context),
+              textColor: Colors.red.shade800,
+            ),
+          ),
         ],
       ),
     );
@@ -358,6 +372,62 @@ class SettingsPage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  /// Account deletion (App Store guideline 5.1.1(v)): confirm, delete on the
+  /// server, then sign out. Same flow as the button at the bottom of ProfilePage.
+  Future<void> _confirmDeleteAccount(BuildContext context) async {
+    final l10n = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+    final authBloc = context.read<AuthBloc>();
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.deleteAccountConfirmTitle),
+        content: Text(l10n.deleteAccountConfirmMessage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(l10n.cancel),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+            ),
+            child: Text(l10n.deleteAccountConfirmButton),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !context.mounted) return;
+
+    // Blocking progress indicator while the request runs.
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const Center(child: CircularProgressIndicator()),
+    );
+    try {
+      await getIt<AuthRepositoryImpl>().deleteAccount();
+    } catch (e) {
+      navigator.pop(); // progress
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(e is ServerFailure ? e.message : e.toString()),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+    navigator.pop(); // progress
+    messenger.showSnackBar(SnackBar(content: Text(l10n.deleteAccountDone)));
+    // Clears the stored session; the router shows the login page.
+    authBloc.add(const LogoutEvent());
+    navigator.popUntil((route) => route.isFirst);
   }
 
   void _showLanguageDialog(BuildContext context) {
