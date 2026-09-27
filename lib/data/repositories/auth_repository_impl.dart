@@ -15,6 +15,7 @@ abstract class AuthRepository {
   Future<User> updateProfile(Map<String, dynamic> profileData);
   Future<String> uploadProfileImage(String imagePath);
   Future<void> changePassword(String oldPassword, String newPassword);
+  Future<void> deleteAccount();
   Future<void> logout();
   Future<bool> isAuthenticated();
   Future<String?> getAccessToken();
@@ -173,6 +174,15 @@ class AuthRepositoryImpl implements AuthRepository {
       await _remoteDataSource.changePassword(oldPassword, newPassword);
     } catch (e) {
       throw ServerFailure(message: e.toString());
+    }
+  }
+
+  @override
+  Future<void> deleteAccount() async {
+    try {
+      await _remoteDataSource.deleteAccount();
+    } catch (e) {
+      throw ServerFailure(message: e.toString().replaceFirst(RegExp(r'^Exception:\s*'), ''));
     }
   }
 }

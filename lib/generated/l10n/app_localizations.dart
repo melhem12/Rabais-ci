@@ -1799,6 +1799,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Contact us'**
   String get contactUsTitle;
+
+  /// Button on the profile page to delete the account
+  ///
+  /// In en, this message translates to:
+  /// **'Delete my account'**
+  String get deleteAccount;
+
+  /// Title of the account deletion confirmation
+  ///
+  /// In en, this message translates to:
+  /// **'Delete your account?'**
+  String get deleteAccountConfirmTitle;
+
+  /// Body of the account deletion confirmation
+  ///
+  /// In en, this message translates to:
+  /// **'Your profile and personal data will be permanently deleted and you will be signed out. Your remaining coins and vouchers will be lost. This cannot be undone.'**
+  String get deleteAccountConfirmMessage;
+
+  /// Confirm button for account deletion
+  ///
+  /// In en, this message translates to:
+  /// **'Delete permanently'**
+  String get deleteAccountConfirmButton;
+
+  /// Snackbar after the account is deleted
+  ///
+  /// In en, this message translates to:
+  /// **'Your account has been deleted.'**
+  String get deleteAccountDone;
 }
 
 class _AppLocalizationsDelegate

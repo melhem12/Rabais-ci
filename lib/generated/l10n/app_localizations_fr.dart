@@ -899,4 +899,20 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get contactUsTitle => 'Nous contacter';
+
+  @override
+  String get deleteAccount => 'Supprimer mon compte';
+
+  @override
+  String get deleteAccountConfirmTitle => 'Supprimer votre compte ?';
+
+  @override
+  String get deleteAccountConfirmMessage =>
+      'Votre profil et vos données personnelles seront définitivement supprimés et vous serez déconnecté. Vos coins et bons restants seront perdus. Cette action est irréversible.';
+
+  @override
+  String get deleteAccountConfirmButton => 'Supprimer définitivement';
+
+  @override
+  String get deleteAccountDone => 'Votre compte a été supprimé.';
 }

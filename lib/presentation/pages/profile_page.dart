@@ -13,6 +13,7 @@ import '../../di/service_locator.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../../core/utils/image_url_helper.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/errors/failures.dart';
 import '../widgets/animations/custom_loader.dart';
 import '../widgets/animations/fade_in_widget.dart';
 import '../widgets/animations/slide_in_widget.dart';
@@ -235,6 +236,22 @@ class _ProfilePageState extends State<ProfilePage> {
                                   fontSize: isSmallScreen ? 14.0 : 16.0,
                                 ),
                               ),
+                      ),
+                    ),
+                    SizedBox(height: sectionSpacing * 1.5),
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton.icon(
+                        onPressed: _isLoading ? null : _handleDeleteAccount,
+                        icon: const Icon(Icons.delete_forever_outlined),
+                        label: Text(l10n.deleteAccount),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Colors.red[700],
+                          side: BorderSide(color: Colors.red.shade300),
+                          padding: EdgeInsets.symmetric(
+                            vertical: isSmallScreen ? 12.0 : 14.0,
+                          ),
+                        ),
                       ),
                     ),
                   ],
@@ -598,6 +615,51 @@ class _ProfilePageState extends State<ProfilePage> {
         _dateOfBirthController.text = _formatDate(picked);
       });
     }
+  }
+
+  /// Account deletion (App Store guideline 5.1.1(v)): confirm, delete on the
+  /// server, then sign out.
+  Future<void> _handleDeleteAccount() async {
+    final l10n = AppLocalizations.of(context);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.deleteAccountConfirmTitle),
+        content: Text(l10n.deleteAccountConfirmMessage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(l10n.cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            style: TextButton.styleFrom(foregroundColor: Colors.red[700]),
+            child: Text(l10n.deleteAccountConfirmButton),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    setState(() => _isLoading = true);
+    try {
+      await getIt<AuthRepositoryImpl>().deleteAccount();
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+      final message = e is ServerFailure ? e.message : e.toString();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message), backgroundColor: Colors.red),
+      );
+      return;
+    }
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(l10n.deleteAccountDone)),
+    );
+    // Clears the stored session; the router shows the login page.
+    context.read<AuthBloc>().add(const LogoutEvent());
+    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
   void _handleSaveProfile() {

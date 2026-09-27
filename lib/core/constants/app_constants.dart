@@ -51,6 +51,7 @@ class AppConstants {
   static const String uploadSponsoredImageEndpoint = '/uploads/sponsored/image';
   static const String uploadUserProfileImageEndpoint = '/uploads/user/profile';
   static const String authPasswordChangeEndpoint = '/auth/password/change';
+  static const String usersMeEndpoint = '/users/me';
 
   // HTTP Status Codes
   static const int httpOk = 200;

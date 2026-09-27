@@ -1150,5 +1150,25 @@
   "apply": "Appliquer",
   "choosePhoto": "Choisir une photo",
   "ourPartners": "Nos Partenaires",
-  "contactUsTitle": "Nous contacter"
+  "contactUsTitle": "Nous contacter",
+  "deleteAccount": "Supprimer mon compte",
+  "@deleteAccount": {
+    "description": "Bouton du profil pour supprimer le compte"
+  },
+  "deleteAccountConfirmTitle": "Supprimer votre compte ?",
+  "@deleteAccountConfirmTitle": {
+    "description": "Titre de la confirmation de suppression"
+  },
+  "deleteAccountConfirmMessage": "Votre profil et vos données personnelles seront définitivement supprimés et vous serez déconnecté. Vos coins et bons restants seront perdus. Cette action est irréversible.",
+  "@deleteAccountConfirmMessage": {
+    "description": "Texte de la confirmation de suppression"
+  },
+  "deleteAccountConfirmButton": "Supprimer définitivement",
+  "@deleteAccountConfirmButton": {
+    "description": "Bouton de confirmation de suppression"
+  },
+  "deleteAccountDone": "Votre compte a été supprimé.",
+  "@deleteAccountDone": {
+    "description": "Message après suppression du compte"
+  }
 }

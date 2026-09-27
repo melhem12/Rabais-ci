@@ -888,4 +888,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get contactUsTitle => 'Contact us';
+
+  @override
+  String get deleteAccount => 'Delete my account';
+
+  @override
+  String get deleteAccountConfirmTitle => 'Delete your account?';
+
+  @override
+  String get deleteAccountConfirmMessage =>
+      'Your profile and personal data will be permanently deleted and you will be signed out. Your remaining coins and vouchers will be lost. This cannot be undone.';
+
+  @override
+  String get deleteAccountConfirmButton => 'Delete permanently';
+
+  @override
+  String get deleteAccountDone => 'Your account has been deleted.';
 }

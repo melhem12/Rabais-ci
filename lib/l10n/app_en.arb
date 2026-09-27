@@ -1150,5 +1150,25 @@
   "apply": "Apply",
   "choosePhoto": "Choose a photo",
   "ourPartners": "Our Partners",
-  "contactUsTitle": "Contact us"
+  "contactUsTitle": "Contact us",
+  "deleteAccount": "Delete my account",
+  "@deleteAccount": {
+    "description": "Button on the profile page to delete the account"
+  },
+  "deleteAccountConfirmTitle": "Delete your account?",
+  "@deleteAccountConfirmTitle": {
+    "description": "Title of the account deletion confirmation"
+  },
+  "deleteAccountConfirmMessage": "Your profile and personal data will be permanently deleted and you will be signed out. Your remaining coins and vouchers will be lost. This cannot be undone.",
+  "@deleteAccountConfirmMessage": {
+    "description": "Body of the account deletion confirmation"
+  },
+  "deleteAccountConfirmButton": "Delete permanently",
+  "@deleteAccountConfirmButton": {
+    "description": "Confirm button for account deletion"
+  },
+  "deleteAccountDone": "Your account has been deleted.",
+  "@deleteAccountDone": {
+    "description": "Snackbar after the account is deleted"
+  }
 }

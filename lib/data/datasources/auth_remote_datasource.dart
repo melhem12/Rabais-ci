@@ -269,6 +269,18 @@ class AuthRemoteDataSource {
     }
   }
 
+  /// Delete the signed-in account (personal data erased server-side).
+  Future<void> deleteAccount() async {
+    try {
+      await _apiClient.dio.delete(AppConstants.usersMeEndpoint);
+    } on DioException catch (e) {
+      final data = e.response?.data;
+      throw Exception(data is Map<String, dynamic>
+          ? (data['detail'] ?? 'Account deletion failed')
+          : (e.message ?? 'Account deletion failed'));
+    }
+  }
+
   /// Change password
   Future<void> changePassword(String oldPassword, String newPassword) async {
     try {
