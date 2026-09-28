@@ -65,3 +65,14 @@ android {
 flutter {
     source = "../.."
 }
+
+// Google Play requires 16 KB page-size support. mobile_scanner 5.x pulls
+// ML Kit barcode 17.2.0 and CameraX 1.3.3, whose native libs (libbarhopper_v3,
+// libimage_processing_util_jni) are 4 KB aligned. These newer, API-compatible
+// versions ship 16 KB aligned libs; Gradle resolves the whole graph to them.
+dependencies {
+    implementation("com.google.mlkit:barcode-scanning:17.3.0")
+    implementation("androidx.camera:camera-core:1.4.2")
+    implementation("androidx.camera:camera-camera2:1.4.2")
+    implementation("androidx.camera:camera-lifecycle:1.4.2")
+}
