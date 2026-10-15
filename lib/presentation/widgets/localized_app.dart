@@ -11,6 +11,7 @@ import '../features/auth/bloc/auth_event.dart';
 import '../pages/splash_page.dart';
 import '../pages/auth/login_page.dart';
 import '../pages/auth/otp_verification_page.dart';
+import '../pages/auth/password_pages.dart';
 import '../pages/auth/profile_completion_page.dart';
 import '../pages/customer_home_page.dart';
 import '../pages/merchant_home_page.dart';
@@ -160,6 +161,10 @@ class _RouterWrapperState extends State<RouterWrapper> {
         phone: state.phone,
         otpResponse: state.response,
       );
+    } else if (state is PasswordLoginRequired) {
+      return PasswordLoginPage(phone: state.phone);
+    } else if (state is PasswordSetupRequired) {
+      return CreatePasswordPage(isReset: state.isReset);
     } else if (state is Unauthenticated) {
       return const LoginPage();
     }

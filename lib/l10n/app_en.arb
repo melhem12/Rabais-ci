@@ -1174,5 +1174,110 @@
   "deleteAccountSubtitle": "Permanently delete your account and personal data",
   "@deleteAccountSubtitle": {
     "description": "Subtitle of the delete account entry in settings"
+  },
+  "createPasswordTitle": "Create your password",
+  "@createPasswordTitle": {
+    "description": "Title of the password creation page after the first SMS login"
+  },
+  "createPasswordSubtitle": "You'll use it to sign in quickly next time, without an SMS code.",
+  "@createPasswordSubtitle": {
+    "description": "Subtitle of the password creation page"
+  },
+  "resetPasswordTitle": "Choose a new password",
+  "@resetPasswordTitle": {
+    "description": "Title of the password reset page"
+  },
+  "resetPasswordSubtitle": "Your phone number is verified. Set a new password for your account.",
+  "@resetPasswordSubtitle": {
+    "description": "Subtitle of the password reset page"
+  },
+  "passwordLabel": "Password",
+  "@passwordLabel": {
+    "description": "Password field label"
+  },
+  "confirmPasswordLabel": "Confirm password",
+  "@confirmPasswordLabel": {
+    "description": "Confirm password field label"
+  },
+  "currentPasswordLabel": "Current password",
+  "@currentPasswordLabel": {
+    "description": "Current password field label"
+  },
+  "newPasswordLabel": "New password",
+  "@newPasswordLabel": {
+    "description": "New password field label"
+  },
+  "passwordRuleLength": "At least 8 characters",
+  "@passwordRuleLength": {
+    "description": "Password rule"
+  },
+  "passwordRuleLetter": "At least one letter",
+  "@passwordRuleLetter": {
+    "description": "Password rule"
+  },
+  "passwordRuleDigit": "At least one digit",
+  "@passwordRuleDigit": {
+    "description": "Password rule"
+  },
+  "passwordRuleMatch": "Both passwords match",
+  "@passwordRuleMatch": {
+    "description": "Password rule"
+  },
+  "savePasswordButton": "Save password",
+  "@savePasswordButton": {
+    "description": "Button to save the new password"
+  },
+  "passwordLoginTitle": "Enter your password",
+  "@passwordLoginTitle": {
+    "description": "Title of the password login page"
+  },
+  "passwordLoginSubtitle": "Signing in to the account {phone}",
+  "@passwordLoginSubtitle": {
+    "description": "Subtitle of the password login page",
+    "placeholders": {
+      "phone": {
+        "type": "String"
+      }
+    }
+  },
+  "signInButton": "Sign in",
+  "@signInButton": {
+    "description": "Sign in button"
+  },
+  "forgotPasswordLink": "Forgot password?",
+  "@forgotPasswordLink": {
+    "description": "Link to reset the password by SMS"
+  },
+  "changePhoneNumberLink": "Use another number",
+  "@changePhoneNumberLink": {
+    "description": "Link back to the phone number screen"
+  },
+  "passwordRequired": "Please enter your password",
+  "@passwordRequired": {
+    "description": "Validation error when the password is empty"
+  },
+  "passwordSecurityNote": "Never share your password. The Rabais Ci team will never ask you for it.",
+  "@passwordSecurityNote": {
+    "description": "Security tip on password pages"
+  },
+  "changePasswordTitle": "Change password",
+  "@changePasswordTitle": {
+    "description": "Settings entry and page title"
+  },
+  "changePasswordSubtitle": "Update the password you use to sign in",
+  "@changePasswordSubtitle": {
+    "description": "Settings entry subtitle"
+  },
+  "changePasswordInfo": "After the change you will be signed out of all your devices and must sign in again with the new password.",
+  "@changePasswordInfo": {
+    "description": "Info on the change password page"
+  },
+  "changePasswordButton": "Change password",
+  "@changePasswordButton": {
+    "description": "Button on the change password page"
+  },
+  "passwordChangedRelogin": "Password changed. Sign in with your new password.",
+  "@passwordChangedRelogin": {
+    "description": "Message after the password was changed"
   }
 }

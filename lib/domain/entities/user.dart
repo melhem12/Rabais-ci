@@ -11,6 +11,10 @@ class User {
   final String? gender;
   final Map<String, dynamic>? additionalInfo;
   final String? profileImageUrl;
+  /// The account has a password (phone + password login).
+  final bool hasPassword;
+  /// Set right after an SMS-code login when the user must create a password.
+  final bool needsPasswordSetup;
 
   const User({
     required this.id,
@@ -24,6 +28,8 @@ class User {
     this.gender,
     this.additionalInfo,
     this.profileImageUrl,
+    this.hasPassword = false,
+    this.needsPasswordSetup = false,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -41,6 +47,8 @@ class User {
       gender: json['gender'],
       additionalInfo: json['additional_info'],
       profileImageUrl: json['profile_image_url'],
+      hasPassword: json['has_password'] ?? false,
+      needsPasswordSetup: json['needs_password_setup'] ?? false,
     );
   }
 
@@ -104,6 +112,8 @@ class OtpRequestResponse {
   final String channel;
   /// Seconds before another code can be requested.
   final int resendAfter;
+  /// The account has a password: the app asks for it, no SMS was sent.
+  final bool requiresPassword;
 
   const OtpRequestResponse({
     required this.ok,
@@ -113,6 +123,7 @@ class OtpRequestResponse {
     required this.phoneVerified,
     this.channel = 'sms',
     this.resendAfter = 60,
+    this.requiresPassword = false,
   });
 
   factory OtpRequestResponse.fromJson(Map<String, dynamic> json) {
@@ -124,6 +135,7 @@ class OtpRequestResponse {
       phoneVerified: json['phone_verified'] ?? false,
       channel: json['channel'] ?? 'sms',
       resendAfter: (json['resend_after'] as num?)?.toInt() ?? 60,
+      requiresPassword: json['requires_password'] ?? false,
     );
   }
 

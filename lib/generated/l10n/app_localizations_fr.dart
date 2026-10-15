@@ -919,4 +919,87 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get deleteAccountSubtitle =>
       'Supprimer définitivement votre compte et vos données';
+
+  @override
+  String get createPasswordTitle => 'Créez votre mot de passe';
+
+  @override
+  String get createPasswordSubtitle =>
+      'Vous l\'utiliserez pour vous connecter rapidement la prochaine fois, sans code SMS.';
+
+  @override
+  String get resetPasswordTitle => 'Choisissez un nouveau mot de passe';
+
+  @override
+  String get resetPasswordSubtitle =>
+      'Votre numéro est vérifié. Définissez un nouveau mot de passe pour votre compte.';
+
+  @override
+  String get passwordLabel => 'Mot de passe';
+
+  @override
+  String get confirmPasswordLabel => 'Confirmer le mot de passe';
+
+  @override
+  String get currentPasswordLabel => 'Mot de passe actuel';
+
+  @override
+  String get newPasswordLabel => 'Nouveau mot de passe';
+
+  @override
+  String get passwordRuleLength => 'Au moins 8 caractères';
+
+  @override
+  String get passwordRuleLetter => 'Au moins une lettre';
+
+  @override
+  String get passwordRuleDigit => 'Au moins un chiffre';
+
+  @override
+  String get passwordRuleMatch => 'Les deux mots de passe sont identiques';
+
+  @override
+  String get savePasswordButton => 'Enregistrer le mot de passe';
+
+  @override
+  String get passwordLoginTitle => 'Entrez votre mot de passe';
+
+  @override
+  String passwordLoginSubtitle(String phone) {
+    return 'Connexion au compte $phone';
+  }
+
+  @override
+  String get signInButton => 'Se connecter';
+
+  @override
+  String get forgotPasswordLink => 'Mot de passe oublié ?';
+
+  @override
+  String get changePhoneNumberLink => 'Changer de numéro';
+
+  @override
+  String get passwordRequired => 'Veuillez saisir votre mot de passe';
+
+  @override
+  String get passwordSecurityNote =>
+      'Ne communiquez jamais votre mot de passe. L\'équipe Rabais Ci ne vous le demandera jamais.';
+
+  @override
+  String get changePasswordTitle => 'Changer le mot de passe';
+
+  @override
+  String get changePasswordSubtitle =>
+      'Modifiez votre mot de passe de connexion';
+
+  @override
+  String get changePasswordInfo =>
+      'Après la modification, vous serez déconnecté de tous vos appareils et devrez vous reconnecter avec le nouveau mot de passe.';
+
+  @override
+  String get changePasswordButton => 'Modifier le mot de passe';
+
+  @override
+  String get passwordChangedRelogin =>
+      'Mot de passe modifié. Reconnectez-vous avec votre nouveau mot de passe.';
 }

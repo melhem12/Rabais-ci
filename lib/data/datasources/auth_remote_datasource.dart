@@ -16,14 +16,17 @@ class AuthRemoteDataSource {
   AuthRemoteDataSource(this._apiClient);
 
   /// Request OTP for phone number. [channel] (sms | whatsapp) overrides the
-  /// server default when given.
-  Future<OtpRequestResponse> requestOtp(String phone, {String? channel}) async {
+  /// server default when given. Accounts with a password get
+  /// `requiresPassword` instead of an SMS, unless [forceOtp] ("forgot password").
+  Future<OtpRequestResponse> requestOtp(String phone, {String? channel, bool forceOtp = false}) async {
     try {
       final response = await _apiClient.dio.post(
         AppConstants.authPhoneOtpRequestEndpoint,
         data: {
           'phone': phone,
           if (channel != null) 'channel': channel,
+          'supports_password': true,
+          if (forceOtp) 'force_otp': true,
         },
       );
 
@@ -269,6 +272,41 @@ class AuthRemoteDataSource {
     }
   }
 
+  /// Sign in with phone + password.
+  Future<AuthSession> loginWithPassword(String phone, String password) {
+    return _postSession(
+      AppConstants.authPhonePasswordLoginEndpoint,
+      {'phone': phone, 'password': password},
+    );
+  }
+
+  /// Create the password after the first SMS-code login, or a new one after
+  /// "forgot password". Returns a fresh session.
+  Future<AuthSession> setPassword(String password) {
+    return _postSession(AppConstants.authPasswordSetEndpoint, {'password': password});
+  }
+
+  Future<AuthSession> _postSession(String endpoint, Map<String, dynamic> body) async {
+    try {
+      final response = await _apiClient.dio.post(endpoint, data: body);
+      return AuthSession.fromJson(response.data as Map<String, dynamic>);
+    } on DioException catch (e) {
+      throw Exception(_errorDetail(e));
+    }
+  }
+
+  /// User-facing message from a backend error (`detail` is already in French).
+  String _errorDetail(DioException e) {
+    final data = e.response?.data;
+    if (data is Map<String, dynamic> && data['detail'] is String) {
+      return data['detail'] as String;
+    }
+    if (e.response == null) {
+      return 'Erreur de connexion. Vérifiez votre internet.';
+    }
+    return 'Une erreur est survenue (${e.response?.statusCode}).';
+  }
+
   /// Delete the signed-in account (personal data erased server-side).
   Future<void> deleteAccount() async {
     try {
@@ -301,10 +339,7 @@ class AuthRemoteDataSource {
         throw Exception(errorMessage);
       }
     } on DioException catch (e) {
-      final errorMessage = e.response?.data is Map<String, dynamic>
-          ? e.response?.data['detail'] ?? e.message ?? 'Password change failed'
-          : e.message ?? 'Password change failed';
-      throw Exception(errorMessage);
+      throw Exception(_errorDetail(e));
     } catch (e) {
       throw Exception('Unknown error: $e');
     }

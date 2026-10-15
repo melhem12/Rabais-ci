@@ -17,6 +17,7 @@ import '../widgets/animations/slide_in_widget.dart';
 import '../widgets/animations/scale_tap_widget.dart';
 import 'profile_page.dart';
 import 'support_page.dart';
+import 'auth/password_pages.dart';
 import 'purchases_page.dart';
 
 /// Settings page
@@ -212,6 +213,18 @@ class SettingsPage extends StatelessWidget {
               delay: 0.55,
               begin: const Offset(-0.2, 0),
               child: _buildSectionHeader(context, l10n.account),
+            ),
+          ),
+          FadeInWidget(
+            delay: 0.6,
+            child: _buildSettingsTile(
+              context,
+              icon: Icons.password_rounded,
+              title: l10n.changePasswordTitle,
+              subtitle: l10n.changePasswordSubtitle,
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const ChangePasswordPage()),
+              ),
             ),
           ),
           FadeInWidget(

@@ -5,6 +5,7 @@ import '../../../../core/errors/failures.dart';
 import '../../../../core/services/localization_service.dart';
 import '../../../../data/repositories/auth_repository_impl.dart';
 import '../../../../core/errors/refresh_token_exception.dart';
+import '../../../../domain/entities/user.dart';
 import 'auth_event.dart';
 import 'auth_state.dart';
 
@@ -20,13 +21,74 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<LogoutEvent>(_onLogout);
     on<CheckAuthStatusEvent>(_onCheckAuthStatus);
     on<RefreshSessionEvent>(_onRefreshSession);
+    on<LoginWithPasswordEvent>(_onLoginWithPassword);
+    on<SetPasswordEvent>(_onSetPassword);
+    on<BackToPhoneEvent>((event, emit) {
+      _resettingPassword = false;
+      _pendingUser = null;
+      emit(const Unauthenticated());
+    });
+  }
+
+  /// True between "forgot password" and the new password being saved.
+  bool _resettingPassword = false;
+
+  /// User from the SMS-code login, kept while they create their password so
+  /// we can route them afterwards (profile completion or home).
+  User? _pendingUser;
+
+  /// Where to go once signed in (shared by OTP, password and password setup).
+  AuthState _stateAfterLogin(User user) {
+    if (user.role == 'merchant') return Authenticated(user);
+    if (user.firstTimeLogin) return ProfileCompletionRequired(user);
+    return Authenticated(user);
+  }
+
+  Future<void> _onLoginWithPassword(LoginWithPasswordEvent event, Emitter<AuthState> emit) async {
+    emit(const AuthLoading());
+    try {
+      final session = await _authRepository.loginWithPassword(event.phone, event.password);
+      emit(_stateAfterLogin(session.user));
+    } on ServerFailure catch (e) {
+      emit(AuthError(e.message));
+    } catch (e) {
+      emit(const AuthError('Une erreur est survenue'));
+    }
+  }
+
+  Future<void> _onSetPassword(SetPasswordEvent event, Emitter<AuthState> emit) async {
+    final pending = _pendingUser;
+    emit(const AuthLoading());
+    try {
+      final session = await _authRepository.setPassword(event.password);
+      _resettingPassword = false;
+      _pendingUser = null;
+      // Route with the user from the SMS login: the fresh session no longer
+      // reports first_time_login.
+      emit(_stateAfterLogin(pending ?? session.user));
+    } on ServerFailure catch (e) {
+      emit(AuthError(e.message));
+    } catch (e) {
+      emit(const AuthError('Une erreur est survenue'));
+    }
   }
 
   Future<void> _onRequestOtp(RequestOtpEvent event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     
     try {
-      final response = await _authRepository.requestOtp(event.phone, channel: event.channel);
+      // "Resend code" during a forgot-password flow must stay on the SMS code.
+      final forceOtp = event.forceOtp || _resettingPassword;
+      final response = await _authRepository.requestOtp(
+        event.phone,
+        channel: event.channel,
+        forceOtp: forceOtp,
+      );
+      if (response.requiresPassword) {
+        emit(PasswordLoginRequired(event.phone));
+        return;
+      }
+      if (forceOtp) _resettingPassword = true;
       emit(OtpVerificationRequired(event.phone, response));
     } on ServerFailure catch (e) {
       // Backend OTP errors carry a user-facing French `detail`; drop the
@@ -53,16 +115,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     
     try {
       final session = await _authRepository.verifyOtp(event.phone, event.otp);
-      
-      // Merchants don't need profile completion, go directly to merchant home
-      if (session.user.role == 'merchant') {
-        emit(Authenticated(session.user));
-      } else if (session.user.firstTimeLogin) {
-        // Only customers need profile completion on first login
-        emit(ProfileCompletionRequired(session.user));
-      } else {
-        emit(Authenticated(session.user));
+
+      // First SMS login (or "forgot password"): create the password before
+      // anything else. Merchants go home afterwards, new customers to the
+      // profile form.
+      if (session.user.needsPasswordSetup || _resettingPassword) {
+        _pendingUser = session.user;
+        emit(PasswordSetupRequired(session.user, isReset: _resettingPassword));
+        return;
       }
+      emit(_stateAfterLogin(session.user));
     } on ServerFailure catch (e) {
       emit(AuthError(e.message));
     } catch (e) {
@@ -107,6 +169,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   Future<void> _onLogout(LogoutEvent event, Emitter<AuthState> emit) async {
     try {
+      _resettingPassword = false;
+      _pendingUser = null;
       await _authRepository.logout();
       // Clear language preference on logout
       await LocalizationService.clearLanguage();

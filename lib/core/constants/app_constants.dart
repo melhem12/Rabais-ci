@@ -1,7 +1,8 @@
 /// Application-wide constants and configuration
 class AppConstants {
   // API Configuration
-  static const String baseUrl = 'https://rabais-ci.com/api';
+  // Overridable for local testing: --dart-define=API_BASE_URL=http://localhost:8096
+  static const String baseUrl = String.fromEnvironment('API_BASE_URL', defaultValue: 'https://rabais-ci.com/api');
   static const String stagingBaseUrl = 'https://rabais-ci.com/api';
 
   // Storage Keys
@@ -52,6 +53,8 @@ class AppConstants {
   static const String uploadUserProfileImageEndpoint = '/uploads/user/profile';
   static const String authPasswordChangeEndpoint = '/auth/password/change';
   static const String usersMeEndpoint = '/users/me';
+  static const String authPhonePasswordLoginEndpoint = '/auth/phone/password/login';
+  static const String authPasswordSetEndpoint = '/auth/password/set';
 
   // HTTP Status Codes
   static const int httpOk = 200;

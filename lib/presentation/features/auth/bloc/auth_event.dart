@@ -13,10 +13,36 @@ class RequestOtpEvent extends AuthEvent {
   final String phone;
   /// Optional delivery channel override (sms | whatsapp).
   final String? channel;
-  const RequestOtpEvent(this.phone, {this.channel});
+  /// "Forgot password": always send an SMS code, then ask for a new password.
+  final bool forceOtp;
+  const RequestOtpEvent(this.phone, {this.channel, this.forceOtp = false});
 
   @override
-  List<Object?> get props => [phone, channel];
+  List<Object?> get props => [phone, channel, forceOtp];
+}
+
+/// Sign in with phone + password.
+class LoginWithPasswordEvent extends AuthEvent {
+  final String phone;
+  final String password;
+  const LoginWithPasswordEvent(this.phone, this.password);
+
+  @override
+  List<Object?> get props => [phone, password];
+}
+
+/// Create the password (first login) or a new one (forgot password).
+class SetPasswordEvent extends AuthEvent {
+  final String password;
+  const SetPasswordEvent(this.password);
+
+  @override
+  List<Object?> get props => [password];
+}
+
+/// Leave the password / OTP step and go back to the phone number screen.
+class BackToPhoneEvent extends AuthEvent {
+  const BackToPhoneEvent();
 }
 
 /// Verify OTP event

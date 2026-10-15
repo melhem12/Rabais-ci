@@ -46,6 +46,28 @@ class OtpVerificationRequired extends AuthState {
   List<Object?> get props => [phone, response];
 }
 
+/// The account has a password: ask for it instead of sending an SMS.
+class PasswordLoginRequired extends AuthState {
+  final String phone;
+
+  const PasswordLoginRequired(this.phone);
+
+  @override
+  List<Object?> get props => [phone];
+}
+
+/// After an SMS-code login: the user must create a password (first login) or
+/// choose a new one ([isReset], forgot password).
+class PasswordSetupRequired extends AuthState {
+  final User user;
+  final bool isReset;
+
+  const PasswordSetupRequired(this.user, {this.isReset = false});
+
+  @override
+  List<Object?> get props => [user, isReset];
+}
+
 /// Profile completion required state
 class ProfileCompletionRequired extends AuthState {
   final User user;

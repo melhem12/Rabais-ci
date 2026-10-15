@@ -1174,5 +1174,110 @@
   "deleteAccountSubtitle": "Supprimer définitivement votre compte et vos données",
   "@deleteAccountSubtitle": {
     "description": "Sous-titre de l'entrée Supprimer mon compte"
+  },
+  "createPasswordTitle": "Créez votre mot de passe",
+  "@createPasswordTitle": {
+    "description": "Title of the password creation page after the first SMS login"
+  },
+  "createPasswordSubtitle": "Vous l'utiliserez pour vous connecter rapidement la prochaine fois, sans code SMS.",
+  "@createPasswordSubtitle": {
+    "description": "Subtitle of the password creation page"
+  },
+  "resetPasswordTitle": "Choisissez un nouveau mot de passe",
+  "@resetPasswordTitle": {
+    "description": "Title of the password reset page"
+  },
+  "resetPasswordSubtitle": "Votre numéro est vérifié. Définissez un nouveau mot de passe pour votre compte.",
+  "@resetPasswordSubtitle": {
+    "description": "Subtitle of the password reset page"
+  },
+  "passwordLabel": "Mot de passe",
+  "@passwordLabel": {
+    "description": "Password field label"
+  },
+  "confirmPasswordLabel": "Confirmer le mot de passe",
+  "@confirmPasswordLabel": {
+    "description": "Confirm password field label"
+  },
+  "currentPasswordLabel": "Mot de passe actuel",
+  "@currentPasswordLabel": {
+    "description": "Current password field label"
+  },
+  "newPasswordLabel": "Nouveau mot de passe",
+  "@newPasswordLabel": {
+    "description": "New password field label"
+  },
+  "passwordRuleLength": "Au moins 8 caractères",
+  "@passwordRuleLength": {
+    "description": "Password rule"
+  },
+  "passwordRuleLetter": "Au moins une lettre",
+  "@passwordRuleLetter": {
+    "description": "Password rule"
+  },
+  "passwordRuleDigit": "Au moins un chiffre",
+  "@passwordRuleDigit": {
+    "description": "Password rule"
+  },
+  "passwordRuleMatch": "Les deux mots de passe sont identiques",
+  "@passwordRuleMatch": {
+    "description": "Password rule"
+  },
+  "savePasswordButton": "Enregistrer le mot de passe",
+  "@savePasswordButton": {
+    "description": "Button to save the new password"
+  },
+  "passwordLoginTitle": "Entrez votre mot de passe",
+  "@passwordLoginTitle": {
+    "description": "Title of the password login page"
+  },
+  "passwordLoginSubtitle": "Connexion au compte {phone}",
+  "@passwordLoginSubtitle": {
+    "description": "Subtitle of the password login page",
+    "placeholders": {
+      "phone": {
+        "type": "String"
+      }
+    }
+  },
+  "signInButton": "Se connecter",
+  "@signInButton": {
+    "description": "Sign in button"
+  },
+  "forgotPasswordLink": "Mot de passe oublié ?",
+  "@forgotPasswordLink": {
+    "description": "Link to reset the password by SMS"
+  },
+  "changePhoneNumberLink": "Changer de numéro",
+  "@changePhoneNumberLink": {
+    "description": "Link back to the phone number screen"
+  },
+  "passwordRequired": "Veuillez saisir votre mot de passe",
+  "@passwordRequired": {
+    "description": "Validation error when the password is empty"
+  },
+  "passwordSecurityNote": "Ne communiquez jamais votre mot de passe. L'équipe Rabais Ci ne vous le demandera jamais.",
+  "@passwordSecurityNote": {
+    "description": "Security tip on password pages"
+  },
+  "changePasswordTitle": "Changer le mot de passe",
+  "@changePasswordTitle": {
+    "description": "Settings entry and page title"
+  },
+  "changePasswordSubtitle": "Modifiez votre mot de passe de connexion",
+  "@changePasswordSubtitle": {
+    "description": "Settings entry subtitle"
+  },
+  "changePasswordInfo": "Après la modification, vous serez déconnecté de tous vos appareils et devrez vous reconnecter avec le nouveau mot de passe.",
+  "@changePasswordInfo": {
+    "description": "Info on the change password page"
+  },
+  "changePasswordButton": "Modifier le mot de passe",
+  "@changePasswordButton": {
+    "description": "Button on the change password page"
+  },
+  "passwordChangedRelogin": "Mot de passe modifié. Reconnectez-vous avec votre nouveau mot de passe.",
+  "@passwordChangedRelogin": {
+    "description": "Message after the password was changed"
   }
 }

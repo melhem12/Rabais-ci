@@ -908,4 +908,86 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get deleteAccountSubtitle =>
       'Permanently delete your account and personal data';
+
+  @override
+  String get createPasswordTitle => 'Create your password';
+
+  @override
+  String get createPasswordSubtitle =>
+      'You\'ll use it to sign in quickly next time, without an SMS code.';
+
+  @override
+  String get resetPasswordTitle => 'Choose a new password';
+
+  @override
+  String get resetPasswordSubtitle =>
+      'Your phone number is verified. Set a new password for your account.';
+
+  @override
+  String get passwordLabel => 'Password';
+
+  @override
+  String get confirmPasswordLabel => 'Confirm password';
+
+  @override
+  String get currentPasswordLabel => 'Current password';
+
+  @override
+  String get newPasswordLabel => 'New password';
+
+  @override
+  String get passwordRuleLength => 'At least 8 characters';
+
+  @override
+  String get passwordRuleLetter => 'At least one letter';
+
+  @override
+  String get passwordRuleDigit => 'At least one digit';
+
+  @override
+  String get passwordRuleMatch => 'Both passwords match';
+
+  @override
+  String get savePasswordButton => 'Save password';
+
+  @override
+  String get passwordLoginTitle => 'Enter your password';
+
+  @override
+  String passwordLoginSubtitle(String phone) {
+    return 'Signing in to the account $phone';
+  }
+
+  @override
+  String get signInButton => 'Sign in';
+
+  @override
+  String get forgotPasswordLink => 'Forgot password?';
+
+  @override
+  String get changePhoneNumberLink => 'Use another number';
+
+  @override
+  String get passwordRequired => 'Please enter your password';
+
+  @override
+  String get passwordSecurityNote =>
+      'Never share your password. The Rabais Ci team will never ask you for it.';
+
+  @override
+  String get changePasswordTitle => 'Change password';
+
+  @override
+  String get changePasswordSubtitle => 'Update the password you use to sign in';
+
+  @override
+  String get changePasswordInfo =>
+      'After the change you will be signed out of all your devices and must sign in again with the new password.';
+
+  @override
+  String get changePasswordButton => 'Change password';
+
+  @override
+  String get passwordChangedRelogin =>
+      'Password changed. Sign in with your new password.';
 }

@@ -1835,6 +1835,156 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Permanently delete your account and personal data'**
   String get deleteAccountSubtitle;
+
+  /// Title of the password creation page after the first SMS login
+  ///
+  /// In en, this message translates to:
+  /// **'Create your password'**
+  String get createPasswordTitle;
+
+  /// Subtitle of the password creation page
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ll use it to sign in quickly next time, without an SMS code.'**
+  String get createPasswordSubtitle;
+
+  /// Title of the password reset page
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a new password'**
+  String get resetPasswordTitle;
+
+  /// Subtitle of the password reset page
+  ///
+  /// In en, this message translates to:
+  /// **'Your phone number is verified. Set a new password for your account.'**
+  String get resetPasswordSubtitle;
+
+  /// Password field label
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get passwordLabel;
+
+  /// Confirm password field label
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm password'**
+  String get confirmPasswordLabel;
+
+  /// Current password field label
+  ///
+  /// In en, this message translates to:
+  /// **'Current password'**
+  String get currentPasswordLabel;
+
+  /// New password field label
+  ///
+  /// In en, this message translates to:
+  /// **'New password'**
+  String get newPasswordLabel;
+
+  /// Password rule
+  ///
+  /// In en, this message translates to:
+  /// **'At least 8 characters'**
+  String get passwordRuleLength;
+
+  /// Password rule
+  ///
+  /// In en, this message translates to:
+  /// **'At least one letter'**
+  String get passwordRuleLetter;
+
+  /// Password rule
+  ///
+  /// In en, this message translates to:
+  /// **'At least one digit'**
+  String get passwordRuleDigit;
+
+  /// Password rule
+  ///
+  /// In en, this message translates to:
+  /// **'Both passwords match'**
+  String get passwordRuleMatch;
+
+  /// Button to save the new password
+  ///
+  /// In en, this message translates to:
+  /// **'Save password'**
+  String get savePasswordButton;
+
+  /// Title of the password login page
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your password'**
+  String get passwordLoginTitle;
+
+  /// Subtitle of the password login page
+  ///
+  /// In en, this message translates to:
+  /// **'Signing in to the account {phone}'**
+  String passwordLoginSubtitle(String phone);
+
+  /// Sign in button
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in'**
+  String get signInButton;
+
+  /// Link to reset the password by SMS
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot password?'**
+  String get forgotPasswordLink;
+
+  /// Link back to the phone number screen
+  ///
+  /// In en, this message translates to:
+  /// **'Use another number'**
+  String get changePhoneNumberLink;
+
+  /// Validation error when the password is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your password'**
+  String get passwordRequired;
+
+  /// Security tip on password pages
+  ///
+  /// In en, this message translates to:
+  /// **'Never share your password. The Rabais Ci team will never ask you for it.'**
+  String get passwordSecurityNote;
+
+  /// Settings entry and page title
+  ///
+  /// In en, this message translates to:
+  /// **'Change password'**
+  String get changePasswordTitle;
+
+  /// Settings entry subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Update the password you use to sign in'**
+  String get changePasswordSubtitle;
+
+  /// Info on the change password page
+  ///
+  /// In en, this message translates to:
+  /// **'After the change you will be signed out of all your devices and must sign in again with the new password.'**
+  String get changePasswordInfo;
+
+  /// Button on the change password page
+  ///
+  /// In en, this message translates to:
+  /// **'Change password'**
+  String get changePasswordButton;
+
+  /// Message after the password was changed
+  ///
+  /// In en, this message translates to:
+  /// **'Password changed. Sign in with your new password.'**
+  String get passwordChangedRelogin;
 }
 
 class _AppLocalizationsDelegate

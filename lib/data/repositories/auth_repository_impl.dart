@@ -9,7 +9,9 @@ import '../datasources/auth_remote_datasource.dart';
 
 /// Abstract repository for authentication operations
 abstract class AuthRepository {
-  Future<OtpRequestResponse> requestOtp(String phone, {String? channel});
+  Future<OtpRequestResponse> requestOtp(String phone, {String? channel, bool forceOtp = false});
+  Future<AuthSession> loginWithPassword(String phone, String password);
+  Future<AuthSession> setPassword(String password);
   Future<AuthSession> verifyOtp(String phone, String otp);
   Future<User> getCurrentUser();
   Future<User> updateProfile(Map<String, dynamic> profileData);
@@ -33,9 +35,9 @@ class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl(this._remoteDataSource, this._localDataSource);
 
   @override
-  Future<OtpRequestResponse> requestOtp(String phone, {String? channel}) async {
+  Future<OtpRequestResponse> requestOtp(String phone, {String? channel, bool forceOtp = false}) async {
     try {
-      return await _remoteDataSource.requestOtp(phone, channel: channel);
+      return await _remoteDataSource.requestOtp(phone, channel: channel, forceOtp: forceOtp);
     } catch (e) {
       throw ServerFailure(message: e.toString());
     }
@@ -54,18 +56,49 @@ class AuthRepositoryImpl implements AuthRepository {
       // ignore: avoid_print
       print('[AuthRepository] verifyOtp received tokens: access(${result.accessToken.length}), refresh(${result.refreshToken.length})');
 
-      // Save tokens locally
-      await _localDataSource.saveAccessToken(result.accessToken);
-      await _localDataSource.saveRefreshToken(result.refreshToken);
-      await _localDataSource.saveUserRole(result.user.role);
-      await _localDataSource.saveFirstTimeLogin(result.user.firstTimeLogin);
-
+      await _saveSession(result);
       return result;
     } catch (e) {
       if (e is ServerFailure) rethrow;
       throw ServerFailure(message: e.toString());
     }
   }
+
+  @override
+  Future<AuthSession> loginWithPassword(String phone, String password) async {
+    try {
+      final result = await _remoteDataSource.loginWithPassword(phone, password);
+      await _saveSession(result);
+      return result;
+    } catch (e) {
+      throw ServerFailure(message: _clean(e));
+    }
+  }
+
+  @override
+  Future<AuthSession> setPassword(String password) async {
+    try {
+      final result = await _remoteDataSource.setPassword(password);
+      await _saveSession(result);
+      return result;
+    } catch (e) {
+      throw ServerFailure(message: _clean(e));
+    }
+  }
+
+  Future<void> _saveSession(AuthSession session) async {
+    if (session.accessToken.isEmpty || session.refreshToken.isEmpty) {
+      throw ServerFailure(message: 'Authentication session missing tokens');
+    }
+    await _localDataSource.saveAccessToken(session.accessToken);
+    await _localDataSource.saveRefreshToken(session.refreshToken);
+    await _localDataSource.saveUserRole(session.user.role);
+    await _localDataSource.saveFirstTimeLogin(session.user.firstTimeLogin);
+  }
+
+  static String _clean(Object e) => e is ServerFailure
+      ? e.message
+      : e.toString().replaceFirst(RegExp(r'^Exception:\s*'), '');
 
   @override
   Future<User> getCurrentUser() async {
@@ -173,7 +206,7 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       await _remoteDataSource.changePassword(oldPassword, newPassword);
     } catch (e) {
-      throw ServerFailure(message: e.toString());
+      throw ServerFailure(message: _clean(e));
     }
   }
 
